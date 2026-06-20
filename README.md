@@ -51,6 +51,33 @@ powershell -ExecutionPolicy Bypass -File scripts/install-ai-from-core.ps1 -Targe
 
 Then fill in `.ai/PROGRAM.md` with your project's verification commands.
 
+## Using it
+
+GXP is a discipline you put your AI agent through — there's no binary to run. Two ways to drive it:
+
+**With an adapter (automatic).** Install the adapter for your tool (see below) and it loads
+the workflow for you: in Cursor the rule applies automatically; in Grok, invoke the `gxp`
+skill; in Claude or the Cowork plugin, just say *"use gxp on …"*.
+
+**With any agent (manual).** Point the agent at `.ai/workflow.md` and tell it to follow GXP.
+A prompt that works in any chat-based coding agent:
+
+> Follow the GXP workflow in `.ai/workflow.md`. Before coding, write a task brief with 4–8
+> binary Ideal State Criteria and pass the self-evaluation gate. Make the smallest change,
+> stop after two failed attempts on the same approach, verify deterministically first, then
+> append one honest line to `.ai/ratings.jsonl`.
+
+As you work, GXP reads and writes a few well-known locations in your repo:
+
+| Artifact | Path | Purpose |
+|---|---|---|
+| Project context | `.ai/PROGRAM.md` | your verification commands + conventions (read in Phase 0) |
+| Task briefs | `.ai/tasks/<slug>.md` | one per task — criteria + verification plan |
+| Ratings ledger | `.ai/ratings.jsonl` | one honest JSON line per run (Phase 6) |
+| Failure notes | `.ai/failures/<slug>.md` | repeatable traps, so they don't recur (Phase 7) |
+
+Start small: run one real task through the full loop — write the brief first, and rate it honestly.
+
 ## Adapters
 
 Each adapter re-expresses GXP for a specific tool's interface and strengths. All derive
