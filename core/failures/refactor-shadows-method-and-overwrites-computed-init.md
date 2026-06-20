@@ -1,7 +1,7 @@
 # Failure capture
 
 **Date:** 2026-06-15
-**Task / context:** Supervisor merge-blockers surfaced after the planner+specialists refactor (`src/agents/supervisor.py`).
+**Task / context:** A method-shadowing bug surfaced after a class refactor split logic across modules (example path `src/agents/supervisor.py`).
 
 ## Expected
 

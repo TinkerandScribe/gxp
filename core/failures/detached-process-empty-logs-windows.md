@@ -1,7 +1,7 @@
 # Failure capture
 
 **Date:** 2026-06-17
-**Task / context:** `scripts/launch-background-job.py` detached run launcher (audit #5 / Telegram dispatch).
+**Task / context:** A launcher that detaches a child process on Windows and returns immediately.
 
 ## Expected
 
@@ -37,7 +37,7 @@ the child as **inherited `stdout`/`stderr`** via `Popen(..., stdout=logf, stderr
 creationflags=CREATE_NEW_PROCESS_GROUP|CREATE_NO_WINDOW)` (no shell, no quoting). Also
 made the launcher respect an explicit `LLM_DISABLE` instead of force-clearing it.
 Verified: detached run executes (5 approved, `success=true`, `api_client.py` written),
-log fully captured, then proven live via Telegram.
+log fully captured, then proven live end-to-end.
 
 ## Prevention
 

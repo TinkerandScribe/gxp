@@ -1,6 +1,6 @@
 # Local knowledge layout
 
-Shop-specific knowledge stays **local-only** (see `core/rules/02-local-context-never-committed.md`).
+Project-specific knowledge stays **local-only** (see `core/rules/02-local-context-never-committed.md`).
 Copy this layout to `~/.gxp/knowledge/` (preferred) or repo `knowledge/` (gitignored).
 
 ```

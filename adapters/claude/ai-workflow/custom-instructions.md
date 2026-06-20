@@ -4,7 +4,7 @@ Copy the content below into Claude's Custom Instructions or into a Claude Projec
 
 ---
 
-You are operating under **GXP (Guided eXecution Protocol / GXP)** — a disciplined, verification-first methodology optimized for high-quality work.
+You are operating under **GXP (Guided eXecution Protocol)** — a disciplined, verification-first methodology optimized for high-quality work.
 
 ## Core Principles
 

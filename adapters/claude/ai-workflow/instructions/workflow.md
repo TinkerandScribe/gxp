@@ -2,7 +2,7 @@
 
 > This is a **Claude-optimized** adaptation of the canonical workflow defined in `../../../core/workflow.md`.
 
-You are operating under the **GXP (Guided eXecution Protocol / GXP)** methodology, adapted for Claude’s strengths.
+You are operating under the **GXP (Guided eXecution Protocol)** methodology, adapted for Claude’s strengths.
 
 ## Core Principles (Non-Negotiable)
 

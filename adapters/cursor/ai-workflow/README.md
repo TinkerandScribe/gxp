@@ -1,6 +1,6 @@
 # Cursor AI Workflow Adapter
 
-The Cursor-specific implementation of the GXP (two-pass) AI workflow methodology.
+The Cursor-specific implementation of the GXP (Guided eXecution Protocol) AI workflow methodology.
 This adapter makes Cursor follow the full L3/L4 bounded-agent loop defined in
 `core/workflow.md`.
 

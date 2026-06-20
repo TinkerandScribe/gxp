@@ -26,13 +26,13 @@ The ratings ledger records one honest line per GXP run. **One JSON object per li
 A clean run:
 
 ```json
-{"ts": "2026-06-19T08:30:00Z", "task": "shop-skills-rule-packs", "brief": "core/tasks/shop-skills-rule-packs.md", "criteria_met": 7, "criteria_total": 7, "rating": 8, "mode": "full", "notes": "quote_feasibility SKILL skeleton; rule-pack templates; 172 pytest pass. Parked: quoting math.", "failure_ref": ""}
+{"ts": "2026-01-15T10:00:00+00:00", "task": "add-csv-export", "brief": "tasks/add-csv-export.md", "criteria_met": 6, "criteria_total": 6, "rating": 8, "mode": "full", "notes": "All 6 binary criteria met (schema, pagination, tests, lint, docs, error path). Deterministic checks first, then behavioral.", "failure_ref": ""}
 ```
 
 A partial — criteria slipped, rating drops:
 
 ```json
-{"ts": "2026-06-19T18:00:00Z", "task": "desktop-cdp-control-v2", "brief": "core/tasks/desktop-cdp-control-v2.md", "criteria_met": 13, "criteria_total": 15, "rating": 7, "mode": "full", "notes": "Phase-2 routing done; Live desktop smoke not verified (Store MSIX CDP bind failed in session).", "failure_ref": "claude-desktop-cdp-unofficial.md"}
+{"ts": "2026-01-22T09:00:00+00:00", "task": "migrate-config-to-yaml", "brief": "tasks/migrate-config-to-yaml.md", "criteria_met": 5, "criteria_total": 7, "rating": 6, "mode": "full", "notes": "2 of 7 criteria slipped: env-var override precedence has no test, and the migration guide is still a stub. Shipped the core conversion; parked the two gaps as follow-ups.", "failure_ref": ""}
 ```
 
 ## Honesty rules

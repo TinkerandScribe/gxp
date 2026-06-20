@@ -1,6 +1,6 @@
 # Perplexity AI Workflow Adapter
 
-This is the **Perplexity-optimized** adapter for the GXP (Guided eXecution Protocol / GXP) methodology.
+This is the **Perplexity-optimized** adapter for the GXP (Guided eXecution Protocol) methodology.
 
 ## Role of Perplexity in GXP
 
