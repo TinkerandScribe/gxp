@@ -1,0 +1,32 @@
+# Drift Allowlist for Grok AI Workflow Adapter
+#
+# List files/labels (partial match) that are intentionally different from core.
+# One entry per line. Comments start with #.
+#
+# Examples:
+# workflow.md
+# Task Brief Template
+
+# Currently the Grok version of the workflow is being actively developed
+# and contains Grok-specific tool use / context strategies.
+workflow.md
+
+# We are not duplicating every template yet — they are referenced from core
+# when appropriate.
+task-brief.md
+failure-capture.md
+weekly-refine.md
+
+# These supporting files are not yet needed in the Grok adapter
+PROGRAM.template.md
+ratings.jsonl
+Rules Philosophy
+Failures Philosophy
+
+# Grok Build specific prototype (per gxp-grok-composer-cursor-strategy-coordination brief):
+# Task-aware strategy selection using personas + model overrides (Composer 2.5 / native Grok)
+# and structured Cursor Composer handoff artifacts. Aligned with GXP, capability gate, Phase 2/3.
+strategy-selection.md
+grok-build-strategy/
+cursor-handoff
+model-persona

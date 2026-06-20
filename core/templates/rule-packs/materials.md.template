@@ -1,0 +1,5 @@
+# Materials rule pack (local copy: ~/.gxp/rule-packs/materials.md)
+
+- Verify material is rated for selected process (laser / FDM / CNC).
+- Reject unknown plastics for laser without MSDS check.
+- _(Add allowed/blocked materials — local only.)_

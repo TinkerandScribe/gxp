@@ -1,0 +1,16 @@
+{
+  "title": "Workshop job record",
+  "type": "object",
+  "required": ["job_id", "material", "machine", "artifact_paths", "outcome", "ts"],
+  "properties": {
+    "job_id": { "type": "string" },
+    "material": { "type": "string" },
+    "machine": { "type": "string" },
+    "artifact_paths": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "outcome": { "type": "string" },
+    "ts": { "type": "string" }
+  }
+}

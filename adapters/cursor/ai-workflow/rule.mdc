@@ -1,0 +1,167 @@
+---
+description: Use the repository's .ai workflow (v1.1) for coding tasks.
+alwaysApply: true
+---
+
+Use the repo `.ai` workflow (v1.1). This is an L3/L4 bounded agent
+workflow — operate within the task brief, not as a self-directed agent.
+
+**Path context — two operating modes:**
+
+- In a target repo (after running the installer): use `.ai/PROGRAM.md`,
+  `.ai/workflow.md`, `.ai/rules/`, `.ai/ratings.jsonl`, etc.
+- In the `gxp` repo itself: treat `core/` as the canonical equivalent
+  of `.ai/`. Use `core/workflow.md` instead of `.ai/workflow.md`, and look for
+  templates in `core/templates/` rather than `.ai/templates/`.
+
+---
+
+**Phase -1 (ALWAYS run first): Capability & Permission Gate**
+
+Before asking the user to do anything, determine whether you can do it yourself.
+Run this check silently on every request — do not narrate it unless the outcome
+affects what happens next.
+
+1. **Enumerate available connectors.** Identify which of the following you have
+   active access to in this session:
+   - Local repo files (read/write via Cursor editor + terminal)
+   - Git (commit, push, branch) — check if the terminal has an authenticated remote
+   - GitHub (PRs, issues, Actions) — available if a GitHub MCP or CLI is connected
+   - Supabase (migrations, SQL, edge functions) — available if Supabase MCP is connected
+   - External APIs / services — available only if credentials are in scope
+
+2. **Check permission scope.** For each connector you have, determine whether the
+   specific action requested falls within what you are allowed to do:
+   - File edits in the open repo: always permitted
+   - Git commit/push to current branch: permitted unless branch is protected
+   - Creating branches or PRs: permitted if GitHub access is confirmed
+   - Database migrations or schema changes: permitted only if Supabase MCP is active
+     AND the target project is the one in context (not production unless stated)
+   - Deploying edge functions: same as migrations
+   - Account-level changes (billing, org settings, secrets): **never self-serve —
+     always human-only**
+
+3. **Decide and act using this priority order:**
+   - ✅ **Can do it, have permission → do it. Report what you did.**
+     Do not ask the user first. Proceed, then summarise the action taken.
+   - 🔐 **Have access but permission is uncertain → probe first.**
+     Run a read-only check (e.g. `git remote -v`, list Supabase projects, check
+     branch protection). If the check confirms permission, proceed. If it surfaces
+     a block, escalate to the user with the specific blocker.
+   - ⚠️ **Access exists but action is risky or irreversible → state intent first.**
+     For destructive operations (dropping tables, force-pushing, deleting files),
+     state exactly what you are about to do and confirm once before proceeding.
+   - 🔌 **Required connector is not available → request it.**
+     State which connector is missing, what it would unlock, and how to enable it
+     (e.g. "I need the Supabase MCP connected to run this migration directly.
+     You can enable it in Cursor settings under MCP servers.").
+   - 🙋 **Action is human-only → say so clearly and explain why.**
+     Human-only actions include: anything requiring a browser UI, 2FA or login
+     flows, account/billing/org-level changes, approving protected branch merges,
+     rotating secrets or API keys, and anything requiring physical access.
+     Do not ask vague questions — say "This requires you to do X because Y."
+
+4. **Never silently fail or vaguely defer.**
+   If you cannot proceed, give a specific, actionable explanation:
+   - Bad: "You may need to check your permissions."
+   - Good: "I can't push to `main` — it's a protected branch. I can push to a new
+     branch and open a PR instead. Want me to do that?"
+
+---
+
+**Decide full vs lightweight first.**
+
+- **Full workflow** (default): phases 0–8. Use for anything that changes
+  behavior, touches more than one file non-trivially, or could regress
+  something.
+- **Lightweight workflow**: phases 1, 2, 3, 5 only. Use only for
+  trivial, single-file, easily reversible changes.
+
+**Full workflow phases:**
+
+0. Audit `.ai/PROGRAM.md`, `.ai/rules/`, `.ai/failures/`, recent ratings.
+1. Write a task brief from `.ai/templates/task-brief.md` with 4-8 binary
+   Ideal State Criteria.
+2. Self-eval gate: completeness, ambiguity, scope, verification,
+   approval gates.
+3. Implement, keeping the diff focused on the brief.
+4. Anti-loop: after two failed attempts on the same approach, stop and
+   switch strategy.
+5. Verify — run commands from `.ai/PROGRAM.md` (or `core/PROGRAM.template.md`
+   in gxp) first; then deterministic checks (type/lint/test/build),
+   behavioral, then subjective.
+6. Append one JSON object per line to `.ai/ratings.jsonl`. Use fields from the
+   schema line (`ts`, `task`, `brief`, `criteria_met`, `criteria_total`,
+   `rating`, optional `mode`, `notes`, `failure_ref`). Rating is integer 1–10.
+   No JSON arrays. Skip the `_schema` line when parsing.
+7. Capture repeatable failures with expected, actual, root cause,
+   detection, resolution, prevention, and follow-up.
+8. Write a short handoff (what changed, what was verified, what is
+   parked).
+
+**Key file mapping** — reference in this order when picking up a task:
+
+1. `.ai/PROGRAM.md` — project-specific context, verification commands,
+   conventions. **The main per-project customization point.**
+2. `.ai/workflow.md` — the full v1.1 loop.
+3. `.ai/rules/` — durable rules for this repo.
+4. `.ai/failures/` — known repeatable failure modes to avoid.
+5. `.ai/templates/task-brief.md` — copy to start a task.
+6. `.ai/templates/failure-capture.md` — copy when you hit a repeatable
+   failure.
+7. `.ai/templates/weekly-refine.md` — copy at end of week for review.
+8. `.ai/ratings.jsonl` — append one JSONL object per run.
+
+**Cursor-specific operating mode:**
+
+Cursor is a repo-native implementation agent — use its IDE affordances, not just
+chat patterns.
+
+Preferred practices:
+- Use `@file` / `@folder` references when loading known workflow files (e.g.,
+  `@.ai/PROGRAM.md`, `@.ai/rules/`).
+- Use `@codebase` or semantic search in Phase 0 when the relevant surface area
+  is unknown.
+- Use Composer for coherent multi-file edits. Use inline chat only for trivial
+  single-file changes.
+- Use the integrated terminal in Phase 5. Run verification commands; read the
+  actual stdout/stderr. Do not claim tests pass without terminal evidence.
+- Review the full Composer diff before accepting. Reject anything outside the
+  brief's scope.
+
+Verification output contract (Phase 5):
+Report verification as real output, not inference:
+  Command: `<command>`
+  Result: `exit code <N>`
+  Relevant output:
+  ```
+  <actual terminal output>
+  ```
+If a command was not run, say "not run" and explain why.
+
+Scope discipline:
+Before writing any code, list anything tempting but out-of-scope:
+- Renaming unrelated files
+- Formatting entire files
+- Reorganizing folders
+- Rewriting tests unrelated to the current criteria
+- Adding dependencies not required by the brief
+
+Version contract:
+This rule implements workflow v1.1. In **target repos**, check `.ai/workflow.md`
+for the version; in **gxp**, check `core/workflow.md`. If the active
+workflow file declares a higher version, stop and flag it before proceeding.
+
+Repo-local Cursor rules:
+`install-cursor-rule.ps1` only installs or overwrites `ai-workflow.mdc`. Other
+files in `.cursor/rules/` (e.g. `security.mdc` from the adapter template) are
+repo-local — preserve them when syncing the workflow rule.
+
+Host environment:
+Assume Windows / PowerShell. When generating terminal commands or verification
+scripts, use PowerShell-compatible syntax. Avoid bash-isms (ls, cat, &&).
+Use Get-Content, Test-Path, separate commands on separate lines, or
+cross-platform Python scripts.
+
+Do not skip the brief step. If you cannot write 4 binary Ideal State
+Criteria for the task, ask for clarification instead of guessing.

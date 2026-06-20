@@ -1,0 +1,19 @@
+{
+  "name": "gxp",
+  "version": "0.1.0",
+  "description": "GXP methodology — verification-first, binary-criteria workflow for any non-trivial task. Bounded L3/L4 discipline: write a brief with 4–8 binary Ideal State Criteria, pass a self-evaluation gate, implement the smallest viable change, stop after two failed attempts (anti-loop), verify deterministic→behavioral→subjective, and rate honestly.",
+  "author": {
+    "name": "Tinker & Scribe Workshop"
+  },
+  "homepage": "https://github.com/TinkerandScribe/gxp",
+  "repository": "https://github.com/TinkerandScribe/gxp",
+  "keywords": [
+    "gxp",
+    "methodology",
+    "verification",
+    "binary-criteria",
+    "anti-loop",
+    "task-brief",
+    "bounded-agent"
+  ]
+}

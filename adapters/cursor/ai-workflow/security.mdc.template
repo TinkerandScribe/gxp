@@ -1,0 +1,33 @@
+---
+description: Repo-local security rules for AI-assisted work (copy and customize).
+alwaysApply: true
+---
+
+# Security rules (customize for this repository)
+
+Copy this file to `.cursor/rules/security.mdc` in your target repo and edit the
+placeholders. It is **not** overwritten by `install-cursor-rule.ps1 -Force`.
+
+## Secrets in version control
+
+- Do not commit live secrets, API keys, or production credentials.
+- Use `.env.example` with placeholder values only; keep `.env` gitignored.
+- Do not paste secret values into chat or commit them into task briefs.
+
+## Agent access to sensitive files
+
+- Do not read live `.env` or credential files into agent context unless the
+  operator explicitly requests it for a defined debugging task.
+- Prefer environment variables and local-only config for runtime secrets.
+
+## Destructive or production-touching operations
+
+- Treat production database writes, secret rotation, and billing changes as
+  **human-only** unless the task brief explicitly authorizes them with approval.
+
+## Project-specific additions
+
+<!-- Add paths, tools, and policies specific to this repo below -->
+
+- _(e.g. never commit `secrets/` directory)_
+- _(e.g. run `npm run security:scan` before release tags)_

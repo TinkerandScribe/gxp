@@ -1,0 +1,29 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Python (adapters/tooling may use it)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Ephemeral GXP audit artifacts
+.ai/tmp/
+
+# Cowork adapter — generated plugin artifacts (built from core/, not committed)
+adapters/cowork/dist/
+
+# Local-only project context — NEVER commit (see core/rules/02-local-context-never-committed.md).
+# The repo holds public methodology only; a project's filled instance stays local.
+/.ai/PROGRAM.md
+/knowledge/
+/local/
+
+# Secrets
+.env
+.env.*
+!.env.example

@@ -1,0 +1,33 @@
+# Cursor adapter intentional drift allowlist
+#
+# Documents compression and divergences that are EXPECTED and CORRECT.
+# check-core.ps1 uses structural checks, not text diff, so this file
+# is primarily a human-readable rationale document.
+
+- rule.mdc is a compressed summary of core/workflow.md. Verbatim match
+  is not the goal -- behaviour coverage is.
+
+- rule.mdc omits the weekly-refine phase because Cursor sessions are
+  task-scoped, not week-scoped. Weekly review is a human-driven activity.
+
+- rule.mdc does not reproduce the full JSONL schema or failure-capture
+  template content. It references the template files instead.
+
+- rule.mdc adds Cursor-specific guidance (Composer, @-references,
+  terminal contract, PowerShell environment) with no equivalent in
+  core/workflow.md. This is intentional extension, not drift.
+
+- rule.mdc adds a two-operating-mode path-mapping block (target repo vs
+  gxp self) that has no equivalent in core/. This is
+  adapter-specific infrastructure.
+
+- rule.mdc adds Phase -1 (Capability & Permission Gate) with connector
+  enumeration and escalation rules. Intentional Cursor-only extension;
+  not duplicated in core/workflow.md.
+
+- security.mdc.template is optional per-repo overlay; never copied by
+  default. install-cursor-rule.ps1 -IncludeSecurityTemplate only creates
+  security.mdc when missing.
+
+- rule.mdc version contract checks .ai/workflow.md in target repos vs
+  core/workflow.md in gxp. Adapter-specific path logic.
