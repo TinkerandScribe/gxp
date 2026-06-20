@@ -2,15 +2,18 @@
 
 This is the **Perplexity-optimized** adapter for the GXP (Guided eXecution Protocol) methodology.
 
-## Role of Perplexity in GXP
+## When to use Perplexity
 
-Perplexity is not a general coding agent. It excels at **research, information synthesis, and grounded exploration**.
+Perplexity is not a coding agent — it's the **research layer**. Reach for it when a GXP task
+needs grounded, cited information *before* you write code or commit to an approach.
 
-In the GXP workflow, Perplexity is most valuable in:
+Use it for:
 
-- **Phase 0 (Repo Audit / Context Gathering)**: Deep research on technologies, competitors, best practices, recent developments, etc.
-- Research-heavy tasks that feed into planning or decision-making.
-- Gathering high-quality, cited information before writing code or making architectural decisions.
+- **Phase 0 context** — technologies, libraries, recent developments, prior art.
+- **Pre-decision research** — best practices and trade-offs before an architecture choice.
+- **Competitive / domain background** — a cited briefing on an unfamiliar area.
+
+Then bring the synthesized, cited findings back into your coding agent (Grok, Claude, Cursor).
 
 ## Recommended Ways to Use
 

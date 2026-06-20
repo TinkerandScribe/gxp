@@ -4,6 +4,13 @@ The Cursor-specific implementation of the GXP (Guided eXecution Protocol) AI wor
 This adapter makes Cursor follow the full L3/L4 bounded-agent loop defined in
 `core/workflow.md`.
 
+## When to use Cursor
+
+Reach for the Cursor adapter when the work is **in-editor, multi-file coding you want to
+review as a visual diff**: Composer edits across several files, tight edit→verify loops on
+a local repo, IDE-native context via @-references. (For autonomous long runs use Grok; for
+research use Perplexity; for chat-driven reasoning use Claude.)
+
 ## What This Adapter Does
 
 - Installs a Cursor `.mdc` rule that enforces the GXP workflow phases

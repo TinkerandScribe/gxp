@@ -1,150 +1,68 @@
-# Getting Started with the Grok AI Workflow Skill
+# Getting Started — Grok GXP Skill
 
-This guide helps individual power users get the GXP skill running quickly and effectively.
+Get the GXP skill running in Grok in a few minutes.
 
-## What This Skill Gives You
+## What it gives you
 
-- A structured, verification-first workflow optimized for Grok's strengths (tool use, long context, reasoning).
-- Strong guardrails against scope creep and repeated mistakes.
-- Built-in mechanisms to stay aligned with the evolving core methodology.
+- A verification-first workflow tuned for Grok (tool use, long context, reasoning).
+- Guardrails against scope creep and repeated mistakes.
 - Ratings + failure capture so the process improves over time.
 
-## 1. Installation (Windows)
+## 1. Install
 
-The easiest way:
+**Windows:**
 
 ```powershell
 cd path\to\gxp\adapters\grok\ai-workflow\sync
 .\install-grok-skill.ps1
 ```
 
-This will create a directory junction (preferred) or copy the skill into:
+**macOS / Linux:** `bash sync/install-grok-skill.sh`
 
-```
-$HOME\.grok\skills\gxp-ai-workflow\
-```
+This installs (junction or copy) to `~/.grok/skills/gxp-ai-workflow/`. The skill is then
+available in Grok chats as **gxp** (just say "use gxp") or the long name `gxp-ai-workflow`.
+Manual alternative: copy or symlink `adapters/grok/ai-workflow/` to that path.
 
-After installation, the skill is available in your Grok chats under the short name **gxp** (recommended — just say "use gxp") as well as the longer name `gxp-ai-workflow`.
+## 2. Verify it works
 
-**Alternative (manual):**
-Copy or symlink the entire `adapters/grok/ai-workflow/` folder to `~/.grok/skills/gxp-ai-workflow/`.
-
-## 2. First Run – Verify Everything Works
-
-From inside the installed skill directory, run:
+From the installed skill directory:
 
 ```powershell
-.\sync\check-core.ps1
+.\sync\check-core.ps1        # or: bash sync/check-core.sh
 ```
 
-You should see output showing the current sync status with `core/`.
+This reports sync status against `core/`. Some differences are normal (Grok-specific
+optimizations). Add `-Lenient` while you're customizing.
 
-On first use it will likely show differences — this is normal while the Grok version is still maturing.
+## 3. Use it day-to-day
 
-Use `-Lenient` while actively developing your personal version of the workflow:
+1. Start a Grok chat and say "use gxp" (or reference the skill).
+2. For non-trivial work it follows the full loop in `instructions/workflow.md`.
+3. Run the sync check (step 2) before important tasks.
 
-```powershell
-.\sync\check-core.ps1 -Lenient
-```
+Extra Grok-specific guidance lives in `instructions/context-loading.md` and
+`instructions/tool-use-patterns.md`.
 
-## 3. How to Use the Skill Day-to-Day
+## Staying in sync (anti-entropy)
 
-1. Start a new Grok chat and invoke the skill (or reference it in your prompt).
-2. For any non-trivial task, the skill will remind you to run the sync check.
-3. Follow the workflow in `instructions/workflow.md` (Grok-optimized version).
-4. Use the extra guidance files:
-   - `instructions/context-loading.md`
-   - `instructions/tool-use-patterns.md`
+The skill is designed not to drift from `core/`:
 
-## 4. Staying in Sync (Anti-Entropy)
+- `instructions/workflow.md` carries a "Last synced from core" marker.
+- `sync/check-core.*` reports drift — run it before important work.
+- `sync/drift-allowlist.txt` declares intentional divergences so the checker won't nag.
 
-The skill includes strong mechanisms so it doesn't drift from the source of truth:
+When core advances, either adopt the change or add an allowlist line explaining why you diverge.
 
-- **Marker system**: The workflow file contains a "Last synced from core" line.
-- **check-core.ps1** (or `.sh`): Run this regularly.
-- **drift-allowlist.txt**: Explicitly declare intentional divergences so the checker doesn't nag you.
+## Going further (optional)
 
-**Recommended habit:**
-- Run the check before any important or complex task.
-- When core advances, decide whether to adopt the changes or update the allowlist with a comment explaining why you're diverging.
+- **PowerShell shortcuts** — source `gxp.ps1` from your `$PROFILE` for `gxp check`,
+  `gxp brief`, `gxp open`, etc. Ready-made snippet: `profile/gxp-profile-snippet.ps1`.
+- **Customize** — this is your toolkit: edit `instructions/workflow.md`, add files under
+  `instructions/`, or adjust `SKILL.md`. Keep the sync discipline so the methodology stays coherent.
+- **Grok Build strategy selection (prototype)** — auto-pick a persona (Composer 2.5 vs
+  native planner) or a Cursor handoff. See `instructions/strategy-selection.md` and
+  `examples/grok-build-strategy/`.
 
-## 5. Customization
+## Next steps
 
-This is *your* toolkit. Feel free to:
-
-- Heavily customize `instructions/workflow.md` for how you like working with Grok.
-- Add new files in `instructions/`.
-- Extend the allowlist.
-- Modify `SKILL.md` to change how the skill presents itself.
-
-Just keep the sync discipline so the methodology stays coherent over time.
-
-## 6. Making GXP Easy to Use (Discoverability)
-
-For maximum convenience, add the helper functions to your PowerShell profile.
-
-### One-time setup (recommended)
-
-1. Open your profile:
-   ```powershell
-   notepad $PROFILE
-   ```
-
-2. Add this line (update the path if your repo is elsewhere):
-   ```powershell
-   . "C:\path\to\gxp\adapters\grok\ai-workflow\gxp.ps1"
-   ```
-
-3. Save and reload:
-   ```powershell
-   . $PROFILE
-   ```
-
-After that you can use these tools from anywhere (recommended subcommand style):
-
-- `gxp check` → Run the sync check against core methodology
-- `gxp open` → Open the skill folder in Explorer
-- `gxp test` → Print a good test prompt
-- `gxp install` → Re-install or repair the skill
-- `gxp root` (or `gxp cd`) → cd into the skill folder
-- `gxp edit` → Open key workflow files for editing
-- `gxp new-brief` (or `gxp brief`) → Start a new task brief from the template
-- `gxp help` → Show all available tools
-
-The old flat names (`gxp-check`, `gxp-open`, etc.) still work for backward compatibility.
-
-There's also a ready-made snippet at:
-`profile/gxp-profile-snippet.ps1`
-
-## 7. Tips for Power Users
-
-- Use `-FullDiff` when you want to deeply review changes.
-- Keep the allowlist honest — only add things you have a real reason to diverge on.
-- Periodically review the core methodology even if you're mostly using the Grok-optimized version.
-- The ratings + failure capture system is extremely valuable — be honest when rating runs.
-
-## 8. Grok Build Strategy Selection (Prototype)
-
-When running inside Grok Build, the GXP skill now includes early strategy classification (see `instructions/strategy-selection.md` and the new section in `instructions/workflow.md`).
-
-This lets you automatically choose:
-- `composer-coder` persona (Composer 2.5) for strong multi-file coding
-- `grok-native-planner` for ambiguity and planning
-- Cursor Composer handoff when the IDE/visual context wins
-
-Sample personas live in `examples/grok-build-strategy/personas/`.
-
-Copy them to `~/.grok/personas/` (or project `.grok/personas/`) and the agent will discover them for `spawn_subagent`.
-
-Example classification decision will appear in your transcript for qualifying tasks. It uses GXP brief/criteria language and notes capability (external_apis).
-
-This prototype advances the coordination brief without touching the upstream orchestrator.
-
-## Next Steps
-
-- Run the check script now.
-- Try a small task using the Full workflow.
-- Customize the workflow file to better match your personal style.
-- Come back and contribute improvements to the broader `gxp` project when you discover better patterns.
-
-Welcome to the workflow. Use it deliberately, measure it, and keep making it better.
+Run the sync check, try a small task with the Full workflow, and rate it honestly.
