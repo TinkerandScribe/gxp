@@ -30,6 +30,9 @@ echo "2. Required adapter files"
 require adapters/cursor/ai-workflow/rule.mdc
 require adapters/grok/ai-workflow/SKILL.md
 require adapters/claude/ai-workflow/custom-instructions.md
+require adapters/chatgpt/ai-workflow/custom-instructions.md
+require adapters/chatgpt/ai-workflow/instructions/workflow.md
+require adapters/chatgpt/ai-workflow/TEST_PROMPT.md
 require adapters/perplexity/ai-workflow/SKILL.md
 require adapters/cowork/plugin-src/.claude-plugin/plugin.json
 

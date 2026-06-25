@@ -71,6 +71,9 @@ clearly better suited, then route the result back:
   (a Reflexion + self-reward autonomous loop). Use when
   you want many unattended iterations, not a single careful pass.
 - **Cursor** → in-editor edit/verify loops on a local repository.
+- **ChatGPT** → web-based GXP brief/planning via Custom GPT
+  (`adapters/chatgpt/ai-workflow/`). Use when the deliverable is criteria and a
+  verification plan, not in-repo execution.
 - **Local model** (e.g. Ollama `qwen2.5-coder`, via `LLM_*` env vars) → offline,
   private, zero-cost, or CI/mock runs. Lower capability — reserve for cheap/bulk
   or air-gapped work, never for high-stakes correctness.

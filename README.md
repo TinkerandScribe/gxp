@@ -7,7 +7,7 @@ core idea: before any non-trivial task, write **4–8 binary, checkable criteria
 "done" means; pass a self-evaluation gate; make the smallest viable change; **stop after
 two failed attempts** on the same approach; verify deterministically before trusting
 anything subjective; and **rate the outcome honestly**. It's tool-agnostic — the same
-discipline drives Claude, Cursor, Grok, Perplexity, or a local model.
+discipline drives Claude, ChatGPT, Cursor, Grok, Perplexity, or a local model.
 
 It is deliberately **bounded** (an L3/L4 discipline, not "full autonomy"): the agent works
 within a written brief, doesn't expand scope on its own, and pauses at approval gates.
@@ -57,7 +57,7 @@ GXP is a discipline you put your AI agent through — there's no binary to run. 
 
 **With an adapter (automatic).** Install the adapter for your tool (see below) and it loads
 the workflow for you: in Cursor the rule applies automatically; in Grok, invoke the `gxp`
-skill; in Claude or the Cowork plugin, just say *"use gxp on …"*.
+skill; in Claude, ChatGPT (Custom GPT), or the Cowork plugin, just say *"use gxp on …"*.
 
 **With any agent (manual).** Point the agent at `.ai/workflow.md` and tell it to follow GXP.
 A prompt that works in any chat-based coding agent:
@@ -86,6 +86,7 @@ from `core/`; see [`adapters/README.md`](adapters/README.md).
 - **`cursor/`** — Cursor rule + capability gate + installer.
 - **`grok/`** — installable Grok skill (`gxp`) with sync checks.
 - **`claude/`** — custom instructions and context-loading patterns for Claude.
+- **`chatgpt/`** — Custom GPT instructions, model routing, and context-loading for ChatGPT.
 - **`perplexity/`** — research-phase workflow and collections strategy.
 - **`cowork/`** — a Cowork plugin (`gxp`) packaging four skills, built from `core/`.
 
@@ -93,7 +94,7 @@ from `core/`; see [`adapters/README.md`](adapters/README.md).
 
 ```
 core/        the methodology — workflow, routing, rules, failures, templates
-adapters/    per-tool integrations (cursor, grok, claude, perplexity, cowork)
+adapters/    per-tool integrations (cursor, grok, claude, chatgpt, perplexity, cowork)
 scripts/     installer (.ps1 + .sh) and an adapter-parity check (verify.sh)
 ```
 

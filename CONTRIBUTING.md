@@ -6,7 +6,7 @@ templates, and small tooling** — clarity matters more than cleverness.
 ## The one rule that shapes everything
 
 **`core/` is the single source of truth.** The adapters (`adapters/cursor`, `grok`,
-`claude`, `perplexity`, `cowork`) re-express the same methodology for a specific tool.
+`claude`, `chatgpt`, `perplexity`, `cowork`) re-express the same methodology for a specific tool.
 
 - A change to the **process or principles** goes into `core/` first, then gets ported
   into the adapters that need it.

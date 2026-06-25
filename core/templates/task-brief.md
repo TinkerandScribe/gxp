@@ -25,7 +25,7 @@ routed to an engine automatically; otherwise leave defaults.
 
 - **privacy_class:** public | private — *private → local engines only (hard rail)*
 - **stakes:** low | high | safety — *safety → real critic + human sign-off*
-- **engine_candidates:** [claude-code | local-agent | perplexity | grok | cursor | api-direct]
+- **engine_candidates:** [claude-code | local-agent | perplexity | grok | cursor | chatgpt | api-direct]
 - **forbidden_engines:** [...] — *e.g. all API/web routes when private*
 - **exec_mode:** auto | recommend-to-human
 - **output_contract:** [expected shape of the result]

@@ -1,0 +1,3 @@
+# Intentional ChatGPT adapter divergences (one pattern per line)
+Workflow Definition
+custom-instructions.md

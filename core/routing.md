@@ -17,8 +17,9 @@ Not every engine is something a dispatcher can invoke autonomously:
     work can run unattended; anything you cannot cleanly undo gates on a human. Make this
     explicit in the engine's invocation (e.g. an `--approve-reversible` flag), not implicit.
 - **Recommend-to-human routes** — the policy *selects* them but a human executes:
-  e.g. a browser-driven research tool, an in-IDE assistant, a human-in-the-loop composer.
-  The dispatcher surfaces a recommendation; it does **not** auto-run these.
+  e.g. a browser-driven research tool, an in-IDE assistant, a Custom GPT / web assistant
+  for brief/planning, a human-in-the-loop composer. The dispatcher surfaces a
+  recommendation; it does **not** auto-run these.
 
 Every routed job therefore carries an `exec_mode`: `auto` or `recommend-to-human`.
 
@@ -39,6 +40,7 @@ cost · latency · location (desk/mobile) · reversibility.**
 | Scheduled monitoring / briefing | read-only | dispatcher-direct | auto | — |
 | High-stakes / safety-relevant | **safety** | strong agent → human | auto + **human** | real critic + **human sign-off** |
 | In-IDE scoped edits | at-desk | IDE assistant | recommend | GXP lightweight |
+| GXP brief / planning (web, no repo) | low / web-ok | Custom GPT / web assistant | recommend | binary criteria + verification plan |
 
 ## Hard overrides (applied after the table match)
 

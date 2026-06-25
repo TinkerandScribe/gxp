@@ -18,6 +18,7 @@ The core methodology lives in `../core/`. Adapters exist to make that methodolog
 - `cursor/` — Cursor rule, Phase -1 capability gate, `install-cursor-rule.ps1`, `security.mdc.template`
 - `grok/` — Installable skill (`gxp`); sync via `check-core.ps1` / `check-core.sh`
 - `claude/` — Instructions and context-loading patterns (targets the claude.ai web app)
+- `chatgpt/` — Custom GPT instructions, model routing, and context-loading (targets chat.openai.com)
 - `perplexity/` — Research-phase workflow and collections strategy
 - `cowork/` — Cowork plugin (`gxp.plugin`): four skills — workflow / brief / rate / failure-capture. Built from `core/` (option (a): references generated at build time, not checked in). Run `bash adapters/cowork/build.sh` to produce `dist/gxp.plugin`, then install in Cowork via Settings → Capabilities.
 
