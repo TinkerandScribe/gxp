@@ -104,6 +104,10 @@ scripts/     installer (.ps1 + .sh) and an adapter-parity check (verify.sh)
 bash scripts/verify.sh   # checks adapters still ship their required files
 ```
 
+## Releases
+
+See [`CHANGELOG.md`](CHANGELOG.md). Latest: **v1.1.0** (ChatGPT adapter + web brief/planning routing).
+
 ## License
 
 [MIT](LICENSE) © 2026 Tinker & Scribe Workshop.
