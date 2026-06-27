@@ -78,6 +78,21 @@ As you work, GXP reads and writes a few well-known locations in your repo:
 
 Start small: run one real task through the full loop — write the brief first, and rate it honestly.
 
+## Use it as a Claude skill (download)
+
+Want a one-click install instead of copying files? Download the packaged skill and add it the normal way:
+
+**⬇️ [`gxp-skill.zip`](https://github.com/TinkerandScribe/gxp/releases/latest/download/gxp-skill.zip)** — from the [latest release](https://github.com/TinkerandScribe/gxp/releases/latest). Self-contained (the full workflow + bundled templates); no repo checkout needed.
+
+- **claude.ai** → Settings → Capabilities → **Skills** → **Upload**, then select the zip. *(Requires a plan where custom Skills are enabled.)*
+- **Claude Code:**
+  ```bash
+  cd ~/.claude/skills
+  curl -L -o gxp.zip https://github.com/TinkerandScribe/gxp/releases/latest/download/gxp-skill.zip
+  unzip gxp.zip && rm gxp.zip        # creates ~/.claude/skills/gxp/
+  ```
+  Restart Claude Code, then invoke with `/gxp` (or just say "use gxp").
+
 ## Adapters
 
 Each adapter re-expresses GXP for a specific tool's interface and strengths. All derive

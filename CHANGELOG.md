@@ -13,6 +13,9 @@ package as a whole (core + adapters + install/verify scripts).
 - **`core/routing.md`** — policy row for web-based GXP brief/planning (recommend-to-human);
   Custom GPT / web assistant called out under recommend-to-human routes.
 - **`core/templates/task-brief.md`** — `chatgpt` in `engine_candidates`.
+- **Downloadable Claude skill** — `gxp-skill.zip` attached to the release; installs via
+  claude.ai (Settings → Capabilities → Skills → Upload) or Claude Code (`~/.claude/skills/`).
+  Self-contained: the full workflow plus bundled brief/failure templates, ratings schema, and rules.
 
 ### Changed
 
