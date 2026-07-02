@@ -46,13 +46,6 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $AdapterRoot = Split-Path -Parent $ScriptDir
 $RepoRoot = $AdapterRoot
 
-# B3: copy-install robustness - if no full core/ (e.g. user copied only adapter dir), warn + exit 0 (non-fatal)
-$coreCheck = Join-Path $RepoRoot "core"
-if (-not (Test-Path $coreCheck)) {
-    if (-not $Quiet) { Write-Host "[B3] copy-install mode detected (no core/ at $coreCheck) - warning only, exit 0" -ForegroundColor Yellow }
-    exit 0
-}
-
 # Walk up to find .git
 while ($RepoRoot -and -not (Test-Path (Join-Path $RepoRoot ".git"))) {
     $parent = Split-Path -Parent $RepoRoot
@@ -62,9 +55,11 @@ while ($RepoRoot -and -not (Test-Path (Join-Path $RepoRoot ".git"))) {
 
 $CoreDir = Join-Path $RepoRoot "core"
 
+# B3: copy-install robustness - if no core/ at the resolved root (e.g. user copied
+# only the adapter dir), warn + exit 0 (non-fatal)
 if (-not (Test-Path $CoreDir)) {
-    Write-Error "Could not locate core/ directory at $CoreDir"
-    exit 1
+    if (-not $Quiet) { Write-Host "[B3] copy-install mode detected (no core/ at $CoreDir) - warning only, exit 0" -ForegroundColor Yellow }
+    exit 0
 }
 
 # --- Colors ---

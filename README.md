@@ -116,12 +116,12 @@ scripts/     installer (.ps1 + .sh) and an adapter-parity check (verify.sh)
 ## Verify the repo
 
 ```bash
-bash scripts/verify.sh   # checks adapters still ship their required files
+bash scripts/verify.sh   # required files present + adapter sync checks pass (drift fails)
 ```
 
 ## Releases
 
-See [`CHANGELOG.md`](CHANGELOG.md). Latest: **v1.1.0** (ChatGPT adapter + web brief/planning routing).
+See [`CHANGELOG.md`](CHANGELOG.md). Latest: **v1.1.1** (verification-tooling fixes: verify.sh, adapter sync checks, installers).
 
 ## License
 

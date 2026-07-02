@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     GXP (Guided eXecution Protocol) Helper Functions
 
@@ -169,8 +169,6 @@ function Show-GxpHelp {
     Write-Host ". '$script:GxpRoot\gxp.ps1'" -ForegroundColor Yellow
 }
 
-# Convenience alias for the old "just run check" behavior
-Set-Alias gxp-check gxp-check -ErrorAction SilentlyContinue  # ensure the function exists
 # Keep old flat names working by leaving the original functions in place.
 
 Write-Host "GXP helpers loaded." -ForegroundColor Green

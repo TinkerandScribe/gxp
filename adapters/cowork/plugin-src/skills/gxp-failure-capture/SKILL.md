@@ -59,4 +59,4 @@ Copy `references/failure-capture-template.md` and fill it in. Stamp the date. Re
 
 ## Reference
 
-- `references/failure-capture-template.md` — the templ
+- `references/failure-capture-template.md` — the template to copy for each new entry.

@@ -66,7 +66,7 @@ After saving, present:
 ## What this skill is NOT
 
 - Not for implementing — for that, the user invokes the full workflow (`gxp-workflow` skill, or "run gxp on X").
-- Not for one-shot Q&A about GXP — for "what is gxp" or "explain the workflow", just answer from `references/workflow.md`.
+- Not for one-shot Q&A about GXP — for "what is gxp" or "explain the workflow", just answer directly (the full workflow ships as `references/workflow.md` in the `gxp-workflow` skill).
 - Not for trivial edits — lightweight workflow (phases 1, 2, 3, 5) doesn't need a written brief; just talk through it.
 
 ## References

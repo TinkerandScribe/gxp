@@ -121,10 +121,12 @@ Before finalizing research output, verify:
 
 ## Phase 6 — Rate
 
-Append one JSON object per line to `ratings.jsonl`:
+Append one JSON object per line to `ratings.jsonl`, using the core schema (`ts` ISO-8601,
+`criteria_met`/`criteria_total` integers, `rating` **integer 1–10**) plus the
+Perplexity-specific extension fields:
 
 ```json
-{"timestamp": "...", "adapter": "perplexity", "task": "...", "rating": 1-5, "notes": "...", "citation_quality": "high|medium|low", "handoff_ready": true|false}
+{"ts": "...", "task": "...", "brief": "...", "criteria_met": 5, "criteria_total": 6, "rating": 8, "mode": "full", "notes": "...", "adapter": "perplexity", "citation_quality": "high|medium|low", "handoff_ready": true|false}
 ```
 
 **Perplexity note:** Be honest. Flag if the research produced lower-confidence findings. Downstream agents make better decisions when they know the confidence level of what they received.

@@ -116,10 +116,14 @@ if [ -f "$ALLOWLIST_FILE" ]; then
     done < "$ALLOWLIST_FILE"
 fi
 
+# Allowlist entries may be labels ("Workflow Definition") or file paths
+# ("workflow.md") — match against all three, per the allowlist header.
 is_allowed() {
-    local label="$1"
+    local label="$1" core_rel="${2:-}" adapter_rel="${3:-}"
     for pattern in "${ALLOWLIST[@]}"; do
-        if [[ "$label" == *"$pattern"* ]]; then
+        if [[ "$label" == *"$pattern"* ]] \
+           || [[ -n "$core_rel" && "$core_rel" == *"$pattern"* ]] \
+           || [[ -n "$adapter_rel" && "$adapter_rel" == *"$pattern"* ]]; then
             return 0
         fi
     done
@@ -181,7 +185,7 @@ compare_file() {
     fi
 
     if [ ! -f "$adapter_file" ]; then
-        if is_allowed "$label"; then
+        if is_allowed "$label" "$core_rel" "$adapter_rel"; then
             log "${YELLOW}ALLOW${RESET} $label (intentionally not present per drift-allowlist.txt)"
             return
         fi
@@ -202,7 +206,7 @@ compare_file() {
     fi
 
     # Files differ — check allowlist first
-    if is_allowed "$label"; then
+    if is_allowed "$label" "$core_rel" "$adapter_rel"; then
         log "${YELLOW}ALLOW${RESET} $label (intentionally diverged per drift-allowlist.txt)"
         return
     fi

@@ -37,16 +37,19 @@ require adapters/perplexity/ai-workflow/SKILL.md
 require adapters/cowork/plugin-src/.claude-plugin/plugin.json
 
 echo ""
-echo "3. Adapter sync checks (run when present)"
-for sh in adapters/*/ai-workflow/sync/check-core.sh; do
+echo "3. Adapter sync checks (run when present; unjustified drift fails the build)"
+for sh in adapters/*/ai-workflow/sync/check-core.sh adapters/*/sync/check-core.sh; do
   [ -e "$sh" ] || continue
   echo "   - $sh"
-  bash "$sh" || echo "     (drift reported — review above)"
+  if ! bash "$sh"; then
+    echo "     FAIL: $sh reported drift or errors"
+    fail=1
+  fi
 done
 
 echo ""
 if [ "$fail" -ne 0 ]; then
-  echo "=== FAIL: one or more required files are missing ==="
+  echo "=== FAIL: missing required files or adapter drift (see above) ==="
   exit 1
 fi
-echo "=== PASS: all required files present ==="
+echo "=== PASS: required files present, adapter sync checks clean ==="

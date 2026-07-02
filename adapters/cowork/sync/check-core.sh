@@ -41,6 +41,19 @@ do
     fi
 done
 
+# The JSON/frontmatter checks need python3; without it, skip with a warning
+# rather than misreporting valid files as broken.
+if ! command -v python3 >/dev/null 2>&1 || ! python3 -c "" >/dev/null 2>&1; then
+    echo "[cowork check-core] WARN: python3 not available — skipping plugin.json and"
+    echo "[cowork check-core]       SKILL.md frontmatter checks (file-presence checks only)."
+    if [[ $FAILED -ne 0 ]]; then
+        echo "[cowork check-core] FAIL"
+        exit 1
+    fi
+    echo "[cowork check-core] PASS (partial — python3 checks skipped)"
+    exit 0
+fi
+
 echo "[cowork check-core] plugin.json parses..."
 if python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$SRC_DIR/.claude-plugin/plugin.json" 2>/dev/null; then
     pass "plugin-src/.claude-plugin/plugin.json"

@@ -65,10 +65,45 @@ check_file() {
     fi
 }
 
-echo "Checking Cursor adapter against core..."
+echo "Checking Cursor adapter against core (structural markers, not text diff)..."
 
-# Required for Cursor
-check_file "workflow.md" "rule.mdc" "Cursor rule (maps to workflow)"
+# rule.mdc is a deliberate compressed adaptation of core/workflow.md (see
+# drift-allowlist.txt: "Verbatim match is not the goal"), so a byte-compare
+# would always fail. Mirror check-core.ps1's structural marker checks instead.
+RULE_PATH="$ADAPTER_ROOT/rule.mdc"
+
+check_marker() {
+    local pattern="$1"
+    local label="$2"
+    if grep -qiE "$pattern" "$RULE_PATH"; then
+        if [ "$QUIET" = false ]; then echo "  PASS: $label"; fi
+    else
+        echo "  FAIL: $label (marker not found in rule.mdc: $pattern)"
+        DRIFT=1
+    fi
+}
+
+if [ ! -f "$RULE_PATH" ]; then
+    echo "  MISSING: rule.mdc"
+    DRIFT=1
+else
+    check_marker "L3/L4 bounded agent"     "L3/L4 bounded agent reference"
+    check_marker "4[^a-z0-9]8"             "4-8 criteria rule (hyphen or dash)"
+    check_marker "anti-loop"               "Anti-loop phase reference"
+    check_marker "deterministic"           "Deterministic verification order"
+    check_marker "ratings\.jsonl"          "ratings.jsonl reference"
+    check_marker "handoff"                 "Handoff phase reference"
+    check_marker "v1\."                    "Version string present"
+    check_marker "PowerShell"              "PowerShell environment note"
+    check_marker "verification output"     "Verification output contract"
+    check_marker "Composer"                "Composer usage guidance"
+    check_marker "Phase -1"                "Capability gate section"
+    check_marker "Capability & Permission" "Capability gate title"
+    check_marker "PROGRAM\.md"             "PROGRAM.md verification pointer"
+    check_marker "Repo-local Cursor"       "Preserve local rules note"
+fi
+
+# Required support files
 check_file "" "sync/install-cursor-rule.ps1" "install script"
 check_file "" "sync/check-core.ps1" "ps1 check script"
 

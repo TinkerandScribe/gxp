@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     PowerShell-native version of check-core.sh for Windows users.
     Compares the Grok AI Workflow skill against the canonical core/ methodology.
@@ -49,13 +49,6 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $AdapterRoot = Split-Path -Parent $ScriptDir
 $RepoRoot = $AdapterRoot
 
-# B3: copy-install robustness - if no full core/ (e.g. user copied only adapter dir), warn + exit 0 (non-fatal)
-$coreCheck = Join-Path $RepoRoot "core"
-if (-not (Test-Path $coreCheck)) {
-    if (-not $Quiet) { Write-Host "[B3] copy-install mode detected (no core/ at $coreCheck) - warning only, exit 0" -ForegroundColor Yellow }
-    exit 0
-}
-
 # Walk up to find .git
 while ($RepoRoot -and -not (Test-Path (Join-Path $RepoRoot ".git"))) {
     $parent = Split-Path -Parent $RepoRoot
@@ -65,9 +58,11 @@ while ($RepoRoot -and -not (Test-Path (Join-Path $RepoRoot ".git"))) {
 
 $CoreDir = Join-Path $RepoRoot "core"
 
+# B3: copy-install robustness - if no core/ at the resolved root (e.g. user copied
+# only the adapter dir), warn + exit 0 (non-fatal)
 if (-not (Test-Path $CoreDir)) {
-    Write-Error "Could not locate core/ directory at $CoreDir"
-    exit 1
+    if (-not $Quiet) { Write-Host "[B3] copy-install mode detected (no core/ at $CoreDir) - warning only, exit 0" -ForegroundColor Yellow }
+    exit 0
 }
 
 # --- Colors ---
@@ -126,9 +121,13 @@ if (Test-Path $AllowlistFile) {
     }
 }
 
-function Is-Allowed($label) {
+# Allowlist entries may be labels ("Workflow Definition") or file paths
+# ("workflow.md") — match against all three, per the allowlist header.
+function Is-Allowed($label, $coreRel = "", $adapterRel = "") {
     foreach ($pattern in $Allowlist) {
         if ($label -like "*$pattern*") { return $true }
+        if ($coreRel -and $coreRel -like "*$pattern*") { return $true }
+        if ($adapterRel -and $adapterRel -like "*$pattern*") { return $true }
     }
     return $false
 }
@@ -151,7 +150,7 @@ function Compare-File {
     }
 
     if (-not (Test-Path $adapterFile)) {
-        if (Is-Allowed $Label) {
+        if (Is-Allowed $Label $CoreRel $AdapterRel) {
             Log "ALLOW  $Label (intentionally not present per drift-allowlist.txt)" "Yellow"
             return
         }
@@ -172,7 +171,7 @@ function Compare-File {
         return
     }
 
-    if (Is-Allowed $Label) {
+    if (Is-Allowed $Label $CoreRel $AdapterRel) {
         Log "ALLOW  $Label (intentionally diverged per drift-allowlist.txt)" "Yellow"
         return
     }

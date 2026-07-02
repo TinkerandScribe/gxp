@@ -137,9 +137,7 @@ if ($IncludeCursorRule) {
     if (Test-Path $cursorInstaller) {
         Write-Host ""
         Write-Host "Installing Cursor rule..."
-        $cursorArgs = @("-TargetRepo", $targetAbs)
-        if ($Force) { $cursorArgs += "-Force" }
-        & $cursorInstaller @cursorArgs
+        & $cursorInstaller -TargetRepo $targetAbs -Force:$Force
     }
 }
 
