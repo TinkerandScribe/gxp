@@ -190,6 +190,11 @@ older project logs; new entries should use the schema above.
 Ratings are how you learn whether the workflow is helping. Be honest;
 a low rating on a real run is more useful than a generous one.
 
+**Where to append:** a run’s rating lives where its artifacts live. In an installed
+project, that is `.ai/ratings.jsonl`. In this source repo, `core/ratings.jsonl` is a
+live ledger for work whose subject is this repo (brief under `core/tasks/`), and it
+keeps the labeled example entries at the top — not an examples-only file.
+
 ## Phase 7 — Failure capture
 
 If you hit a repeatable failure — something that would trip you (or

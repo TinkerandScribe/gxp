@@ -121,7 +121,7 @@ bash scripts/verify.sh   # required files present + adapter sync checks pass (dr
 
 ## Releases
 
-See [`CHANGELOG.md`](CHANGELOG.md). Latest: **v1.1.1** (verification-tooling fixes: verify.sh, adapter sync checks, installers).
+See [`CHANGELOG.md`](CHANGELOG.md). Latest: **v1.1.2** (live-for-fork-work ratings policy; webfetch-summarizer failure capture).
 
 ## License
 

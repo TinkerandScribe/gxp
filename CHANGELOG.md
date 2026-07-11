@@ -4,6 +4,26 @@ All notable changes to the public [GXP](https://github.com/TinkerandScribe/gxp) 
 documented here. Versioning follows [SemVer](https://semver.org/) for the methodology
 package as a whole (core + adapters + install/verify scripts).
 
+## [1.1.2] - 2026-07-11
+
+### Changed
+
+- **Ratings ledger policy (live-for-fork-work)** — `core/ratings.jsonl` is a **live** ledger
+  for runs whose subject is this repo (brief under `core/tasks/`), while keeping the labeled
+  example entries. A run’s rating lives where its artifacts live: rate work done in an
+  installed project’s `.ai/ratings.jsonl`, not here. Clarified in Phase 6 of
+  `core/workflow.md`. This resolves the earlier ambiguity between “examples only” and the
+  real dogfood line added in 1.1.1.
+
+### Added
+
+- **`core/failures/webfetch-summarizer-invents-plausible-details.md`** — research-task trap:
+  broad web-fetch summaries can invent plausible specifics (model names, versions, numbers);
+  never promote a broad-summary fact to confirmed without a verbatim quote or a second
+  independent source. Prefer on-disk clones for citable claims.
+- **`.gitignore`** — `/gxp-release-asset/` so the Claude skill zip stays a GitHub Release
+  asset only (as the README already documents), never an in-tree binary.
+
 ## [1.1.1] - 2026-07-02
 
 ### Fixed
@@ -65,6 +85,7 @@ package as a whole (core + adapters + install/verify scripts).
 - Cross-platform installer (`.ps1` + `.sh`) and adapter-parity check (`verify.sh`).
 - MIT license, `CODE_OF_CONDUCT`, and `SECURITY` policy.
 
+[1.1.2]: https://github.com/TinkerandScribe/gxp/releases/tag/v1.1.2
 [1.1.1]: https://github.com/TinkerandScribe/gxp/releases/tag/v1.1.1
 [1.1.0]: https://github.com/TinkerandScribe/gxp/releases/tag/v1.1.0
 [1.0.0]: https://github.com/TinkerandScribe/gxp/releases/tag/v1.0.0
