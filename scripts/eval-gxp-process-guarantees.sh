@@ -180,7 +180,10 @@ RESULTS_FILE="$OUT_DIR/process-guarantees-raw.txt"
 } | tee -a "$RESULTS_FILE"
 
 # Build markdown report
-python3 - "$OUT_DIR" "$BEFORE_REF" "$AFTER_REF" <<'PY'
+# Probe executability — on Windows Git Bash, `python3` may be the Microsoft Store stub.
+PY=python3
+"$PY" -c "" >/dev/null 2>&1 || PY=python
+"$PY" - "$OUT_DIR" "$BEFORE_REF" "$AFTER_REF" <<'PY'
 import sys, re, json
 from pathlib import Path
 from collections import defaultdict
