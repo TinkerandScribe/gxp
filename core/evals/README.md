@@ -19,4 +19,6 @@ human-readable signals.
 
 ## Current golden
 
-_(none yet — add frozen coding fixtures when multi-run quality tracking starts)_
+| Path | Purpose |
+|---|---|
+| [`golden/agent-code-quality/`](golden/agent-code-quality/) | **Prove whether agents write better code** under different conditions (control vs GXP). Hidden automated tests score correctness; process is scored separately. Self-test: `bash scripts/eval-agent-code-quality-selftest.sh`. Protocol: `golden/agent-code-quality/PROTOCOL.md`. |
