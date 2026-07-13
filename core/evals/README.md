@@ -10,4 +10,13 @@ human-readable signals.
 - `canaries/` — cheap, fast signals that a change went sideways
   (e.g. a one-line script, a screenshot, a sample query).
 
-Each subdirectory is initially empty. Add files as the project grows.
+## Current canaries
+
+| Path | Purpose |
+|---|---|
+| [`canaries/gxp-version-comparison/`](canaries/gxp-version-comparison/) | Before/after (`v1.1.3` vs HEAD): process-guarantee scorecard + brief/handoff canaries. Run `bash scripts/eval-gxp-process-guarantees.sh v1.1.3 HEAD`. See `REPORT.md`. |
+| [`regressions/verification-wrapper-must-fail-on-drift.md`](regressions/verification-wrapper-must-fail-on-drift.md) | Induced structural drift must fail `verify.sh`. |
+
+## Current golden
+
+_(none yet — add frozen coding fixtures when multi-run quality tracking starts)_

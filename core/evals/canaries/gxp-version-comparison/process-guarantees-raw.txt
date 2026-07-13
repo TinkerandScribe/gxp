@@ -1,0 +1,24 @@
+BEFORE total_partial=2/10
+RESULT BEFORE phase8 0
+RESULT BEFORE ratings_fields 0
+RESULT BEFORE version_header 1
+RESULT BEFORE structural_floor 0
+RESULT BEFORE no_wholefile_allow 0
+RESULT BEFORE bold_marker_regex 0
+RESULT BEFORE stale_threshold 0
+RESULT BEFORE real_sha_marker 0
+RESULT BEFORE grok_48 0
+RESULT BEFORE core_phase8 1
+AFTER total_partial=10/10
+RESULT AFTER phase8 1
+RESULT AFTER ratings_fields 1
+RESULT AFTER version_header 1
+RESULT AFTER structural_floor 1
+RESULT AFTER no_wholefile_allow 1
+RESULT AFTER bold_marker_regex 1
+RESULT AFTER stale_threshold 1
+RESULT AFTER real_sha_marker 1
+RESULT AFTER grok_48 1
+RESULT AFTER core_phase8 1
+RESULT BEFORE neg_drift_behavioral 0
+RESULT AFTER neg_drift_behavioral 1
