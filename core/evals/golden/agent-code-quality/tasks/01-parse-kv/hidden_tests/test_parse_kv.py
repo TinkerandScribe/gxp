@@ -18,7 +18,7 @@ def load_parse_kv(module_path: Path):
 def _path() -> Path:
     import os
 
-    p = os.environ.get("PARSE_KV_PATH")
+    p = os.environ.get("PARSE_KV_PATH") or os.environ.get("IMPL_PATH")
     if p:
         return Path(p)
     # Scorer copies parse_kv.py next to this file during grading.

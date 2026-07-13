@@ -1,0 +1,5 @@
+{
+  "impl_file": "parse_kv.py",
+  "env_var": "PARSE_KV_PATH",
+  "title": "Robust KEY=VALUE parser"
+}

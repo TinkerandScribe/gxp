@@ -21,4 +21,4 @@ human-readable signals.
 
 | Path | Purpose |
 |---|---|
-| [`golden/agent-code-quality/`](golden/agent-code-quality/) | **Prove whether agents write better code** under different conditions (control vs GXP). Hidden automated tests score correctness; process is scored separately. Self-test: `bash scripts/eval-agent-code-quality-selftest.sh`. Protocol: `golden/agent-code-quality/PROTOCOL.md`. |
+| [`golden/agent-code-quality/`](golden/agent-code-quality/) | **Prove whether agents write better code** (control vs GXP). 3 frozen tasks; hidden-test scorer; process separate. Self-test: `bash scripts/eval-agent-code-quality-selftest.sh`. Latest run: [`trials/2026-07-13-campaign/CAMPAIGN_REPORT.md`](golden/agent-code-quality/trials/2026-07-13-campaign/CAMPAIGN_REPORT.md). |

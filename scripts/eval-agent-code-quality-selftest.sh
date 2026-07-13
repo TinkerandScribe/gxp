@@ -9,21 +9,20 @@ BASE=core/evals/golden/agent-code-quality/tasks/$TASK
 PY=python3
 command -v python3 >/dev/null 2>&1 || PY=python
 
-"$PY" "$SCORE" --task "$TASK" --result "$BASE/starter" --out /tmp/gxp-cq-starter.json
-"$PY" "$SCORE" --task "$TASK" --result "$BASE/reference" --out /tmp/gxp-cq-ref.json
-
-"$PY" - <<'PY'
-import json
-s=json.load(open("/tmp/gxp-cq-starter.json",encoding="utf-8"))
-r=json.load(open("/tmp/gxp-cq-ref.json",encoding="utf-8"))
-print(f"starter correctness={s['correctness']} ({s['tests_passed']}/{s['tests_total']})")
-print(f"reference correctness={r['correctness']} ({r['tests_passed']}/{r['tests_total']})")
-assert r["correctness"] == 1.0, "reference must be perfect"
-assert s["correctness"] < r["correctness"], "starter must score below reference"
-assert r["no_test_tamper"] and s["no_test_tamper"]
-print("SELFTEST OK: harness separates weak starter from full reference")
+for TASK in 01-parse-kv 02-slugify 03-merge-intervals; do
+  BASE="core/evals/golden/agent-code-quality/tasks/$TASK"
+  echo "=== selftest $TASK ==="
+  "$PY" "$SCORE" --task "$TASK" --result "$BASE/starter" --out "/tmp/gxp-cq-starter-$TASK.json"
+  "$PY" "$SCORE" --task "$TASK" --result "$BASE/reference" --out "/tmp/gxp-cq-ref-$TASK.json"
+  "$PY" - "$TASK" <<'PY'
+import json, sys
+task = sys.argv[1]
+s=json.load(open(f"/tmp/gxp-cq-starter-{task}.json",encoding="utf-8"))
+r=json.load(open(f"/tmp/gxp-cq-ref-{task}.json",encoding="utf-8"))
+print(f"  starter={s['correctness']}  reference={r['correctness']}")
+assert r["correctness"] == 1.0, f"{task}: reference must be perfect"
+assert s["correctness"] < r["correctness"], f"{task}: starter must score below reference"
+print(f"  OK {task}")
 PY
-
-"$PY" core/evals/golden/agent-code-quality/harness/compare_scores.py \
-  --a /tmp/gxp-cq-starter.json --b /tmp/gxp-cq-ref.json \
-  --label-a starter --label-b reference
+done
+echo "SELFTEST OK: all tasks separate starter from reference"

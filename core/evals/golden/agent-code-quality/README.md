@@ -30,9 +30,18 @@ agent-code-quality/
   README.md                 # this file
   PROTOCOL.md               # how to run a fair A/B trial
   harness/score_trial.py    # automatic scorer
+  harness/compare_scores.py
   tasks/
-    01-parse-kv/            # first frozen coding canary
+    01-parse-kv/
+    02-slugify/
+    03-merge-intervals/
+  trials/                   # recorded campaign runs (optional)
 ```
+
+## Latest campaign
+
+See [`trials/2026-07-13-campaign/CAMPAIGN_REPORT.md`](trials/2026-07-13-campaign/CAMPAIGN_REPORT.md)
+(control vs GXP, 3 tasks, 1 model seed).
 
 ## Quick self-test (proves the scorer works)
 

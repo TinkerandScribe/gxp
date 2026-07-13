@@ -61,6 +61,14 @@ def score_brief(path: Path | None) -> dict:
     return {"process_score": round(score, 3), "process_checks": checks}
 
 
+def load_meta(task_id: str) -> dict:
+    meta_path = TASKS / task_id / "meta.json"
+    if meta_path.is_file():
+        return json.loads(meta_path.read_text(encoding="utf-8"))
+    # Backward-compatible default for 01-parse-kv
+    return {"impl_file": "parse_kv.py", "env_var": "IMPL_PATH"}
+
+
 def run_hidden_tests(task_id: str, result_dir: Path) -> tuple[float, int, int, str]:
     """Return (correctness, passed, total, log)."""
     task_dir = TASKS / task_id
@@ -68,43 +76,53 @@ def run_hidden_tests(task_id: str, result_dir: Path) -> tuple[float, int, int, s
     if not hidden.is_dir():
         raise SystemExit(f"No hidden_tests for task {task_id}")
 
-    # Find implementation module expected for this task
-    impl = result_dir / "parse_kv.py"
+    meta = load_meta(task_id)
+    impl_name = meta.get("impl_file", "parse_kv.py")
+    env_var = meta.get("env_var", "IMPL_PATH")
+
+    impl = result_dir / impl_name
     if not impl.is_file():
-        # allow nested
-        candidates = list(result_dir.rglob("parse_kv.py"))
+        candidates = list(result_dir.rglob(impl_name))
         if not candidates:
-            return 0.0, 0, 0, "missing parse_kv.py"
+            return 0.0, 0, 0, f"missing {impl_name}"
         impl = candidates[0]
 
     with tempfile.TemporaryDirectory() as td:
         td_path = Path(td)
-        # Copy tests into temp and point them at implementation via env
         for f in hidden.glob("test_*.py"):
             shutil.copy2(f, td_path / f.name)
         env = os.environ.copy()
-        env["PARSE_KV_PATH"] = str(impl.resolve())
-        # Also place a copy for default path resolution
-        shutil.copy2(impl, td_path / "parse_kv.py")
-        loader = unittest.TestLoader()
-        suite = loader.discover(str(td_path), pattern="test_*.py")
-        buf_out = []
+        env[env_var] = str(impl.resolve())
+        env["IMPL_PATH"] = str(impl.resolve())  # generic fallback
+        # Also place a copy for default path resolution beside tests
+        shutil.copy2(impl, td_path / impl_name)
+        old = os.environ.copy()
+        os.environ.update(env)
+        try:
+            loader = unittest.TestLoader()
+            suite = loader.discover(str(td_path), pattern="test_*.py")
+            buf_out = []
 
-        class L(unittest.TextTestResult):
-            def addSuccess(self, test):
-                super().addSuccess(test)
-                buf_out.append(f"PASS {test}")
+            class L(unittest.TextTestResult):
+                def addSuccess(self, test):
+                    super().addSuccess(test)
+                    buf_out.append(f"PASS {test}")
 
-            def addFailure(self, test, err):
-                super().addFailure(test, err)
-                buf_out.append(f"FAIL {test}: {err[1]}")
+                def addFailure(self, test, err):
+                    super().addFailure(test, err)
+                    buf_out.append(f"FAIL {test}: {err[1]}")
 
-            def addError(self, test, err):
-                super().addError(test, err)
-                buf_out.append(f"ERROR {test}: {err[1]}")
+                def addError(self, test, err):
+                    super().addError(test, err)
+                    buf_out.append(f"ERROR {test}: {err[1]}")
 
-        runner = unittest.TextTestRunner(verbosity=0, resultclass=L, stream=open(os.devnull, "w"))
-        result = runner.run(suite)
+            runner = unittest.TextTestRunner(
+                verbosity=0, resultclass=L, stream=open(os.devnull, "w")
+            )
+            result = runner.run(suite)
+        finally:
+            os.environ.clear()
+            os.environ.update(old)
         total = result.testsRun
         failed = len(result.failures) + len(result.errors)
         passed = total - failed
