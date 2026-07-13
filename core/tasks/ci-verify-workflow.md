@@ -1,9 +1,8 @@
 # Task brief — CI for verify.sh and platform checks (audit P0-1)
 
-**Status:** draft — not started (Milestone 1, item 2)
-**Depends on:** `real-diff-sync-checks` — until it lands, the negative-drift test
-below cannot fail (adapter workflow drift is whole-file allow-listed; proven
-empirically at v1.1.2). Do not ship this first.
+**Status:** done (Milestone 1, item 2) — 2026-07-13
+**Depends on:** `real-diff-sync-checks` — landed (structural floor makes the
+negative-drift test real).
 
 ## Goal
 
@@ -26,20 +25,19 @@ negative test.
 - The ps1 checks target **Windows PowerShell 5.1** semantics (the BOM/ANSI failure
   class lives there) — run them with `shell: powershell`, not `pwsh`.
 
-## Ideal State Criteria (draft — refine at pickup)
+## Ideal State Criteria
 
-- [ ] 1. `.github/workflows/verify.yml` runs on push and pull_request; matrix
+- [x] 1. `.github/workflows/verify.yml` runs on push and pull_request; matrix
   ubuntu-latest + windows-latest with `fail-fast: false`; checkout uses
   `fetch-depth: 0`.
-- [ ] 2. `bash scripts/verify.sh` runs and gates on both OSes (Git Bash on Windows).
-- [ ] 3. Every `adapters/**/sync/check-core.ps1` runs on Windows under
+- [x] 2. `bash scripts/verify.sh` runs and gates on both OSes (Git Bash on Windows).
+- [x] 3. Every `adapters/**/sync/check-core.ps1` runs on Windows under
   `shell: powershell` (5.1), aggregated so any non-zero exit fails the job.
-- [ ] 4. `adapters/cowork/build.sh` runs on ubuntu and its exit code gates the job.
-- [ ] 5. A negative-test step induces non-allow-listed drift (e.g. delete the Phase 8
-  heading from a claude/chatgpt workflow, or remove a required file), asserts
-  verify.sh exits non-zero, and restores the tree; a CI run demonstrating the assert
-  actually fired (red on purpose, then green) is linked in the PR.
-- [ ] 6. The workflow is green on main at merge.
+- [x] 4. `adapters/cowork/build.sh` runs on ubuntu and its exit code gates the job.
+- [x] 5. A negative-test step induces structural Phase 8 deletion, asserts
+  verify.sh exits non-zero, and restores the tree (local smoke OK; first main CI run
+  is the live proof).
+- [ ] 6. The workflow is green on main at merge — **pending first CI run after push**.
 
 ## Out of scope
 

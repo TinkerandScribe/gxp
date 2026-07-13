@@ -4,22 +4,36 @@ All notable changes to the public [GXP](https://github.com/TinkerandScribe/gxp) 
 documented here. Versioning follows [SemVer](https://semver.org/) for the methodology
 package as a whole (core + adapters + install/verify scripts).
 
-## [Unreleased]
+## [1.2.0] - 2026-07-13
+
+### Added
+
+- **CI** — `.github/workflows/verify.yml` (ubuntu + windows, `fetch-depth: 0`,
+  `verify.sh`, Windows PowerShell 5.1 sync checks, cowork build on Linux, negative
+  structural-drift test, main-branch marker auto-bump).
+- **Live sync markers** — real core tip SHA in claude/chatgpt/grok/perplexity
+  workflows; bold-tolerant regex; hard-fail past threshold (default 3); shallow WARN;
+  `scripts/update-sync-markers.sh`.
+- **Installer `--dry-run` / `-DryRun`** and subshell counter fix (process substitution)
+  in `install-ai-from-core.sh`.
+- **Eval regression fixture** —
+  `core/evals/regressions/verification-wrapper-must-fail-on-drift.md`.
+- **Optional ratings hash-chain** schema fields + `scripts/validate-ratings-chain.py`.
+- **Routing critic descope** — independent review recommended, not a shipped subsystem.
+- **Structural floor (P0-2)** — claude/chatgpt/grok checks enforce Phases 0–8, 4–8
+  criteria, anti-loop, deterministic-first verification, and ratings fields.
 
 ### Fixed
 
-- **Sync-check structural floor (P0-2)** — claude/chatgpt/grok no longer whole-file
-  allowlist `workflow.md` / "Workflow Definition". Checks enforce Phases 0–8, 4–8
-  criteria, anti-loop, deterministic-first verification, and ratings fields
-  (`ts`, `criteria_met`, `criteria_total`, `rating`). Present non-workflow files are
-  byte-diffed; allowlist only covers intentional absence. Allowlist readers strip CR
-  so WSL/Windows CRLF cannot silently break matching.
+- Whole-file `workflow.md` allowlisting no longer masks drift; present-file content
+  is not allowlist-exempt; allowlist readers strip CR for WSL/Windows.
 
 ### Changed
 
 - **chatgpt** workflow header `v1.0` → `v1.1`; **chatgpt/claude** gain Phase 8
   (Handoff) and explicit ratings field list; **grok** Phase 1 states 4–8 criteria
   and Phase 6 lists ratings fields.
+- README install examples prefer dry-run / non-force defaults.
 
 ## [1.1.3] - 2026-07-13
 
@@ -126,6 +140,7 @@ package as a whole (core + adapters + install/verify scripts).
 - Cross-platform installer (`.ps1` + `.sh`) and adapter-parity check (`verify.sh`).
 - MIT license, `CODE_OF_CONDUCT`, and `SECURITY` policy.
 
+[1.2.0]: https://github.com/TinkerandScribe/gxp/releases/tag/v1.2.0
 [1.1.3]: https://github.com/TinkerandScribe/gxp/releases/tag/v1.1.3
 [1.1.2]: https://github.com/TinkerandScribe/gxp/releases/tag/v1.1.2
 [1.1.1]: https://github.com/TinkerandScribe/gxp/releases/tag/v1.1.1

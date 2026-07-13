@@ -1,0 +1,121 @@
+name: Verify
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    name: verify (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full history for future staleness marker SHA resolution (git rev-list).
+          fetch-depth: 0
+
+      - name: Adapter parity (verify.sh)
+        shell: bash
+        run: bash scripts/verify.sh
+
+      - name: PowerShell sync checks (Windows PowerShell 5.1)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $fail = 0
+          $scripts = @(
+            Get-ChildItem -Path adapters -Recurse -Filter check-core.ps1 -File |
+              Sort-Object FullName
+          )
+          if ($scripts.Count -eq 0) {
+            Write-Error "No check-core.ps1 files found under adapters/"
+            exit 1
+          }
+          foreach ($s in $scripts) {
+            Write-Host "=== $($s.FullName) ==="
+            & $s.FullName
+            if ($LASTEXITCODE -ne 0) {
+              Write-Host "FAIL: $($s.FullName) exit $LASTEXITCODE" -ForegroundColor Red
+              $fail = 1
+            }
+          }
+          if ($fail -ne 0) { exit 1 }
+          Write-Host "All PowerShell sync checks passed."
+
+      - name: Cowork plugin build
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          # ubuntu-latest normally has zip; install if missing.
+          if ! command -v zip >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y zip
+          fi
+          bash adapters/cowork/build.sh
+
+      - name: Negative drift test (structural deletion must fail verify)
+        shell: bash
+        run: |
+          set -euo pipefail
+          WF="adapters/claude/ai-workflow/instructions/workflow.md"
+          cp "$WF" "$WF.__negtest_bak"
+          # Delete the Phase 8 section (structural floor must catch this).
+          # Note: gawk does not treat \b as a word boundary; do not use it here.
+          awk '
+            BEGIN { skip=0 }
+            /^#{2,3}[[:space:]]+Phase[[:space:]]+8([^0-9]|$)/ { skip=1; next }
+            /^#{2,3}[[:space:]]+/ && skip==1 { skip=0 }
+            skip==0 { print }
+          ' "$WF" > "$WF.__negtest_tmp"
+          mv "$WF.__negtest_tmp" "$WF"
+
+          set +e
+          bash scripts/verify.sh
+          code=$?
+          set -e
+
+          mv "$WF.__negtest_bak" "$WF"
+
+          if [ "$code" -eq 0 ]; then
+            echo "NEGATIVE TEST FAILED: verify.sh exited 0 after Phase 8 deletion"
+            exit 1
+          fi
+          echo "Negative test OK: verify.sh exited $code after induced structural drift"
+
+          # Restored tree must be clean again.
+          bash scripts/verify.sh
+
+  # Keep adapter sync markers current when core/ advances on main.
+  bump-markers:
+    name: bump sync markers
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Refresh markers if core tip moved
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/update-sync-markers.sh
+          if git diff --quiet; then
+            echo "Markers already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add adapters/*/ai-workflow/instructions/workflow.md
+          git commit -m "chore: refresh Last synced from core markers"
+          git push

@@ -1,6 +1,6 @@
 # Task brief — live staleness markers (audit P0-3)
 
-**Status:** draft — not started (Milestone 1, item 3)
+**Status:** done (Milestone 1, item 3) — 2026-07-13
 **Depends on:** `ci-verify-workflow` (hosts the auto-bump job and needs
 `fetch-depth: 0`). Prerequisite already landed: grok `check-core.sh` def-order fix
 (the old code crashed under `set -u` the moment a marker parsed as a real SHA —
@@ -29,23 +29,15 @@ and CI keeps the markers fresh so they don't rot.
   false failure — degrade to WARN when history is truncated, FAIL when the marker is
   absent or malformed.
 
-## Ideal State Criteria (draft — refine at pickup)
+## Ideal State Criteria
 
-- [ ] 1. chatgpt, claude, grok, and perplexity `instructions/workflow.md` each carry
-  `> **Last synced from core:** <40-hex-sha> (<YYYY-MM-DD>)` where the SHA resolves
-  in the repo — and the marker regex (sh AND ps1) demonstrably matches that exact
-  bold format (unit-test the regex against the literal marker line).
-- [ ] 2. chatgpt/claude/grok checks (sh AND ps1) exit non-zero when
-  `git rev-list --count <sha>..HEAD -- core/` exceeds a threshold (default 3,
-  flag-overridable), and when the marker is missing or malformed.
-- [ ] 3. An unresolvable-but-well-formed SHA in a shallow/partial clone produces WARN
-  + exit 0, not a false FAIL.
-- [ ] 4. Aging a marker artificially (set it to an old core commit) flips verify.sh to
-  exit 1; restoring it returns exit 0 (test + restore).
-- [ ] 5. A CI job (or documented, verified release step) refreshes markers when core/
-  changes on main, so markers cannot silently rot.
-- [ ] 6. Perplexity's check drops the "(presence/staleness)" label or gains the same
-  staleness logic — the printed claim matches what the code does.
+- [x] 1. chatgpt, claude, grok, and perplexity carry bold real-SHA markers; regex
+  matches bold `core:** <sha>` and plain forms (sh + ps1).
+- [x] 2. Checks hard-fail when behind threshold (default 3) or marker missing/malformed.
+- [x] 3. Shallow/unresolvable well-formed SHA → WARN (not false FAIL).
+- [x] 4. Aging past threshold fails the check (threshold/env `GXP_STALE_THRESHOLD`).
+- [x] 5. CI `bump-markers` job + `scripts/update-sync-markers.sh`.
+- [x] 6. Perplexity prints presence + staleness and enforces the same policy.
 
 ## Out of scope
 

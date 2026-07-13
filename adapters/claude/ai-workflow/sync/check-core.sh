@@ -86,25 +86,75 @@ if [ ! -d "$CORE_DIR" ]; then
     exit 0
 fi
 
-# --- Last Synced Marker Detection ---
-CLAUDE_WORKFLOW="$ADAPTER_ROOT/instructions/workflow.md"
+# --- Staleness marker (real SHA; bold markdown tolerant) ---
+STALE_THRESHOLD="${GXP_STALE_THRESHOLD:-3}"
+STALE_FAIL=0
 LAST_SYNCED_SHA=""
+MARKER_STATUS="missing"
 
-if [ -f "$CLAUDE_WORKFLOW" ]; then
-    marker_line=$(grep -i "last synced from core" "$CLAUDE_WORKFLOW" | head -1 || true)
-    if [[ "$marker_line" =~ Last\ synced\ from\ core:\ ([0-9a-fA-F]+) ]]; then
-        LAST_SYNCED_SHA="${BASH_REMATCH[1]}"
+parse_sync_marker() {
+    local wf="$1"
+    LAST_SYNCED_SHA=""
+    MARKER_STATUS="missing"
+    [ -f "$wf" ] || return 0
+    local marker_line
+    marker_line=$(grep -i "last synced from core" "$wf" | head -1 || true)
+    if [ -z "$marker_line" ]; then
+        MARKER_STATUS="missing"
+        return 0
     fi
-fi
+    # Bold format renders as core:** <sha>; also accept plain core: <sha>
+    if [[ "$marker_line" =~ [Ll]ast[[:space:]]+[Ss]ynced[[:space:]]+[Ff]rom[[:space:]]+[Cc]ore:(\*\*)?[[:space:]]*([0-9a-fA-F]{7,40}) ]]; then
+        LAST_SYNCED_SHA="${BASH_REMATCH[2]}"
+        MARKER_STATUS="ok"
+    else
+        MARKER_STATUS="malformed"
+    fi
+}
 
-if [ -n "$LAST_SYNCED_SHA" ]; then
-    if command -v git >/dev/null 2>&1 && git -C "$REPO_ROOT" rev-parse --verify "$LAST_SYNCED_SHA" >/dev/null 2>&1; then
-        commits_since=$(git -C "$REPO_ROOT" rev-list --count "$LAST_SYNCED_SHA..HEAD" -- core/ 2>/dev/null || echo "?")
-        if [ "$commits_since" != "?" ] && [ "$commits_since" -gt 0 ]; then
-            echo "NOTE   Core has advanced $commits_since commit(s) since last recorded sync ($LAST_SYNCED_SHA)" >&2
+evaluate_staleness() {
+    if [ "$MARKER_STATUS" = "missing" ]; then
+        echo "FAIL   Sync marker missing (expected > **Last synced from core:** <sha> (YYYY-MM-DD))" >&2
+        STALE_FAIL=1
+        return 0
+    fi
+    if [ "$MARKER_STATUS" = "malformed" ]; then
+        echo "FAIL   Sync marker malformed (need real hex SHA)" >&2
+        STALE_FAIL=1
+        return 0
+    fi
+    if ! command -v git >/dev/null 2>&1; then
+        [ "$QUIET" != true ] && echo "WARN   git not available; skipping staleness count"
+        return 0
+    fi
+    if ! git -C "$REPO_ROOT" rev-parse --verify "${LAST_SYNCED_SHA}^{commit}" >/dev/null 2>&1; then
+        local shallow
+        shallow=$(git -C "$REPO_ROOT" rev-parse --is-shallow-repository 2>/dev/null || echo "false")
+        if [ "$shallow" = "true" ]; then
+            [ "$QUIET" != true ] && echo "WARN   Sync marker SHA $LAST_SYNCED_SHA not in shallow history (not a hard fail)"
+            return 0
         fi
+        echo "FAIL   Sync marker SHA unresolvable: $LAST_SYNCED_SHA" >&2
+        STALE_FAIL=1
+        return 0
     fi
-fi
+    local commits_since
+    commits_since=$(git -C "$REPO_ROOT" rev-list --count "$LAST_SYNCED_SHA..HEAD" -- core/ 2>/dev/null || echo "?")
+    if [ "$commits_since" = "?" ]; then
+        [ "$QUIET" != true ] && echo "WARN   Could not count commits since $LAST_SYNCED_SHA"
+        return 0
+    fi
+    if [ "$commits_since" -gt "$STALE_THRESHOLD" ]; then
+        echo "FAIL   Core has advanced $commits_since commit(s) since sync marker $LAST_SYNCED_SHA (threshold $STALE_THRESHOLD)" >&2
+        STALE_FAIL=1
+        return 0
+    fi
+    if [ "$commits_since" -gt 0 ]; then
+        [ "$QUIET" != true ] && echo "NOTE   Core has advanced $commits_since commit(s) since last recorded sync ($LAST_SYNCED_SHA) — within threshold $STALE_THRESHOLD"
+    else
+        [ "$QUIET" != true ] && echo "OK     Sync marker current ($LAST_SYNCED_SHA)"
+    fi
+}
 
 # --- Drift Allowlist ---
 ALLOWLIST_FILE="$ADAPTER_ROOT/sync/drift-allowlist.txt"
@@ -237,6 +287,9 @@ if [ "$QUIET" != true ]; then
     echo ""
 fi
 
+parse_sync_marker "$ADAPTER_ROOT/instructions/workflow.md"
+evaluate_staleness
+
 # Critical workflow: structural floor (not whole-file allowlist)
 check_workflow_structure "$ADAPTER_ROOT/instructions/workflow.md"
 
@@ -260,10 +313,10 @@ if [ "$QUIET" != true ]; then
     fi
 fi
 
-if { [ $structure_fail_count -gt 0 ] || [ $critical_diff_count -gt 0 ]; } && [ "$LENIENT" != true ]; then
-    echo "ACTION REQUIRED: Fix workflow structural floor and/or critical diffs." >&2
+if { [ $structure_fail_count -gt 0 ] || [ $critical_diff_count -gt 0 ] || [ $STALE_FAIL -gt 0 ]; } && [ "$LENIENT" != true ]; then
+    echo "ACTION REQUIRED: Fix workflow structural floor, sync marker, and/or critical diffs." >&2
     exit 1
-elif [ $structure_fail_count -gt 0 ] || [ $diff_count -gt 0 ] || [ $missing_count -gt 0 ]; then
+elif [ $structure_fail_count -gt 0 ] || [ $STALE_FAIL -gt 0 ] || [ $diff_count -gt 0 ] || [ $missing_count -gt 0 ]; then
     if [ "$QUIET" != true ]; then
         echo "Some differences noted (allowed or minor)."
     fi

@@ -1,5 +1,7 @@
 # Claude-Optimized Workflow (v1.1)
 
+> **Last synced from core:** 9cfe43fed675682297886d172f579f09a0eb0859 (2026-07-13)
+
 > This is a **Claude-optimized** adaptation of the canonical workflow defined in `../../../core/workflow.md`.
 
 You are operating under the **GXP (Guided eXecution Protocol)** methodology, adapted for Claude’s strengths.

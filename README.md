@@ -47,13 +47,15 @@ Copies `core/` into your project as a portable `.ai/` layout (preserves an exist
 `.ai/PROGRAM.md` and `.ai/ratings.jsonl`):
 
 ```bash
-# Mac / Linux / Git-Bash
-bash scripts/install-ai-from-core.sh /path/to/your/repo --force --include-cursor-rule
+# Mac / Linux / Git-Bash — preview first, then install (add --force only to refresh templates)
+bash scripts/install-ai-from-core.sh /path/to/your/repo --dry-run
+bash scripts/install-ai-from-core.sh /path/to/your/repo --include-cursor-rule
 ```
 
 ```powershell
 # Windows PowerShell
-powershell -ExecutionPolicy Bypass -File scripts/install-ai-from-core.ps1 -TargetRepo C:\path\to\your\repo -Force -IncludeCursorRule
+powershell -ExecutionPolicy Bypass -File scripts/install-ai-from-core.ps1 -TargetRepo C:\path\to\your\repo -DryRun
+powershell -ExecutionPolicy Bypass -File scripts/install-ai-from-core.ps1 -TargetRepo C:\path\to\your\repo -IncludeCursorRule
 ```
 
 Then fill in `.ai/PROGRAM.md` with your project's verification commands.
@@ -128,7 +130,7 @@ bash scripts/verify.sh   # required files present + adapter sync checks pass (dr
 
 ## Releases
 
-See [`CHANGELOG.md`](CHANGELOG.md). Latest: **v1.1.3** (grok sync-check def-order fix; GxP naming disclaimer; verification-hardening roadmap + P0 briefs).
+See [`CHANGELOG.md`](CHANGELOG.md). Latest: **v1.2.0** (CI, structural floor, live sync markers, installer dry-run, verification-hardening roadmap complete except doc-dedup).
 
 Planned work lives in [`ROADMAP.md`](ROADMAP.md) (verification-hardening sequence from the 2026-07 external audit review).
 

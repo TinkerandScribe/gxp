@@ -14,6 +14,9 @@
 .PARAMETER Force
     Overwrite existing scaffold template files (not PROGRAM.md or ratings body).
 
+.PARAMETER DryRun
+    Print what would happen without writing files.
+
 .PARAMETER IncludeCursorRule
     Also install adapters/cursor/ai-workflow/rule.mdc to .cursor/rules/
 
@@ -27,6 +30,7 @@
 param(
     [string]$TargetRepo = (Get-Location).Path,
     [switch]$Force,
+    [switch]$DryRun,
     [switch]$IncludeCursorRule
 )
 
@@ -55,6 +59,19 @@ function Ensure-Dir([string]$path) {
 function Copy-Scaffold {
     param([string]$Src, [string]$Dest, [switch]$Preserve)
     $rel = $Dest.Replace($targetAbs + "\", "").Replace($targetAbs + "/", "")
+    if ($DryRun) {
+        if (Test-Path $Dest) {
+            if ($Preserve) { Write-Host "  - $rel (would preserve)"; $script:skipped++; return }
+            if ($Force) {
+                if ((Test-Path $Src) -and (Get-FileHash $Src).Hash -eq (Get-FileHash $Dest).Hash) {
+                    Write-Host "  - $rel (would skip unchanged)"; $script:skipped++
+                } else { Write-Host "  ~ $rel (would update)"; $script:updated++ }
+                return
+            }
+            Write-Host "  - $rel (would skip exists)"; $script:skipped++; return
+        }
+        Write-Host "  + $rel (would create)"; $script:created++; return
+    }
     Ensure-Dir (Split-Path -Parent $Dest)
     if (Test-Path $Dest) {
         if ($Preserve) {

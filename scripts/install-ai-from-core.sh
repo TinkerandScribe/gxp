@@ -7,16 +7,18 @@
 # .ai/ratings.jsonl.
 #
 # Usage:
-#   bash scripts/install-ai-from-core.sh [TARGET_REPO] [--force] [--include-cursor-rule]
+#   bash scripts/install-ai-from-core.sh [TARGET_REPO] [--force] [--dry-run] [--include-cursor-rule]
 #   bash scripts/install-ai-from-core.sh ../my-app --force
 set -euo pipefail
 
 TARGET="."
 FORCE=0
+DRY_RUN=0
 INCLUDE_CURSOR=0
 for arg in "$@"; do
   case "$arg" in
     --force) FORCE=1 ;;
+    --dry-run) DRY_RUN=1 ;;
     --include-cursor-rule) INCLUDE_CURSOR=1 ;;
     -*) echo "Unknown option: $arg" >&2; exit 2 ;;
     *) TARGET="$arg" ;;
@@ -28,12 +30,33 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 CORE="$REPO_ROOT/core"
 [ -d "$CORE" ] || { echo "Cannot find core/ at $CORE (run from the GXP repo)" >&2; exit 1; }
 
+if [ ! -d "$TARGET" ]; then
+  if [ "$DRY_RUN" = "1" ]; then
+    # Allow previewing an install into a path that does not exist yet.
+    mkdir -p "$TARGET"
+  else
+    echo "Target directory does not exist: $TARGET" >&2
+    exit 1
+  fi
+fi
 TARGET_ABS="$(cd "$TARGET" && pwd)"
 AI="$TARGET_ABS/.ai"
 created=0; updated=0; skipped=0
 
 copy_scaffold() {  # $1=src  $2=dest  $3=preserve(0/1)
   local src="$1" dest="$2" preserve="${3:-0}" rel="${2#$TARGET_ABS/}"
+  if [ "$DRY_RUN" = "1" ]; then
+    if [ -e "$dest" ]; then
+      if [ "$preserve" = "1" ]; then echo "  - $rel (would preserve)"; skipped=$((skipped+1)); return; fi
+      if [ "$FORCE" = "1" ]; then
+        if cmp -s "$src" "$dest" 2>/dev/null; then echo "  - $rel (would skip unchanged)"; skipped=$((skipped+1));
+        else echo "  ~ $rel (would update)"; updated=$((updated+1)); fi
+        return
+      fi
+      echo "  - $rel (would skip exists)"; skipped=$((skipped+1)); return
+    fi
+    echo "  + $rel (would create)"; created=$((created+1)); return
+  fi
   mkdir -p "$(dirname "$dest")"
   if [ -e "$dest" ]; then
     if [ "$preserve" = "1" ]; then echo "  - $rel (user file, preserved)"; skipped=$((skipped+1)); return; fi
@@ -48,6 +71,10 @@ copy_scaffold() {  # $1=src  $2=dest  $3=preserve(0/1)
 }
 
 ensure_empty_dir() {  # $1=dir
+  if [ "$DRY_RUN" = "1" ]; then
+    if [ ! -e "$1/.gitkeep" ]; then echo "  + ${1#$TARGET_ABS/}/.gitkeep (would create)"; created=$((created+1)); fi
+    return
+  fi
   mkdir -p "$1"
   [ -e "$1/.gitkeep" ] || { : > "$1/.gitkeep"; echo "  + ${1#$TARGET_ABS/}/.gitkeep"; created=$((created+1)); }
 }
@@ -55,6 +82,7 @@ ensure_empty_dir() {  # $1=dir
 echo "Installing .ai scaffold from core/"
 echo "  target: $TARGET_ABS"
 [ "$FORCE" = "1" ] && echo "  mode:   force (overwrite changed templates)"
+[ "$DRY_RUN" = "1" ] && echo "  mode:   dry-run (no writes)"
 echo ""
 
 mkdir -p "$AI"
@@ -65,10 +93,11 @@ copy_scaffold "$CORE/ratings.jsonl"       "$AI/ratings.jsonl" 1
 
 for sub in rules failures wiki evals; do
   [ -d "$CORE/$sub" ] || continue
-  mkdir -p "$AI/$sub"
-  find "$CORE/$sub" -maxdepth 1 -type f | while read -r f; do
+  [ "$DRY_RUN" = "1" ] || mkdir -p "$AI/$sub"
+  # Process substitution keeps counters in this shell (pipe|while is a subshell).
+  while IFS= read -r f; do
     copy_scaffold "$f" "$AI/$sub/$(basename "$f")" 0
-  done
+  done < <(find "$CORE/$sub" -maxdepth 1 -type f)
 done
 
 ensure_empty_dir "$AI/evals/golden"
@@ -76,10 +105,10 @@ ensure_empty_dir "$AI/evals/regressions"
 ensure_empty_dir "$AI/evals/canaries"
 
 if [ -d "$CORE/templates" ]; then
-  mkdir -p "$AI/templates"
-  find "$CORE/templates" -maxdepth 1 -type f | while read -r f; do
+  [ "$DRY_RUN" = "1" ] || mkdir -p "$AI/templates"
+  while IFS= read -r f; do
     copy_scaffold "$f" "$AI/templates/$(basename "$f")" 0
-  done
+  done < <(find "$CORE/templates" -maxdepth 1 -type f)
 fi
 
 if [ "$INCLUDE_CURSOR" = "1" ]; then

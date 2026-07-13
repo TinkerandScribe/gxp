@@ -16,9 +16,6 @@ accurate; two ordering corrections from the review are baked into the sequence b
    bold — `core:** <hex>` — so even a real SHA never matches. The staleness task must
    also fix the regex/format mismatch; its brief carries the evidence.
 
-Briefs for items marked *brief-on-pickup* are written when the work starts, per the
-GXP workflow — briefs drafted far ahead go stale.
-
 ## Milestone 0 — unblockers (done in v1.1.3)
 
 | Item | Status | Notes |
@@ -29,32 +26,31 @@ GXP workflow — briefs drafted far ahead go stale.
 
 ## Milestone 1 — make drift checkable (target v1.2.0)
 
-| Order | Item (audit ref) | Brief | Depends on | Status |
-|---|---|---|---|---|
-| 1 | Real per-hunk content diff in claude/chatgpt/grok sync checks, replacing whole-file allowlists; structural marker floor (phases 0–8, criteria rule, ratings fields) for intentional-rewrite adapters (P0-2, Option A). **Folds in P1-4** — the floor fails on chatgpt/claude's current missing Phase 8 and stale header, so those adapters are brought current in the same change | [`core/tasks/real-diff-sync-checks.md`](core/tasks/real-diff-sync-checks.md) | — | **done** (structural floor shipped; verbatim present-file byte-diff + absence-only allowlist) |
-| 2 | CI: `.github/workflows/verify.yml` — verify.sh on ubuntu+windows, ps1 checks, cowork build (ubuntu), negative-drift test (P0-1) | [`core/tasks/ci-verify-workflow.md`](core/tasks/ci-verify-workflow.md) | item 1 (negative test is dead before it) | next |
-| 3 | Staleness markers: real SHA, present in all adapters, hard-fail past threshold, CI auto-bump (P0-3) | [`core/tasks/staleness-marker-real-sha.md`](core/tasks/staleness-marker-real-sha.md) | item 2 (auto-bump job); grok def-order fix (done) | pending |
+| Order | Item (audit ref) | Brief | Status |
+|---|---|---|---|
+| 1 | Structural floor / real sync checks (P0-2 + P1-4) | [`real-diff-sync-checks.md`](core/tasks/real-diff-sync-checks.md) | **done** |
+| 2 | CI verify workflow (P0-1) | [`ci-verify-workflow.md`](core/tasks/ci-verify-workflow.md) | **done** (workflow file + local negative smoke; green main run is first CI execution) |
+| 3 | Staleness markers real SHA (P0-3) | [`staleness-marker-real-sha.md`](core/tasks/staleness-marker-real-sha.md) | **done** (bold-tolerant regex, threshold fail, shallow WARN, auto-bump job) |
 
 ## Milestone 2 — close the narrative gap (target v1.2.x)
 
-| Item (audit ref) | Disposition from review | Brief |
-|---|---|---|
-| Installer subshell counter fix (P1-2) | adopt as sketched (process substitution + CI count assert) | brief-on-pickup |
-| Installer docs correction (P1-3 option b) + workshop-template quarantine to `core/examples/fabrication-workshop/` (P2-2) | adopt combined; quarantine moots recursive-copy option (a); update `core/rules/02` path references | brief-on-pickup |
-| Hash-chained ratings ledger (P1-1, ledger half) | adopt with care: chain per-ledger from a genesis line; live-for-fork-work relocations must re-anchor | brief-on-pickup |
-| Routing "real critic" language (P1-1, critic half) | descope: mark as recommended-not-shipped in `core/routing.md`, or ship `scripts/critic.sh` later as opt-in | brief-on-pickup |
+| Item (audit ref) | Status |
+|---|---|
+| Installer subshell counter fix (P1-2) | **done** (process substitution) |
+| Installer docs + dry-run (P1-3 / P2-5 partial) | **done** (`--dry-run` / `-DryRun`) |
+| Workshop-template quarantine (P2-2) | **n/a in this tree** — no fabrication-workshop path present to quarantine |
+| Hash-chained ratings ledger (P1-1, ledger half) | **done** (optional fields + `validate-ratings-chain.py`; historical lines unchained) |
+| Routing "real critic" language (P1-1, critic half) | **done** (descope note: recommended-not-shipped) |
 
 ## Milestone 3 — positioning & ergonomics (target v1.3.0)
 
-| Item (audit ref) | Disposition | Brief |
-|---|---|---|
-| Real eval fixtures in `core/evals/` (P2-1) | adopt; regression fixture mirrors `verification-wrapper-swallows-exit-codes` | brief-on-pickup |
-| Installer `--dry-run`; README stops defaulting to `--force` (P2-5) | adopt | brief-on-pickup |
-| Doc dedup behind core + per-adapter deltas (P2-4) | defer until Milestone 1 makes deltas verifiable; consider build-time generation (audit P0-2 Option B) as the end-state | brief-on-pickup |
+| Item (audit ref) | Status |
+|---|---|
+| Real eval fixtures in `core/evals/` (P2-1) | **done** (regression canary for verify wrapper) |
+| Installer `--dry-run`; README stops defaulting to `--force` (P2-5) | **done** (dry-run; README already shows `--force` as optional) |
+| Doc dedup behind core + per-adapter deltas (P2-4) | **deferred** — needs deliberate content architecture; floor now makes deltas verifiable |
 
 ## Deliberately not adopted
 
-- **Second-model critic as a P1 requirement** — a new subsystem (keys, providers,
-  cost) that outgrows a docs-and-tooling repo; handled by the descope item above.
-- **P0-1 before P0-2** — the audit's implied ordering; rejected with evidence (see
-  correction 1).
+- **Second-model critic as a P1 requirement** — descope in `core/routing.md`.
+- **P0-1 before P0-2** — rejected with evidence (correction 1).

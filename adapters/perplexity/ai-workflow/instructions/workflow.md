@@ -1,6 +1,6 @@
 # Perplexity-Optimized Workflow (v1.1)
 
-> **Last synced from core:** post-strategy-prototype-implementation (2026-06-09)
+> **Last synced from core:** 9cfe43fed675682297886d172f579f09a0eb0859 (2026-07-13)
 > This file is intentionally allowed to diverge from `../../../core/workflow.md`
 > for Perplexity-specific strengths. Run `../sync/check-core.sh` regularly.
 

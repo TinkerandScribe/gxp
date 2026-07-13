@@ -84,19 +84,11 @@ if [ ! -d "$CORE_DIR" ]; then
     exit 1
 fi
 
-# --- Last Synced Marker Detection ---
-GROK_WORKFLOW="$ADAPTER_ROOT/instructions/workflow.md"
+# --- Staleness marker state (evaluated in Main Checks after log/helpers) ---
+STALE_THRESHOLD="${GXP_STALE_THRESHOLD:-3}"
+STALE_FAIL=0
 LAST_SYNCED_SHA=""
-
-if [ -f "$GROK_WORKFLOW" ]; then
-    marker_line=$(grep -i "last synced from core" "$GROK_WORKFLOW" | head -1 || true)
-    if [[ "$marker_line" =~ Last\ synced\ from\ core:\ ([0-9a-fA-F]+) ]]; then
-        LAST_SYNCED_SHA="${BASH_REMATCH[1]}"
-    fi
-fi
-
-# (The staleness NOTE for this marker is emitted in Main Checks below — after
-# the log/color helpers are defined; emitting it here crashes under set -u.)
+MARKER_STATUS="missing"
 
 # --- Drift Allowlist ---
 ALLOWLIST_FILE="$ADAPTER_ROOT/sync/drift-allowlist.txt"
@@ -280,11 +272,43 @@ log "Core:      $CORE_DIR"
 log "Adapter:   $ADAPTER_ROOT"
 echo
 
-if [ -n "$LAST_SYNCED_SHA" ]; then
-    if command -v git >/dev/null 2>&1 && git -C "$REPO_ROOT" rev-parse --verify "$LAST_SYNCED_SHA" >/dev/null 2>&1; then
+# Parse/evaluate after log helpers exist (set -u safety).
+marker_line=""
+if [ -f "$ADAPTER_ROOT/instructions/workflow.md" ]; then
+    marker_line=$(grep -i "last synced from core" "$ADAPTER_ROOT/instructions/workflow.md" | head -1 || true)
+fi
+if [ -z "$marker_line" ]; then
+    MARKER_STATUS="missing"
+elif [[ "$marker_line" =~ [Ll]ast[[:space:]]+[Ss]ynced[[:space:]]+[Ff]rom[[:space:]]+[Cc]ore:(\*\*)?[[:space:]]*([0-9a-fA-F]{7,40}) ]]; then
+    LAST_SYNCED_SHA="${BASH_REMATCH[2]}"
+    MARKER_STATUS="ok"
+else
+    MARKER_STATUS="malformed"
+fi
+if [ "$MARKER_STATUS" = "missing" ]; then
+    log "${RED}FAIL${RESET}   Sync marker missing"
+    STALE_FAIL=1
+elif [ "$MARKER_STATUS" = "malformed" ]; then
+    log "${RED}FAIL${RESET}   Sync marker malformed (need real hex SHA)"
+    STALE_FAIL=1
+elif command -v git >/dev/null 2>&1; then
+    if ! git -C "$REPO_ROOT" rev-parse --verify "${LAST_SYNCED_SHA}^{commit}" >/dev/null 2>&1; then
+        shallow=$(git -C "$REPO_ROOT" rev-parse --is-shallow-repository 2>/dev/null || echo "false")
+        if [ "$shallow" = "true" ]; then
+            log "${YELLOW}WARN${RESET}   Sync marker SHA not in shallow history"
+        else
+            log "${RED}FAIL${RESET}   Sync marker SHA unresolvable: $LAST_SYNCED_SHA"
+            STALE_FAIL=1
+        fi
+    else
         commits_since=$(git -C "$REPO_ROOT" rev-list --count "$LAST_SYNCED_SHA..HEAD" -- core/ 2>/dev/null || echo "?")
-        if [ "$commits_since" != "0" ] && [ "$commits_since" != "?" ]; then
-            log "${YELLOW}NOTE${RESET}   Core has advanced $commits_since commit(s) since last recorded sync ($LAST_SYNCED_SHA)"
+        if [ "$commits_since" != "?" ] && [ "$commits_since" -gt "$STALE_THRESHOLD" ]; then
+            log "${RED}FAIL${RESET}   Core advanced $commits_since commit(s) since marker (threshold $STALE_THRESHOLD)"
+            STALE_FAIL=1
+        elif [ "$commits_since" != "?" ] && [ "$commits_since" -gt 0 ]; then
+            log "${YELLOW}NOTE${RESET}   Core has advanced $commits_since commit(s) since last recorded sync ($LAST_SYNCED_SHA) — within threshold"
+        else
+            log "${GREEN}OK${RESET}     Sync marker current ($LAST_SYNCED_SHA)"
         fi
     fi
 fi
@@ -325,11 +349,11 @@ echo
 print_header "Summary"
 
 CRITICAL_FAILURE=false
-if { [ "$CRITICAL_DIFF_COUNT" -gt 0 ] || [ "$structure_fail_count" -gt 0 ]; } && [ "$LENIENT" = false ]; then
+if { [ "$CRITICAL_DIFF_COUNT" -gt 0 ] || [ "$structure_fail_count" -gt 0 ] || [ "$STALE_FAIL" -gt 0 ]; } && [ "$LENIENT" = false ]; then
     CRITICAL_FAILURE=true
 fi
 
-if [ "$DIFF_COUNT" -eq 0 ] && [ "$MISSING_COUNT" -eq 0 ] && [ "$structure_fail_count" -eq 0 ] && [ "$CRITICAL_FAILURE" = false ]; then
+if [ "$DIFF_COUNT" -eq 0 ] && [ "$MISSING_COUNT" -eq 0 ] && [ "$structure_fail_count" -eq 0 ] && [ "$STALE_FAIL" -eq 0 ] && [ "$CRITICAL_FAILURE" = false ]; then
     log "${GREEN}✓ All checked files are in sync with core.${RESET}"
     EXIT_CODE=0
 else

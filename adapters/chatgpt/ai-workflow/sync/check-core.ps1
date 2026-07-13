@@ -133,6 +133,61 @@ function Test-WorkflowMarker {
     }
 }
 
+
+# --- Staleness marker (real SHA; bold markdown tolerant) ---
+$script:StaleFailCount = 0
+$script:StaleThreshold = if ($env:GXP_STALE_THRESHOLD) { [int]$env:GXP_STALE_THRESHOLD } else { 3 }
+
+function Test-SyncMarker {
+    param($WorkflowPath)
+    if (-not (Test-Path $WorkflowPath)) {
+        Log "FAIL   Sync marker missing (no workflow file)" "Red"
+        $script:StaleFailCount++
+        return
+    }
+    $hit = Select-String -Path $WorkflowPath -Pattern "last synced from core" | Select-Object -First 1
+    if (-not $hit) {
+        Log "FAIL   Sync marker missing" "Red"
+        $script:StaleFailCount++
+        return
+    }
+    $line = $hit.Line
+    if ($line -notmatch 'Last\s+synced\s+from\s+core:(?:\*\*)?\s*([0-9a-fA-F]{7,40})') {
+        Log "FAIL   Sync marker malformed (need real hex SHA)" "Red"
+        $script:StaleFailCount++
+        return
+    }
+    $sha = $Matches[1]
+    $resolved = $false
+    try {
+        git -C $RepoRoot rev-parse --verify ($sha + '^{commit}') 2>$null | Out-Null
+        if ($LASTEXITCODE -eq 0) { $resolved = $true }
+    } catch {}
+    if (-not $resolved) {
+        $shallow = "false"
+        try { $shallow = (git -C $RepoRoot rev-parse --is-shallow-repository 2>$null) } catch {}
+        if ($shallow -eq "true") {
+            Log "WARN   Sync marker SHA not in shallow history" "Yellow"
+            return
+        }
+        Log "FAIL   Sync marker SHA unresolvable: $sha" "Red"
+        $script:StaleFailCount++
+        return
+    }
+    $count = git -C $RepoRoot rev-list --count ($sha + '..HEAD') -- core/ 2>$null
+    if ($count -and [int]$count -gt $script:StaleThreshold) {
+        Log "FAIL   Core advanced $count commit(s) since marker (threshold $($script:StaleThreshold))" "Red"
+        $script:StaleFailCount++
+        return
+    }
+    if ($count -and [int]$count -gt 0) {
+        Log "NOTE   Core advanced $count commit(s) since marker (within threshold)" "Yellow"
+    } else {
+        Log "OK     Sync marker current ($sha)" "Green"
+    }
+}
+
+
 function Test-WorkflowStructure {
     param($WorkflowPath)
     if (-not (Test-Path $WorkflowPath)) {
@@ -219,6 +274,7 @@ if ($LastSyncedSha) {
 }
 
 # Critical workflow: structural floor (not whole-file allowlist)
+Test-SyncMarker (Join-Path $AdapterRoot "instructions/workflow.md")
 Test-WorkflowStructure (Join-Path $AdapterRoot "instructions/workflow.md")
 
 foreach ($f in $OtherFiles) {
@@ -226,6 +282,15 @@ foreach ($f in $OtherFiles) {
 }
 
 Write-Host ""
+if ($script:StaleFailCount -gt 0) {
+    if ($Lenient) {
+        Log "! Sync marker stale or invalid (lenient mode)" "Yellow"
+    } else {
+        Log "x Sync marker stale or invalid." "Red"
+        $exitCode = 1
+    }
+}
+
 if ($script:StructureFailCount -gt 0) {
     Write-Host "Found $($script:StructureFailCount) workflow structural failure(s)." -ForegroundColor Yellow
 }
@@ -236,10 +301,10 @@ if ($MissingCount -gt 0) {
     Write-Host "Found $MissingCount missing file(s)." -ForegroundColor Yellow
 }
 
-if (($script:StructureFailCount -gt 0 -or $CriticalDiffCount -gt 0) -and -not $Lenient) {
+if (($script:StructureFailCount -gt 0 -or $script:StaleFailCount -gt 0 -or $CriticalDiffCount -gt 0) -and -not $Lenient) {
     Write-Host "ACTION REQUIRED: Fix workflow structural floor and/or critical diffs." -ForegroundColor Red
     exit 1
-} elseif ($script:StructureFailCount -gt 0 -or $DiffCount -gt 0 -or $MissingCount -gt 0) {
+} elseif ($script:StructureFailCount -gt 0 -or $script:StaleFailCount -gt 0 -or $DiffCount -gt 0 -or $MissingCount -gt 0) {
     Write-Host "Some differences noted (allowed or minor)." -ForegroundColor Yellow
     exit 0
 } else {

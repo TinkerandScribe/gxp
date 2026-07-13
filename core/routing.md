@@ -32,13 +32,13 @@ cost · latency · location (desk/mobile) · reversibility.**
 
 | Job need | Privacy / Stakes | Route | Exec mode | Verification |
 |---|---|---|---|---|
-| Research / ideation / critique | low / web-ok | research tool | recommend | optional second-model critic |
-| Autonomous multi-file coding | public / verified | strong coding agent | auto | GXP deterministic + critic |
+| Research / ideation / critique | low / web-ok | research tool | recommend | optional second-model critic\* |
+| Autonomous multi-file coding | public / verified | strong coding agent | auto | GXP deterministic + optional critic\* |
 | Long autonomous build-verify loops | mixed | autonomous agent (auto) · IDE (recommend) | auto · recommend | GXP + honest ratings |
-| Offline / private code execution | **private** | local agent + local model | auto | **real critic — not the agent's own self-score** |
+| Offline / private code execution | **private** | local agent + local model | auto | independent review\* — not the agent's own self-score |
 | Cheap / bulk / background | low / private | local model | auto | spot-check |
 | Scheduled monitoring / briefing | read-only | dispatcher-direct | auto | — |
-| High-stakes / safety-relevant | **safety** | strong agent → human | auto + **human** | real critic + **human sign-off** |
+| High-stakes / safety-relevant | **safety** | strong agent → human | auto + **human** | independent review\* + **human sign-off** |
 | In-IDE scoped edits | at-desk | IDE assistant | recommend | GXP lightweight |
 | GXP brief / planning (web, no repo) | low / web-ok | Custom GPT / web assistant | recommend | binary criteria + verification plan |
 
@@ -48,9 +48,16 @@ cost · latency · location (desk/mobile) · reversibility.**
    (local agent, local model, dispatcher-direct). Never to a web tool, a hosted API, or
    the open web. No exceptions.
 2. **Stakes → verification depth.** `low` = spot-check · `high` = GXP deterministic +
-   a real (independent) critic · `safety` = real critic **and** human sign-off before
+   an independent review\* · `safety` = independent review\* **and** human sign-off before
    any output is emitted. High/safety verification is **never** an agent grading its own
    work.
+
+\* **Critic language (recommended, not shipped):** "real critic" / second-model critic means
+an independent review pass — a second engine, human, or checklist — not a required subsystem
+in this package. Shipping an automatic multi-provider critic (keys, cost, providers) is
+explicitly out of scope for the core methodology package; projects that need it can add an
+opt-in `scripts/critic.sh` later. The table still **recommends** independent review for
+high/safety stakes; it does not require this repo to host that tooling.
 
 ## Decision procedure (hybrid)
 
