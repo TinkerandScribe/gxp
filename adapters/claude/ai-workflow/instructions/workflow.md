@@ -1,6 +1,6 @@
 # Claude-Optimized Workflow (v1.1)
 
-> **Last synced from core:** 06b6425272bf46ea07b5a8ae4fb6740a65ae40ad (2026-07-13)
+> **Last synced from core:** f75c090e40029c5af38b22ccafe502f44c64929c (2026-07-13)
 
 > This is a **Claude-optimized** adaptation of the canonical workflow defined in `../../../core/workflow.md`.
 
