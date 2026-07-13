@@ -1,6 +1,6 @@
 # ChatGPT-Optimized Workflow (v1.1)
 
-> **Last synced from core:** ca71f2d2a2ff44b2c999fe2449fa73751e27b699 (2026-07-13)
+> **Last synced from core:** 06b6425272bf46ea07b5a8ae4fb6740a65ae40ad (2026-07-13)
 
 > This is a **ChatGPT-optimized** adaptation of the canonical workflow defined in `../../../core/workflow.md`.
 
