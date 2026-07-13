@@ -1,15 +1,9 @@
 # Drift Allowlist for Grok AI Workflow Adapter
 #
-# List files/labels (partial match) that are intentionally different from core.
-# One entry per line. Comments start with #.
-#
-# Examples:
-# workflow.md
-# Task Brief Template
-
-# Currently the Grok version of the workflow is being actively developed
-# and contains Grok-specific tool use / context strategies.
-workflow.md
+# Workflow content is an intentional rewrite: enforced by the structural floor
+# in check-core (sh/ps1), not by whole-file allowlisting of workflow.md.
+# Entries below mark files intentionally absent (or non-workflow intentional
+# paths). One entry per line. Comments start with #.
 
 # We are not duplicating every template yet — they are referenced from core
 # when appropriate.

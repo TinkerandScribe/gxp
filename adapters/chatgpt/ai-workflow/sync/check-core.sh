@@ -111,7 +111,7 @@ ALLOWLIST_FILE="$ADAPTER_ROOT/sync/drift-allowlist.txt"
 ALLOWLIST=()
 if [ -f "$ALLOWLIST_FILE" ]; then
     while IFS= read -r line || [ -n "$line" ]; do
-        line=$(echo "$line" | cut -d'#' -f1 | xargs)
+        line=$(echo "$line" | tr -d '\r' | cut -d'#' -f1 | xargs)
         [ -n "$line" ] && ALLOWLIST+=("$line")
     done < "$ALLOWLIST_FILE"
 fi
@@ -124,6 +124,45 @@ is_allowed() {
         fi
     done
     return 1
+}
+
+
+# --- Workflow structural floor (intentional rewrites; not whole-file allowlist) ---
+structure_fail_count=0
+
+check_workflow_marker() {
+    local file="$1" pattern="$2" label="$3"
+    if grep -qiE "$pattern" "$file"; then
+        if [ "$QUIET" != true ]; then
+            echo "PASS   $label"
+        fi
+    else
+        echo "FAIL   $label (marker not found)" >&2
+        structure_fail_count=$((structure_fail_count + 1))
+    fi
+}
+
+check_workflow_structure() {
+    local wf="$1"
+    if [ ! -f "$wf" ]; then
+        echo "MISSING instructions/workflow.md" >&2
+        structure_fail_count=$((structure_fail_count + 1))
+        return 0
+    fi
+    if [ "$QUIET" != true ]; then
+        echo "=== Workflow structural floor ==="
+    fi
+    local n
+    for n in 0 1 2 3 4 5 6 7 8; do
+        check_workflow_marker "$wf" "Phase[[:space:]]+$n([^0-9]|$)" "Phase $n present"
+    done
+    check_workflow_marker "$wf" "4[^[:alnum:]]+8" "4-8 binary criteria rule"
+    check_workflow_marker "$wf" "anti[-[:space:]]?loop" "Anti-loop rule"
+    check_workflow_marker "$wf" "deterministic" "Deterministic-first verification"
+    check_workflow_marker "$wf" "criteria_met" "Ratings field criteria_met"
+    check_workflow_marker "$wf" "criteria_total" "Ratings field criteria_total"
+    check_workflow_marker "$wf" '`ts`' "Ratings field ts"
+    check_workflow_marker "$wf" '`rating`' "Ratings field rating"
 }
 
 # --- Comparison ---
@@ -170,13 +209,7 @@ compare_file() {
         return 0
     fi
 
-    if is_allowed "$label"; then
-        if [ "$QUIET" != true ]; then
-            echo "ALLOW  $label (intentionally diverged per drift-allowlist.txt)"
-        fi
-        return 0
-    fi
-
+    # Present files are byte-compared; allowlist only covers intentional absence.
     diff_count=$((diff_count + 1))
     if [ "$required" = true ]; then
         critical_diff_count=$((critical_diff_count + 1))
@@ -204,11 +237,8 @@ if [ "$QUIET" != true ]; then
     echo ""
 fi
 
-# Critical
-for entry in "${CRITICAL_FILES[@]}"; do
-    IFS=':' read -r core_rel adapter_rel label <<< "$entry"
-    compare_file "$core_rel" "$adapter_rel" "$label" true
-done
+# Critical workflow: structural floor (not whole-file allowlist)
+check_workflow_structure "$ADAPTER_ROOT/instructions/workflow.md"
 
 # Other
 for entry in "${OTHER_FILES[@]}"; do
@@ -219,6 +249,9 @@ done
 # Summary
 if [ "$QUIET" != true ]; then
     echo ""
+    if [ $structure_fail_count -gt 0 ]; then
+        echo "Found $structure_fail_count workflow structural failure(s)."
+    fi
     if [ $diff_count -gt 0 ]; then
         echo "Found $diff_count difference(s) ($critical_diff_count critical)."
     fi
@@ -227,10 +260,10 @@ if [ "$QUIET" != true ]; then
     fi
 fi
 
-if [ $critical_diff_count -gt 0 ] && [ "$LENIENT" != true ]; then
-    echo "ACTION REQUIRED: Review and align critical differences with core/." >&2
+if { [ $structure_fail_count -gt 0 ] || [ $critical_diff_count -gt 0 ]; } && [ "$LENIENT" != true ]; then
+    echo "ACTION REQUIRED: Fix workflow structural floor and/or critical diffs." >&2
     exit 1
-elif [ $diff_count -gt 0 ] || [ $missing_count -gt 0 ]; then
+elif [ $structure_fail_count -gt 0 ] || [ $diff_count -gt 0 ] || [ $missing_count -gt 0 ]; then
     if [ "$QUIET" != true ]; then
         echo "Some differences noted (allowed or minor)."
     fi

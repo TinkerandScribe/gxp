@@ -4,6 +4,23 @@ All notable changes to the public [GXP](https://github.com/TinkerandScribe/gxp) 
 documented here. Versioning follows [SemVer](https://semver.org/) for the methodology
 package as a whole (core + adapters + install/verify scripts).
 
+## [Unreleased]
+
+### Fixed
+
+- **Sync-check structural floor (P0-2)** — claude/chatgpt/grok no longer whole-file
+  allowlist `workflow.md` / "Workflow Definition". Checks enforce Phases 0–8, 4–8
+  criteria, anti-loop, deterministic-first verification, and ratings fields
+  (`ts`, `criteria_met`, `criteria_total`, `rating`). Present non-workflow files are
+  byte-diffed; allowlist only covers intentional absence. Allowlist readers strip CR
+  so WSL/Windows CRLF cannot silently break matching.
+
+### Changed
+
+- **chatgpt** workflow header `v1.0` → `v1.1`; **chatgpt/claude** gain Phase 8
+  (Handoff) and explicit ratings field list; **grok** Phase 1 states 4–8 criteria
+  and Phase 6 lists ratings fields.
+
 ## [1.1.3] - 2026-07-13
 
 ### Fixed

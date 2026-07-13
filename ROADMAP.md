@@ -29,11 +29,11 @@ GXP workflow — briefs drafted far ahead go stale.
 
 ## Milestone 1 — make drift checkable (target v1.2.0)
 
-| Order | Item (audit ref) | Brief | Depends on |
-|---|---|---|---|
-| 1 | Real per-hunk content diff in claude/chatgpt/grok sync checks, replacing whole-file allowlists; structural marker floor (phases 0–8, criteria rule, ratings fields) for intentional-rewrite adapters (P0-2, Option A). **Folds in P1-4** — the floor fails on chatgpt/claude's current missing Phase 8 and stale header, so those adapters are brought current in the same change | [`core/tasks/real-diff-sync-checks.md`](core/tasks/real-diff-sync-checks.md) | — |
-| 2 | CI: `.github/workflows/verify.yml` — verify.sh on ubuntu+windows, ps1 checks, cowork build (ubuntu), negative-drift test (P0-1) | [`core/tasks/ci-verify-workflow.md`](core/tasks/ci-verify-workflow.md) | item 1 (negative test is dead before it) |
-| 3 | Staleness markers: real SHA, present in all adapters, hard-fail past threshold, CI auto-bump (P0-3) | [`core/tasks/staleness-marker-real-sha.md`](core/tasks/staleness-marker-real-sha.md) | item 2 (auto-bump job); grok def-order fix (done) |
+| Order | Item (audit ref) | Brief | Depends on | Status |
+|---|---|---|---|---|
+| 1 | Real per-hunk content diff in claude/chatgpt/grok sync checks, replacing whole-file allowlists; structural marker floor (phases 0–8, criteria rule, ratings fields) for intentional-rewrite adapters (P0-2, Option A). **Folds in P1-4** — the floor fails on chatgpt/claude's current missing Phase 8 and stale header, so those adapters are brought current in the same change | [`core/tasks/real-diff-sync-checks.md`](core/tasks/real-diff-sync-checks.md) | — | **done** (structural floor shipped; verbatim present-file byte-diff + absence-only allowlist) |
+| 2 | CI: `.github/workflows/verify.yml` — verify.sh on ubuntu+windows, ps1 checks, cowork build (ubuntu), negative-drift test (P0-1) | [`core/tasks/ci-verify-workflow.md`](core/tasks/ci-verify-workflow.md) | item 1 (negative test is dead before it) | next |
+| 3 | Staleness markers: real SHA, present in all adapters, hard-fail past threshold, CI auto-bump (P0-3) | [`core/tasks/staleness-marker-real-sha.md`](core/tasks/staleness-marker-real-sha.md) | item 2 (auto-bump job); grok def-order fix (done) | pending |
 
 ## Milestone 2 — close the narrative gap (target v1.2.x)
 

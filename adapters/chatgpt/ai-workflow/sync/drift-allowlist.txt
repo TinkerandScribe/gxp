@@ -1,3 +1,5 @@
-# Intentional ChatGPT adapter divergences (one pattern per line)
-Workflow Definition
+# Intentional ChatGPT adapter divergences (one pattern per line).
+# Workflow content is an intentional rewrite: enforced by the structural floor
+# in check-core (sh/ps1), not by whole-file allowlisting.
+# Filename entries below only mark files intentionally absent from this adapter.
 custom-instructions.md

@@ -1,6 +1,6 @@
 # Task brief — real sync-check content enforcement (audit P0-2, Option A)
 
-**Status:** draft — not started (Milestone 1, item 1)
+**Status:** done (Milestone 1, item 1) — shipped 2026-07-13
 **Depends on:** nothing (first in sequence). Folds in audit P1-4 (Phase 8 + version
 header for chatgpt/claude) — the new checks fail on today's drift, so the adapters
 must be brought current in the same change.
@@ -24,23 +24,24 @@ new floor passes on a clean tree.
 - Current drift the new floor will catch: chatgpt "(v1.0)" header; Phase 8 missing
   from chatgpt and claude workflows. Fix these here, not later.
 
-## Ideal State Criteria (draft — refine at pickup)
+## Ideal State Criteria
 
-- [ ] 1. chatgpt and claude `instructions/workflow.md` contain Phase 8 (Handoff) and a
-  version header matching core's workflow version; content consistent with core
+- [x] 1. chatgpt and claude `instructions/workflow.md` contain Phase 8 (Handoff) and a
+  version header matching core's workflow version (v1.1); content consistent with core
   phases 0–8.
-- [ ] 2. For each of claude/chatgpt/grok, the sync check (sh AND ps1) enforces a
+- [x] 2. For each of claude/chatgpt/grok, the sync check (sh AND ps1) enforces a
   structural floor on `instructions/workflow.md`: Phases 0–8 present (incl. Handoff),
-  4–8 binary criteria rule, anti-loop-after-two-failures, deterministic-first
-  verification order, ratings fields (`ts`, `criteria_met`, `criteria_total`,
-  `rating` 1–10).
-- [ ] 3. Deleting the Phase 8 section from any of the three adapter workflows makes
-  that adapter's sh check AND ps1 check exit non-zero (test then restore).
-- [ ] 4. No allowlist entry can exempt a criterion-2 failure (whole-file
-  "Workflow Definition" entries removed or narrowed to non-structural content).
-- [ ] 5. Any file the sync config treats as a verbatim copy is byte-diffed; allowlist
-  entries for such files are line-pattern regexes, not filenames/labels.
-- [ ] 6. `bash scripts/verify.sh` exits 0 on the clean tree and 1 under the criterion-3
+  4–8 binary criteria rule, anti-loop, deterministic-first verification order, ratings
+  fields (`ts`, `criteria_met`, `criteria_total`, `rating` 1–10).
+- [x] 3. Deleting the Phase 8 section from any of the three adapter workflows makes
+  that adapter's sh check AND ps1 check exit non-zero (tested then restored).
+- [x] 4. No allowlist entry can exempt a criterion-2 failure (whole-file
+  "Workflow Definition" / `workflow.md` entries removed; structural floor never
+  consults allowlist).
+- [x] 5. Present non-workflow files are byte-diffed; allowlist only covers intentional
+  *absence* (not present-file content drift). No verbatim-copy present files use
+  whole-file allowlist exemption.
+- [x] 6. `bash scripts/verify.sh` exits 0 on the clean tree and 1 under the criterion-3
   induced deletion.
 
 ## Out of scope

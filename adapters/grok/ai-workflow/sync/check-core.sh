@@ -104,7 +104,7 @@ declare -a ALLOWLIST=()
 
 if [ -f "$ALLOWLIST_FILE" ]; then
     while IFS= read -r line || [ -n "$line" ]; do
-        line=$(echo "$line" | sed 's/#.*//' | xargs)   # strip comments and trim
+        line=$(echo "$line" | tr -d '\r' | sed 's/#.*//' | xargs)   # strip CR/comments and trim
         [ -z "$line" ] && continue
         ALLOWLIST+=("$line")
     done < "$ALLOWLIST_FILE"
@@ -163,6 +163,45 @@ record_missing() {
     MISSING_COUNT=$((MISSING_COUNT + 1))
 }
 
+
+# --- Workflow structural floor (intentional rewrites; not whole-file allowlist) ---
+structure_fail_count=0
+
+check_workflow_marker() {
+    local file="$1" pattern="$2" label="$3"
+    if grep -qiE "$pattern" "$file"; then
+        if [ "$QUIET" != true ]; then
+            echo "PASS   $label"
+        fi
+    else
+        echo "FAIL   $label (marker not found)" >&2
+        structure_fail_count=$((structure_fail_count + 1))
+    fi
+}
+
+check_workflow_structure() {
+    local wf="$1"
+    if [ ! -f "$wf" ]; then
+        echo "MISSING instructions/workflow.md" >&2
+        structure_fail_count=$((structure_fail_count + 1))
+        return 0
+    fi
+    if [ "$QUIET" != true ]; then
+        echo "=== Workflow structural floor ==="
+    fi
+    local n
+    for n in 0 1 2 3 4 5 6 7 8; do
+        check_workflow_marker "$wf" "Phase[[:space:]]+$n([^0-9]|$)" "Phase $n present"
+    done
+    check_workflow_marker "$wf" "4[^[:alnum:]]+8" "4-8 binary criteria rule"
+    check_workflow_marker "$wf" "anti[-[:space:]]?loop" "Anti-loop rule"
+    check_workflow_marker "$wf" "deterministic" "Deterministic-first verification"
+    check_workflow_marker "$wf" "criteria_met" "Ratings field criteria_met"
+    check_workflow_marker "$wf" "criteria_total" "Ratings field criteria_total"
+    check_workflow_marker "$wf" '`ts`' "Ratings field ts"
+    check_workflow_marker "$wf" '`rating`' "Ratings field rating"
+}
+
 # --- Comparison Function ---
 compare_file() {
     local core_rel="$1"
@@ -199,13 +238,8 @@ compare_file() {
         return
     fi
 
-    # Files differ — check allowlist first
-    if is_allowed "$label" "$core_rel" "$adapter_rel"; then
-        log "${YELLOW}ALLOW${RESET} $label (intentionally diverged per drift-allowlist.txt)"
-        return
-    fi
-
-    # Files differ
+    # Present files are byte-compared; allowlist only covers intentional absence
+    # (and non-workflow intentional paths). Workflow uses structural floor below.
     record_diff
 
     # Track critical diffs separately for stricter default behavior
@@ -256,7 +290,7 @@ if [ -n "$LAST_SYNCED_SHA" ]; then
 fi
 
 print_header "Critical Methodology"
-compare_file "workflow.md" "instructions/workflow.md" "Workflow Definition" "true"
+check_workflow_structure "$ADAPTER_ROOT/instructions/workflow.md"
 
 print_header "Templates"
 for item in "${TEMPLATE_FILES[@]}"; do
@@ -291,11 +325,11 @@ echo
 print_header "Summary"
 
 CRITICAL_FAILURE=false
-if [ "$CRITICAL_DIFF_COUNT" -gt 0 ] && [ "$LENIENT" = false ]; then
+if { [ "$CRITICAL_DIFF_COUNT" -gt 0 ] || [ "$structure_fail_count" -gt 0 ]; } && [ "$LENIENT" = false ]; then
     CRITICAL_FAILURE=true
 fi
 
-if [ "$DIFF_COUNT" -eq 0 ] && [ "$MISSING_COUNT" -eq 0 ] && [ "$CRITICAL_FAILURE" = false ]; then
+if [ "$DIFF_COUNT" -eq 0 ] && [ "$MISSING_COUNT" -eq 0 ] && [ "$structure_fail_count" -eq 0 ] && [ "$CRITICAL_FAILURE" = false ]; then
     log "${GREEN}✓ All checked files are in sync with core.${RESET}"
     EXIT_CODE=0
 else
@@ -306,6 +340,14 @@ else
             log "${RED}✗ $CRITICAL_DIFF_COUNT critical file(s) differ from core.${RESET}"
         fi
     fi
+if [ "$structure_fail_count" -gt 0 ]; then
+        if [ "$LENIENT" = true ]; then
+            log "${YELLOW}! $structure_fail_count workflow structural marker(s) missing (lenient mode).${RESET}"
+        else
+            log "${RED}✗ $structure_fail_count workflow structural marker(s) missing.${RESET}"
+        fi
+    fi
+    
     if [ "$DIFF_COUNT" -gt "$CRITICAL_DIFF_COUNT" ]; then
         log "${RED}✗ $((DIFF_COUNT - CRITICAL_DIFF_COUNT)) non-critical file(s) differ from core.${RESET}"
     fi

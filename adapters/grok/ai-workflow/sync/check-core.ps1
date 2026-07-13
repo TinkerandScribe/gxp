@@ -116,13 +116,13 @@ $Allowlist = @()
 
 if (Test-Path $AllowlistFile) {
     Get-Content $AllowlistFile | ForEach-Object {
-        $line = ($_ -split '#')[0].Trim()
+        $line = (($_ -split '#')[0] -replace "`r", '').Trim()
         if ($line) { $Allowlist += $line }
     }
 }
 
-# Allowlist entries may be labels ("Workflow Definition") or file paths
-# ("workflow.md") — match against all three, per the allowlist header.
+# Allowlist entries mark intentional absence (or non-workflow paths).
+# Present-file content drift is never whole-file allowlisted.
 function Is-Allowed($label, $coreRel = "", $adapterRel = "") {
     foreach ($pattern in $Allowlist) {
         if ($label -like "*$pattern*") { return $true }
@@ -130,6 +130,39 @@ function Is-Allowed($label, $coreRel = "", $adapterRel = "") {
         if ($adapterRel -and $adapterRel -like "*$pattern*") { return $true }
     }
     return $false
+}
+
+# --- Workflow structural floor (intentional rewrites; not whole-file allowlist) ---
+$script:StructureFailCount = 0
+
+function Test-WorkflowMarker {
+    param($File, $Pattern, $Label)
+    if (Select-String -Path $File -Pattern $Pattern -Quiet) {
+        Log "PASS   $Label" "Green"
+    } else {
+        Log "FAIL   $Label (marker not found)" "Red"
+        $script:StructureFailCount++
+    }
+}
+
+function Test-WorkflowStructure {
+    param($WorkflowPath)
+    if (-not (Test-Path $WorkflowPath)) {
+        Log "MISSING instructions/workflow.md" "Red"
+        $script:StructureFailCount++
+        return
+    }
+    if (-not $Quiet) { Write-Host "=== Workflow structural floor ===" -ForegroundColor Cyan }
+    foreach ($n in 0..8) {
+        Test-WorkflowMarker $WorkflowPath "Phase\s+$n([^0-9]|$)" "Phase $n present"
+    }
+    Test-WorkflowMarker $WorkflowPath "4[^a-zA-Z0-9]+8" "4-8 binary criteria rule"
+    Test-WorkflowMarker $WorkflowPath "anti[- ]?loop" "Anti-loop rule"
+    Test-WorkflowMarker $WorkflowPath "deterministic" "Deterministic-first verification"
+    Test-WorkflowMarker $WorkflowPath "criteria_met" "Ratings field criteria_met"
+    Test-WorkflowMarker $WorkflowPath "criteria_total" "Ratings field criteria_total"
+    Test-WorkflowMarker $WorkflowPath '`ts`' "Ratings field ts"
+    Test-WorkflowMarker $WorkflowPath '`rating`' "Ratings field rating"
 }
 
 # --- Comparison ---
@@ -171,11 +204,7 @@ function Compare-File {
         return
     }
 
-    if (Is-Allowed $Label $CoreRel $AdapterRel) {
-        Log "ALLOW  $Label (intentionally diverged per drift-allowlist.txt)" "Yellow"
-        return
-    }
-
+    # Present files are byte-compared; allowlist only covers intentional absence.
     $script:DiffCount++
     $isCritical = $CriticalFiles | Where-Object { $_.Label -eq $Label }
     if ($isCritical) { $script:CriticalDiffCount++ }
@@ -236,11 +265,9 @@ if ($LastSyncedSha) {
     } catch {}
 }
 
-# Critical
+# Critical Methodology — structural floor
 Write-Host "`n=== Critical Methodology ===" -ForegroundColor Cyan
-foreach ($item in $CriticalFiles) {
-    Compare-File $item.Core $item.Adapter $item.Label $true
-}
+Test-WorkflowStructure (Join-Path $AdapterRoot "instructions/workflow.md")
 
 # Templates + Philosophy
 Write-Host "`n=== Templates and Philosophy ===" -ForegroundColor Cyan
@@ -267,6 +294,15 @@ if (Test-Path $skillFile) {
 Write-Host "`n=== Summary ===" -ForegroundColor Cyan
 
 $exitCode = 0
+
+if ($script:StructureFailCount -gt 0) {
+    if ($Lenient) {
+        Log "! $($script:StructureFailCount) workflow structural marker(s) missing (lenient mode)" "Yellow"
+    } else {
+        Log "✗ $($script:StructureFailCount) workflow structural marker(s) missing." "Red"
+        $exitCode = 1
+    }
+}
 
 if ($CriticalDiffCount -gt 0) {
     if ($Lenient) {

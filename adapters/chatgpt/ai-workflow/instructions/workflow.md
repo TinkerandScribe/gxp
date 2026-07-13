@@ -1,4 +1,4 @@
-# ChatGPT-Optimized Workflow (v1.0)
+# ChatGPT-Optimized Workflow (v1.1)
 
 > This is a **ChatGPT-optimized** adaptation of the canonical workflow defined in `../../../core/workflow.md`.
 
@@ -112,7 +112,9 @@ Only move to the next layer after the previous one passes.
 
 ### Phase 6 — Honest Rating
 
-Give a thoughtful 1–10 rating of the overall outcome.
+Append one JSON object per line to `ratings.jsonl` with fields `ts`,
+`criteria_met`, `criteria_total`, and `rating` (integer 1–10). Optional:
+`mode`, `notes`, `failure_ref`.
 
 Be honest. Low ratings on difficult tasks are extremely valuable data.
 
@@ -124,6 +126,19 @@ Focus especially on:
 
 - What early signal could have caught this?
 - What durable prevention was added?
+
+### Phase 8 — Handoff
+
+Before declaring done:
+
+- Summarize what changed, what was verified, and what is explicitly not done
+  (out-of-scope, parked, follow-ups).
+- Surface any approval gates that were hit, and their outcome.
+- Name any dead ends from Phase 4 worth remembering.
+- Point at the rating entry and any new `failures/` file.
+
+The handoff is the artifact the next person (or next session) reads to pick up
+the work. Optimize for the reader, not for completeness.
 
 ## ChatGPT-Specific Strengths to Leverage
 

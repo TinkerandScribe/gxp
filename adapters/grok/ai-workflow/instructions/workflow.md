@@ -69,8 +69,9 @@ This is prototype only — it advances the coordination brief without touching u
 
 ## Phase 1 — Task brief
 
-Same structure as core. Binary Ideal State Criteria remain the heart
-of the system.
+Same structure as core. Write **4–8 binary Ideal State Criteria** — they
+remain the heart of the system. If you cannot write at least 4 strong
+binary criteria, stop and clarify before coding.
 
 **Grok tip:** When writing verification plans, think about what tools
 you can use to make verification deterministic.
@@ -116,7 +117,9 @@ confidence level and the method used.
 
 ## Phase 6 — Rate
 
-Append one JSON object per line to `ratings.jsonl`.
+Append one JSON object per line to `ratings.jsonl` with fields `ts`,
+`criteria_met`, `criteria_total`, and `rating` (integer 1–10). Optional:
+`mode`, `notes`, `failure_ref`.
 
 **Grok note:** Be honest. Low ratings on difficult tasks are extremely
 valuable data.
