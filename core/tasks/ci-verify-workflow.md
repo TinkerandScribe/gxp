@@ -37,7 +37,8 @@ negative test.
 - [x] 5. A negative-test step induces structural Phase 8 deletion, asserts
   verify.sh exits non-zero, and restores the tree (local smoke OK; first main CI run
   is the live proof).
-- [ ] 6. The workflow is green on main at merge — **pending first CI run after push**.
+- [x] 6. The workflow is green on main at merge —
+  https://github.com/TinkerandScribe/gxp/actions/runs/29279663570
 
 ## Out of scope
 
