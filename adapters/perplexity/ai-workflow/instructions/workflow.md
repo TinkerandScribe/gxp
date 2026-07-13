@@ -1,6 +1,6 @@
 # Perplexity-Optimized Workflow (v1.1)
 
-> **Last synced from core:** e62b13e017a39c471fe3d3852c6ed22fd3f9e240 (2026-07-13)
+> **Last synced from core:** 39b9b20a072069a04dec276941383dcf8dbfca39 (2026-07-13)
 > This file is intentionally allowed to diverge from `../../../core/workflow.md`
 > for Perplexity-specific strengths. Run `../sync/check-core.sh` regularly.
 
