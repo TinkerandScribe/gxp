@@ -1,6 +1,6 @@
 # Grok-Optimized Workflow (v1.1)
 
-> **Last synced from core:** 40873dc581ded3924d84ed4a9c37279be1674c03 (2026-07-13)
+> **Last synced from core:** ca71f2d2a2ff44b2c999fe2449fa73751e27b699 (2026-07-13)
 > This file is intentionally allowed to diverge from `../../../core/workflow.md`
 > for Grok-specific strengths. Run `../sync/check-core.sh` regularly.
 
