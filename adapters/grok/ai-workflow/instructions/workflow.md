@@ -1,142 +1,314 @@
+<!-- GENERATED FILE — do not edit by hand.
+     Sources: core/workflow.md +
+              adapters/grok/ai-workflow/deltas/workflow.delta.md
+     Regenerate: python scripts/generate-adapter-workflows.py
+     Check:      python scripts/generate-adapter-workflows.py --check
+-->
 # Grok-Optimized Workflow (v1.1)
 
 > **Last synced from core:** 53e1c9e3303884c03b01a51bbb09d6eeed5320f5 (2026-07-13)
-> This file is intentionally allowed to diverge from `../../../core/workflow.md`
-> for Grok-specific strengths. Run `../sync/check-core.sh` regularly.
+> This file is generated from `core/workflow.md` plus the grok delta. Tool-specific notes are in the delta; shared methodology is core. Run `../sync/check-core.sh` regularly.
 
 This is a **Grok-optimized** adaptation of the core AI Workflow methodology.
 
 ## Grok Strengths We Leverage
+
 
 - Excellent tool use and function calling
 - Strong long-context reasoning
 - Good at explicit uncertainty handling
 - Capable of complex multi-step planning when given clear structure
 
+
+
 ## Autonomy calibration
+
 
 This is an **L3/L4 bounded agent workflow**. The agent operates within a
 defined task brief with explicit Ideal State Criteria, runs verification
 itself, and pauses at approval gates. It is **not** L5 self-directed
-research.
+research: do not pick your own problems, do not expand scope beyond the
+brief, and do not skip the approval gates below.
 
-**Grok note:** Use your tool-calling capabilities aggressively during
-repo audit and verification. Do not rely only on reasoning when tools
-can give you ground truth.
+If you find yourself reasoning about goals or strategy that are not in the
+brief, stop and either update the brief explicitly or kick the question
+back to the operator.
 
 ## Full vs lightweight workflow
 
-Same rules as core. When in doubt, run the full workflow.
 
-## Phase 0 — Repo audit (Grok enhanced)
+Pick the variant before starting:
+
+- **Full workflow** — phases 0 through 8 below. Use for any task that
+  changes behavior, touches more than one file in a non-trivial way, or
+  could plausibly regress something. The default.
+- **Lightweight workflow** — phases 1, 2, 3, 5 only. Skip the repo audit,
+  rating, failure capture, and handoff. Use only for trivial,
+  single-file, easily reversible changes (typo, comment, one-line fix).
+  If you start lightweight and find the task is bigger than expected,
+  upgrade to full.
+
+When in doubt, run the full workflow. The overhead is small; the cost of
+skipping it on a real change is much larger.
+
+## Phase 0 — Repo audit
+
+
+> **Path note:** paths below use the portable `.ai/` layout installed into target repos
+> by `scripts/install-ai-from-core.{sh,ps1}`. In this source repo the same content lives
+> under `core/` (e.g. `core/PROGRAM.template.md`, `core/rules/`, `core/failures/`,
+> `core/ratings.jsonl`).
 
 Before writing or proposing anything, scan the repo for context:
 
-- Read `.ai/PROGRAM.md`
-- Read `.ai/rules/`
-- Read `.ai/failures/`
-- Skim recent `ratings.jsonl`
+- Read `.ai/PROGRAM.md` (project-specific context, verification commands,
+  conventions).
+- Read `.ai/rules/` (durable rules for this repo).
+- Read `.ai/failures/` (known repeatable failure modes).
+- Skim recent `ratings.jsonl` entries for patterns relevant to this task.
+- Note any tests, linters, or build commands the project standardizes on.
 
-**Grok-specific guidance:**
-- Use the `read_file` and directory listing tools heavily here.
-- When the repo is large, be strategic: start with key files mentioned
-  in the brief, then expand using search.
-- Explicitly call out any rules or past failures that are relevant.
-- If you are uncertain about something, use tools to resolve it rather
-  than guessing.
+The output of phase 0 is a short mental (or written) summary of the
+relevant constraints. If a rule or failure entry plausibly applies to
+this task, name it explicitly in the brief.
 
-## Grok Build Strategy Selection (Prototype — see instructions/strategy-selection.md)
+**Grok note:**
 
-**For sessions running in Grok Build (with access to Composer 2.5 and subagents):**
 
-After (or as part of) Phase 0, perform lightweight strategy classification using GXP language before committing to a model or delegation style.
+Use `read_file` and directory listing tools aggressively. On large repos, start from files named in the brief, then expand with search. Resolve uncertainty with tools rather than guessing.
 
-See the full guidance in `instructions/strategy-selection.md` (coordinated with `core/tasks/EXAMPLE-feature-brief.md`).
+## Phase 0.5 — Strategy & Model Selection
 
-Quick decision matrix (binary criteria style):
-- Genuine ambiguity / architecture / research / planning heavy → Use native Grok + plan mode (or grok-native-planner persona).
-- Coherent multi-file agentic coding, long sustained implementation, "make the whole thing work" → Composer 2.5 (via persona "composer-coder" or `/model composer-2.5` + subagent).
-- Requires visual side-by-side editing, IDE context, or Cursor ecosystem → Emit Cursor Composer handoff artifact (GXP brief + ready-to-paste prompt that follows the Cursor adapter rule.mdc).
-- Small, reversible, terminal/debug focused → Fast native Grok model.
 
-**Always:**
-- Log the decision with justification tied to Ideal State Criteria.
-- Note capability (external_apis availability).
-- Plan scoped context for any subagent/handoff.
-- Ensure the choice can be scored later in critic / Phase 6 (gxp_alignment_score style).
+After the repo audit but before (or while) writing the task brief, classify
+the task along dimensions such as complexity and scope, risk and
+reversibility, domain knowledge required, tolerance for iteration, and the
+margin by which the chosen engine must clear the criteria.
 
-This is prototype only — it advances the coordination brief without touching upstream orchestrator internals. Use `spawn_subagent` with persona for automatic switching inside one session.
+Choose the least-capable engine (model, tool, persona, handoff target, or
+environment) that can still satisfy the Ideal State Criteria with
+comfortable margin. This conserves context budget, reduces unnecessary cost
+and latency, and keeps the agent operating inside its reliable capability
+band.
+
+Record the decision explicitly in the brief (see the **Strategy/Model:**
+line in the template) together with a one-line rationale.
+
+Re-evaluate the choice at the Phase 4 anti-loop gate if the current engine
+is failing to make progress.
+
+The classification and selection process is defined here in core and is
+tool-agnostic. Individual adapters and environments may specialize the
+set of available "engines" (model tiers, composer targets, handoff
+formats, etc.) but the decision skeleton, margin rule, and re-evaluation
+discipline are canonical.
+
+When a job may leave the current tool (privacy class, stakes, cost, or
+location), also read `routing.md` (same directory as this file in source;
+`.ai/routing.md` when installed) and fill the **Routing** block in the
+task brief.
+
+**Grok note:**
+
+
+Prefer tool-backed verification of capability (what connectors exist) over assuming models. Re-evaluate engine choice at the Phase 4 anti-loop gate.
 
 ## Phase 1 — Task brief
 
-Same structure as core. Write **4–8 binary Ideal State Criteria** — they
-remain the heart of the system. If you cannot write at least 4 strong
-binary criteria, stop and clarify before coding.
 
-**Grok tip:** When writing verification plans, think about what tools
-you can use to make verification deterministic.
+Copy `templates/task-brief.md`. Fill it in **before writing code**.
+
+A brief contains:
+
+- **Goal** — one sentence on what success looks like.
+- **Context** — links to relevant files, prior PRs, tickets, plus
+  anything surfaced in phase 0.
+- **Ideal State Criteria** — **4 to 8 binary, checkable statements**
+  that will be true when the task is done. "Tests pass" is too vague;
+  "running `pytest tests/test_foo.py` exits 0 with no warnings" is
+  checkable.
+- **Out of scope** — what you are deliberately not doing.
+- **Verification plan** — how each criterion will be checked.
+
+If you cannot write 4 binary criteria, the task is not understood yet.
+Stop and clarify.
+
+Adapter floor: Ideal State Criteria count is **4–8** (binary, checkable) — same rule as core's “4 to 8”.
+
+**Grok note:**
+
+
+When writing verification plans, name the **tools** you will use to make each check deterministic.
 
 ## Phase 2 — Self-evaluation gate
 
-Same gates as core.
 
-**Grok note:** Be particularly strict on "Verification" and "Approval
-gates". If a criterion cannot be checked mechanically, say so clearly
-and propose how you will handle the uncertainty.
+Before coding, evaluate the brief against these gates. Each must pass.
+
+- **Completeness** — does the brief cover the actual goal, or just the
+  surface request? Is anything load-bearing missing?
+- **Ambiguity** — are any criteria not strictly binary? Rewrite or drop.
+- **Scope trap** — does the brief include cleanup, refactors, or
+  "while we're here" items that are not strictly required? Move them to
+  out-of-scope.
+- **Verification** — does every criterion have a concrete check? If a
+  criterion can only be confirmed by eyeballing, mark how you will
+  confirm and accept the lower confidence.
+- **Approval gates** — are there points in the work where the operator
+  must sign off (destructive changes, irreversible operations, schema
+  migrations, public-facing copy, anything touching production)? Name
+  them in the brief and **stop at each one** until approved.
+
+If any gate fails, fix the brief before continuing.
+
+**Grok note:**
+
+
+Be strict on Verification and Approval gates. If a criterion cannot be checked mechanically, say so and propose how you will handle uncertainty.
 
 ## Phase 3 — Implementation
 
-- Keep the diff focused on the brief.
-- Prefer the smallest viable change.
-- Follow conventions from phase 0.
-- Do not introduce new dependencies unless the brief calls for them.
-- Write one-line notes for non-obvious decisions.
 
-**Grok optimization:** Use your tool calling to explore the codebase
-while implementing. Prefer reading actual source over relying on
-memory.
+Make the change. Principles:
+
+- Keep the diff focused on the brief. Anything outside the brief goes to
+  a follow-up list, not into this change.
+- Prefer the smallest viable change. Don't refactor opportunistically.
+- Follow the conventions surfaced in phase 0.
+- Don't introduce new dependencies, abstractions, or files unless the
+  brief calls for them.
+- If you have to make a non-obvious decision, write a one-line note
+  somewhere durable (commit message, brief, comment) — not just chat.
+
+**Grok note:**
+
+
+Explore the codebase with tools while implementing. Prefer reading source over relying on memory.
 
 ## Phase 4 — Anti-loop rule
 
-Identical to core. This rule is extremely high value.
 
-## Phase 5 — Verification (Grok enhanced)
+If the same approach fails twice in a row (same test failing for the
+same reason, same lint error reappearing after a fix attempt, same
+build break), **stop**. Do not try the same shape of fix a third time.
 
-Run verification commands from `PROGRAM.md`.
+- Write down the dead end: what you tried, why it failed, what you now
+  believe is true.
+- Switch strategy: re-read the failing output carefully, change the
+  hypothesis, ask the operator if the brief itself is wrong.
+- Persistent dead ends should land in `failures/` once the task is done.
 
-**Strongly recommended order for Grok:**
+This rule exists because the most expensive failure mode is grinding
+on a broken approach. Cheap to notice, cheap to recover.
 
-1. **Deterministic checks first** (type/lint/test/build)
-2. Use tools to execute tests and capture real output.
-3. Behavioral checks — actually run the feature using whatever
-   execution or REPL tools are available.
-4. Only then do subjective review.
+## Phase 5 — Verification
 
-If a criterion cannot be checked mechanically, clearly state your
-confidence level and the method used.
+
+Run the verification commands from `PROGRAM.md`. Walk through each
+Ideal State Criterion and confirm it is met.
+
+Order of checks:
+
+1. **Deterministic checks first** — type checking, linting, unit tests,
+   build, schema validation, anything that returns a clear pass/fail.
+   These are cheap and unambiguous. Run them before anything subjective.
+2. **Behavioral checks** — run the actual feature, follow the golden
+   path, hit the edge cases named in the brief.
+3. **Subjective checks** — code quality, UX, anything that requires
+   judgment. Only after the deterministic and behavioral checks pass.
+
+If a criterion cannot be checked mechanically, state how you confirmed
+it and accept the lower confidence.
+
+**Grok note:**
+
+
+1. Deterministic checks first (type/lint/test/build) via tools with real output.
+2. Behavioral checks using execution/REPL tools when available.
+3. Subjective review only after the above.
 
 ## Phase 6 — Rate
 
-Append one JSON object per line to `ratings.jsonl` with fields `ts`,
-`criteria_met`, `criteria_total`, and `rating` (integer 1–10). Optional:
-`mode`, `notes`, `failure_ref`.
 
-**Grok note:** Be honest. Low ratings on difficult tasks are extremely
-valuable data.
+Append one line to `ratings.jsonl` describing the run. **One JSON
+object per line.** Do not use a JSON array. Do not wrap multiple runs
+in a single line.
+
+Recommended fields (see schema line at the top of `ratings.jsonl`):
+
+- `ts` — ISO-8601 timestamp.
+- `task` — short task slug.
+- `brief` — path to the brief, or inline summary.
+- `criteria_met` / `criteria_total` — integers.
+- `rating` — **integer 1–10** for overall outcome.
+- `mode` — optional: `full` or `lightweight` (which workflow variant you ran).
+- `notes` — free text, optional.
+- `failure_ref` — path under `failures/` if a failure was captured.
+
+Legacy field names (`timestamp`, `score`, `criteria_passed`) may appear in
+older project logs; new entries should use the schema above.
+
+Ratings are how you learn whether the workflow is helping. Be honest;
+a low rating on a real run is more useful than a generous one.
+
+**Where to append:** a run’s rating lives where its artifacts live. In an installed
+project, that is `.ai/ratings.jsonl`. In this source repo, `core/ratings.jsonl` is a
+live ledger for work whose subject is this repo (brief under `core/tasks/`), and it
+keeps the labeled example entries at the top — not an examples-only file.
+
+**Grok note:**
+
+
+Be honest. Low ratings on difficult tasks are valuable data.
 
 ## Phase 7 — Failure capture
 
-Same as core, but with one Grok addition:
 
-When capturing failures, consider whether better tool use or better
-context loading could have prevented the issue. Document that.
+If you hit a repeatable failure — something that would trip you (or
+another contributor) again — copy `templates/failure-capture.md` into
+`failures/` with a descriptive filename.
 
-## Phase 8 — Handoff (from core v1.1)
+Capture, at minimum:
 
-Explicit handoff section in the task brief when relevant.
+- **Expected** behavior.
+- **Actual** behavior.
+- **Root cause** (or honest "unknown" + best guess).
+- **Detection** — how to notice this earlier next time.
+- **Resolution** — what fixed it.
+- **Prevention** — the durable change (rule, test, doc) that stops
+  recurrence.
+- **Follow-up** — concrete next action: add a test, write a rule,
+  update a doc. Link to the resulting PR or issue if any.
+
+The goal is not to log every bug, only patterns worth remembering.
+
+**Grok note:**
+
+
+When capturing failures, note whether better tool use or context loading could have prevented the issue.
+
+## Phase 8 — Handoff
+
+
+Before declaring done:
+
+- Summarize what changed, what was verified, and what is explicitly
+  not done (out-of-scope, parked, follow-ups).
+- Surface any approval gates that were hit, and their outcome.
+- Name any dead ends from phase 4 worth remembering.
+- Point at the rating entry and any new `failures/` file.
+
+The handoff is the artifact the next person (or next session) reads
+to pick up the work. Optimize for the reader, not for completeness.
+
+## Weekly refine
+
+
+Once a week, copy `templates/weekly-refine.md` and use it to skim recent
+ratings and failures. Convert repeated failures into tests, docs, or
+rules. Prune stale rules. Update `PROGRAM.md` if it has drifted.
 
 ---
 
-**Remember:** This is an optimized *adaptation*, not a replacement.
-The source of truth remains in `core/`. Use `../sync/check-core.sh`
-frequently, especially before important work.
+
+**Remember:** This is an optimized *adaptation*, not a replacement. The source of truth remains in `core/`. Use `../sync/check-core.sh` frequently, especially before important work.

@@ -20,6 +20,13 @@ jobs:
           # Full history for future staleness marker SHA resolution (git rev-list).
           fetch-depth: 0
 
+      - name: Generated adapter workflows in sync
+        shell: bash
+        run: |
+          PY=python3
+          "$PY" -c "" >/dev/null 2>&1 || PY=python
+          "$PY" scripts/generate-adapter-workflows.py --check
+
       - name: Adapter parity (verify.sh)
         shell: bash
         run: bash scripts/verify.sh

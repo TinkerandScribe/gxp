@@ -48,7 +48,7 @@ accurate; two ordering corrections from the review are baked into the sequence b
 |---|---|
 | Real eval fixtures in `core/evals/` (P2-1) | **done** (regression canary for verify wrapper) |
 | Installer `--dry-run`; README stops defaulting to `--force` (P2-5) | **done** (dry-run; README already shows `--force` as optional) |
-| Doc dedup behind core + per-adapter deltas (P2-4) | **deferred** — needs deliberate content architecture; floor now makes deltas verifiable |
+| Doc dedup behind core + per-adapter deltas (P2-4) | **done** — hybrid generator: `scripts/generate-adapter-workflows.py` + `deltas/workflow.delta.md` for claude/chatgpt/grok/perplexity; Cursor/Cowork unchanged; CI `--check` |
 
 ## Deliberately not adopted
 

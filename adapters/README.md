@@ -9,9 +9,11 @@ The core methodology lives in `../core/`. Adapters exist to make that methodolog
 ## Rules for Adapters
 
 - Significant changes to the *process* or *principles* must be made in `core/` first.
-- Adapters may duplicate content from core when it enables meaningfully better results for that AI.
-- Every adapter should have a clear way to stay in sync with core (strong instructions + convenient tooling).
-- The verification system treats unjustified drift as a failure.
+- **claude / chatgpt / grok / perplexity:** edit `deltas/workflow.delta.md` (tool-specific)
+  and regenerate with `python scripts/generate-adapter-workflows.py`. Do not hand-edit
+  generated `instructions/workflow.md` bodies (CI `--check`).
+- **cursor / cowork:** keep their existing models (`rule.mdc`; build-time core copy).
+- Every adapter has sync/check tooling; unjustified drift fails `verify.sh`.
 
 ## Current Adapters
 

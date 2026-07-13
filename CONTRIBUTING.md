@@ -8,10 +8,16 @@ templates, and small tooling** — clarity matters more than cleverness.
 **`core/` is the single source of truth.** The adapters (`adapters/cursor`, `grok`,
 `claude`, `chatgpt`, `perplexity`, `cowork`) re-express the same methodology for a specific tool.
 
-- A change to the **process or principles** goes into `core/` first, then gets ported
-  into the adapters that need it.
-- An adapter may rephrase or optimize for its tool, but must not quietly diverge from
-  core. Each adapter has a `sync/check-core.*` script — run it after changes.
+- A change to the **process or principles** goes into `core/` first.
+- For **claude / chatgpt / grok / perplexity**, published
+  `instructions/workflow.md` files are **generated** from `core/workflow.md` plus
+  `adapters/<tool>/ai-workflow/deltas/workflow.delta.md`. Edit **core and the delta**,
+  then run:
+  `python scripts/generate-adapter-workflows.py`
+  Do **not** hand-edit the generated workflow bodies (CI runs `--check`).
+- **Cursor** (`rule.mdc`) and **Cowork** (build-time core copy) stay on their existing models.
+- Each adapter has a `sync/check-core.*` script — run it after changes. Structural floor
+  and live sync markers must keep working.
 
 ## Use the methodology on itself
 

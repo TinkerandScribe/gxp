@@ -3,7 +3,7 @@
 **Date:** 2026-07-13  
 **Task slug:** doc-dedup-architecture  
 **Workflow:** full (this session: plan + brief only)  
-**Status:** **awaiting operator approval** — do not migrate without sign-off  
+**Status:** **approved Hybrid; implementation landed** (operator: proceed as recommended)  
 
 ## Goal
 
@@ -97,16 +97,16 @@ without a generator for the shared phase skeleton (drift returns).
 
 ---
 
-## Ideal State Criteria (for the **implementation** of P2-4 — not met in this planning session)
+## Ideal State Criteria (implementation)
 
-- [ ] 1. A documented generator (or explicit “no generator” rejection with rationale) lives under `scripts/` with `--check` that fails if published adapter workflows drift from generation inputs.  
-- [ ] 2. For each of claude/chatgpt/grok/perplexity: tool-specific content lives only in a delta file (or clearly marked non-generated section); shared phase prose is not copy-pasted by hand.  
-- [ ] 3. `bash scripts/verify.sh` exits 0 on clean tree after migration.  
-- [ ] 4. Structural floor still fails when Phase 8 is deleted from claude published workflow (local + CI negative test).  
-- [ ] 5. `bash scripts/update-sync-markers.sh` still rewrites the standard bold marker line in all four workflow paths.  
-- [ ] 6. Cursor `rule.mdc` and cowork build model remain green without forcing them onto the same generator.  
-- [ ] 7. ROADMAP P2-4 marked done with link to generator + delta layout.  
-- [ ] 8. No whole-file workflow allowlist returns.
+- [x] 1. Generator under `scripts/generate-adapter-workflows.py` with `--check`.  
+- [x] 2. Deltas at `adapters/{claude,chatgpt,grok,perplexity}/ai-workflow/deltas/workflow.delta.md`; shared phases from `core/workflow.md`.  
+- [x] 3. `bash scripts/verify.sh` exits 0 after migration.  
+- [x] 4. Phase 8 deletion from claude published workflow fails verify (local negative test).  
+- [x] 5. `update-sync-markers.sh` still rewrites bold marker lines (preserves via generator).  
+- [x] 6. Cursor/Cowork not forced onto generator; verify still green.  
+- [x] 7. ROADMAP P2-4 marked done.  
+- [x] 8. No whole-file workflow allowlist reintroduced.  
 
 ## Out of scope (this brief / first implementation)
 

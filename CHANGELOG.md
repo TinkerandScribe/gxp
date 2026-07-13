@@ -4,6 +4,17 @@ All notable changes to the public [GXP](https://github.com/TinkerandScribe/gxp) 
 documented here. Versioning follows [SemVer](https://semver.org/) for the methodology
 package as a whole (core + adapters + install/verify scripts).
 
+## [Unreleased]
+
+### Changed
+
+- **Doc dedup (P2-4 hybrid)** — `claude` / `chatgpt` / `grok` / `perplexity`
+  `instructions/workflow.md` are generated from `core/workflow.md` +
+  `adapters/<tool>/ai-workflow/deltas/workflow.delta.md` via
+  `scripts/generate-adapter-workflows.py` (`--check` in CI). Cursor `rule.mdc` and
+  Cowork build-time core copy unchanged. Edit core + deltas only; do not hand-edit
+  generated workflow bodies.
+
 ## [1.2.0] - 2026-07-13
 
 ### Added

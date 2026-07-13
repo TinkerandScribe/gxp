@@ -1,163 +1,324 @@
+<!-- GENERATED FILE — do not edit by hand.
+     Sources: core/workflow.md +
+              adapters/perplexity/ai-workflow/deltas/workflow.delta.md
+     Regenerate: python scripts/generate-adapter-workflows.py
+     Check:      python scripts/generate-adapter-workflows.py --check
+-->
 # Perplexity-Optimized Workflow (v1.1)
 
 > **Last synced from core:** 53e1c9e3303884c03b01a51bbb09d6eeed5320f5 (2026-07-13)
-> This file is intentionally allowed to diverge from `../../../core/workflow.md`
-> for Perplexity-specific strengths. Run `../sync/check-core.sh` regularly.
+> This file is generated from `core/workflow.md` plus the perplexity delta. Tool-specific notes are in the delta; shared methodology is core. Run `../sync/check-core.sh` regularly.
 
-This is a **Perplexity-optimized** adaptation of the core AI Workflow methodology.
+This is a **Perplexity-optimized** adaptation of the core AI Workflow methodology, oriented toward research and handoff rather than in-repo implementation.
 
 ## Perplexity Strengths We Leverage
 
-- Excellent real-time web search with high citation quality
+
+- Real-time web search with high citation quality
 - Parallel multi-query decomposition for broader coverage
-- MCP tool integration for repo and GitHub state inspection
-- Strong synthesis: turning scattered sources into structured, brief-ready output
+- MCP tool integration for repo and GitHub state inspection when available
+- Strong synthesis into structured, brief-ready output
 - Memory and Collections for persistent research context across sessions
 
-## Autonomy Calibration
+## Autonomy calibration
 
-This is an **L2/L3 research agent**. The agent executes focused research tasks within a defined scope, synthesizes findings, and produces outputs for handoff. It is **not** an implementation agent.
 
-**Perplexity note:** Use search tools aggressively. Never answer from internal knowledge alone when a search can give you a more current, grounded answer.
+This is an **L3/L4 bounded agent workflow**. The agent operates within a
+defined task brief with explicit Ideal State Criteria, runs verification
+itself, and pauses at approval gates. It is **not** L5 self-directed
+research: do not pick your own problems, do not expand scope beyond the
+brief, and do not skip the approval gates below.
 
-## Full vs Lightweight Workflow
+If you find yourself reasoning about goals or strategy that are not in the
+brief, stop and either update the brief explicitly or kick the question
+back to the operator.
 
-- **Full workflow**: Use for any research that will feed a task brief, inform an architectural decision, or be handed off to a coding agent.
-- **Lightweight workflow**: Use only for quick single-question lookups, fact-checking, or simple definitions.
+## Full vs lightweight workflow
 
-When in doubt, use the full workflow.
 
----
+Pick the variant before starting:
 
-## Phase 0 — Context Audit (Perplexity Enhanced)
+- **Full workflow** — phases 0 through 8 below. Use for any task that
+  changes behavior, touches more than one file in a non-trivial way, or
+  could plausibly regress something. The default.
+- **Lightweight workflow** — phases 1, 2, 3, 5 only. Skip the repo audit,
+  rating, failure capture, and handoff. Use only for trivial,
+  single-file, easily reversible changes (typo, comment, one-line fix).
+  If you start lightweight and find the task is bigger than expected,
+  upgrade to full.
 
-Before writing or synthesizing anything, gather context:
+When in doubt, run the full workflow. The overhead is small; the cost of
+skipping it on a real change is much larger.
 
-- Ask the operator: what is the task brief or problem statement?
-- If GitHub MCP tools are available, read key repo files: `PROGRAM.md`, `.ai/PROGRAM.md`, recent `ratings.jsonl`, and rules from `.ai/rules/`.
-- Identify what existing research has already been done (check Collections or prior threads).
-- Clarify the scope: what decisions does this research need to support?
+## Phase 0 — Repo audit
 
-**Perplexity-specific guidance:**
-- Use MCP repo tools to read actual file contents rather than guessing what the codebase contains.
-- If the task involves a specific technology or library, run an immediate web search for its current version, changelog, and known issues.
-- Explicitly identify which Focus mode (Web, Academic, Writing, Wolfram) is most appropriate for this research type.
-- If you are uncertain about scope, ask before beginning — a tightly-scoped research task always produces better output than a vague one.
 
----
+> **Path note:** paths below use the portable `.ai/` layout installed into target repos
+> by `scripts/install-ai-from-core.{sh,ps1}`. In this source repo the same content lives
+> under `core/` (e.g. `core/PROGRAM.template.md`, `core/rules/`, `core/failures/`,
+> `core/ratings.jsonl`).
 
-## Phase 1 — Research Brief
+Before writing or proposing anything, scan the repo for context:
 
-Structure every non-trivial research task as a brief with:
+- Read `.ai/PROGRAM.md` (project-specific context, verification commands,
+  conventions).
+- Read `.ai/rules/` (durable rules for this repo).
+- Read `.ai/failures/` (known repeatable failure modes).
+- Skim recent `ratings.jsonl` entries for patterns relevant to this task.
+- Note any tests, linters, or build commands the project standardizes on.
 
-- **Objective**: One sentence describing what the research must accomplish.
-- **Key Questions**: 3–7 binary or clearly answerable questions the research must address.
-- **Ideal State Criteria**: Binary checkable outcomes, e.g. "We have a current best-practices comparison of [A] vs [B] with ≥3 cited sources" or "We have identified all known breaking changes in [library] since v2.x."
-- **Out of Scope**: What this research thread explicitly does NOT need to cover.
-- **Handoff Target**: Which agent or phase will consume this research (e.g., "Grok Phase 1 brief", "Claude custom-instructions", "Cursor rule.mdc").
+The output of phase 0 is a short mental (or written) summary of the
+relevant constraints. If a rule or failure entry plausibly applies to
+this task, name it explicitly in the brief.
 
-**Perplexity tip:** Writing the Key Questions before searching forces you to decompose the problem properly. This leads to better query construction and avoids rabbit holes.
+**Perplexity note:**
 
----
 
-## Phase 2 — Self-Evaluation Gate
+You are often an **L2/L3 research agent**: execute focused research within scope, synthesize, and hand off — not implement large code changes here.
 
-Before executing research, evaluate:
+- Prefer search over answering from internal knowledge alone when currency matters.
+- If MCP/repo tools exist, read `PROGRAM.md` / `.ai/PROGRAM.md`, rules, and recent ratings rather than guessing.
+- Identify Focus mode (Web, Academic, Writing, Wolfram) appropriate to the task.
+- If scope is unclear, ask before deep searching.
 
-- [ ] Are the Key Questions specific enough that I can tell when each one is answered?
-- [ ] Is the scope narrow enough to complete in one session without rabbit-holing?
-- [ ] Do I have a clear handoff target in mind?
-- [ ] Am I using the right Focus mode for this research type?
+## Phase 0.5 — Strategy & Model Selection
 
-If any gate fails, revise the brief before proceeding.
 
----
+After the repo audit but before (or while) writing the task brief, classify
+the task along dimensions such as complexity and scope, risk and
+reversibility, domain knowledge required, tolerance for iteration, and the
+margin by which the chosen engine must clear the criteria.
 
-## Phase 3 — Research Execution (Perplexity Enhanced)
+Choose the least-capable engine (model, tool, persona, handoff target, or
+environment) that can still satisfy the Ideal State Criteria with
+comfortable margin. This conserves context budget, reduces unnecessary cost
+and latency, and keeps the agent operating inside its reliable capability
+band.
 
-Execute research using this approach:
+Record the decision explicitly in the brief (see the **Strategy/Model:**
+line in the template) together with a one-line rationale.
 
-1. **Decompose**: Break the Key Questions into 2–3 focused parallel queries per question. Avoid single broad queries.
-2. **Search**: Run queries, review results and citations. Note which sources are primary vs secondary.
-3. **Iterate**: Follow up on the highest-signal threads. Stop when you have enough to answer the Key Question — do not keep searching for marginal improvement.
-4. **Capture**: For every Key Question answered, write a 2–5 sentence synthesis with inline citations.
+Re-evaluate the choice at the Phase 4 anti-loop gate if the current engine
+is failing to make progress.
 
-**Perplexity optimization:**
-- Use Follow-Up questions aggressively to drill into sub-topics without losing the thread.
-- When a result cites a primary source (paper, docs, changelog), click through and confirm the claim.
-- Label your confidence on each finding: HIGH (direct primary source), MEDIUM (secondary source or synthesis), LOW (single source or older content).
+The classification and selection process is defined here in core and is
+tool-agnostic. Individual adapters and environments may specialize the
+set of available "engines" (model tiers, composer targets, handoff
+formats, etc.) but the decision skeleton, margin rule, and re-evaluation
+discipline are canonical.
 
----
+When a job may leave the current tool (privacy class, stakes, cost, or
+location), also read `routing.md` (same directory as this file in source;
+`.ai/routing.md` when installed) and fill the **Routing** block in the
+task brief.
 
-## Phase 4 — Anti-Loop Rule
+## Phase 1 — Task brief
 
-**Do not re-research a question you have already answered without new signal.**
 
-Signs you are looping:
-- Re-running the same or very similar queries
-- Getting the same sources back repeatedly
-- Rewriting your synthesis without new information
+Copy `templates/task-brief.md`. Fill it in **before writing code**.
 
-If you are looping, stop. Either the question is answered or it requires a different research strategy (different Focus mode, different query angle, or escalation to a human).
+A brief contains:
 
----
+- **Goal** — one sentence on what success looks like.
+- **Context** — links to relevant files, prior PRs, tickets, plus
+  anything surfaced in phase 0.
+- **Ideal State Criteria** — **4 to 8 binary, checkable statements**
+  that will be true when the task is done. "Tests pass" is too vague;
+  "running `pytest tests/test_foo.py` exits 0 with no warnings" is
+  checkable.
+- **Out of scope** — what you are deliberately not doing.
+- **Verification plan** — how each criterion will be checked.
 
-## Phase 5 — Verification (Perplexity Enhanced)
+If you cannot write 4 binary criteria, the task is not understood yet.
+Stop and clarify.
 
-Before finalizing research output, verify:
+Adapter floor: Ideal State Criteria count is **4–8** (binary, checkable) — same rule as core's “4 to 8”.
 
-1. **Citation check**: Every major claim has at least one cited, retrievable source.
-2. **Currency check**: Time-sensitive claims (library versions, best practices, security advisories) reference sources from the last 12 months unless historical context is explicit.
-3. **Coverage check**: Each Ideal State Criterion from Phase 1 has been addressed.
-4. **Conflict check**: If sources disagree, the conflict is explicitly surfaced — do not silently pick one.
+**Perplexity note:**
 
-**Strongly recommended order for Perplexity:**
-1. Check coverage of Ideal State Criteria first (binary: done or not done).
-2. Run a final verification query for any claims that have only one source.
-3. Review citations for freshness and source quality.
-4. Only then write the final synthesis.
 
----
+Structure research as a brief with Objective, 3–7 Key Questions, 4–8 binary Ideal State Criteria, Out of Scope, and **Handoff Target** (which coding agent/phase consumes this). Writing Key Questions before searching reduces rabbit holes.
+
+## Phase 2 — Self-evaluation gate
+
+
+Before coding, evaluate the brief against these gates. Each must pass.
+
+- **Completeness** — does the brief cover the actual goal, or just the
+  surface request? Is anything load-bearing missing?
+- **Ambiguity** — are any criteria not strictly binary? Rewrite or drop.
+- **Scope trap** — does the brief include cleanup, refactors, or
+  "while we're here" items that are not strictly required? Move them to
+  out-of-scope.
+- **Verification** — does every criterion have a concrete check? If a
+  criterion can only be confirmed by eyeballing, mark how you will
+  confirm and accept the lower confidence.
+- **Approval gates** — are there points in the work where the operator
+  must sign off (destructive changes, irreversible operations, schema
+  migrations, public-facing copy, anything touching production)? Name
+  them in the brief and **stop at each one** until approved.
+
+If any gate fails, fix the brief before continuing.
+
+## Phase 3 — Implementation
+
+
+Make the change. Principles:
+
+- Keep the diff focused on the brief. Anything outside the brief goes to
+  a follow-up list, not into this change.
+- Prefer the smallest viable change. Don't refactor opportunistically.
+- Follow the conventions surfaced in phase 0.
+- Don't introduce new dependencies, abstractions, or files unless the
+  brief calls for them.
+- If you have to make a non-obvious decision, write a one-line note
+  somewhere durable (commit message, brief, comment) — not just chat.
+
+**Perplexity note:**
+
+
+Research execution pattern:
+
+1. **Decompose** Key Questions into 2–3 focused queries each.
+2. **Search** and separate primary vs secondary sources.
+3. **Iterate** on high-signal threads; stop when criteria are met.
+4. **Capture** 2–5 sentence synthesis with citations and confidence (HIGH/MEDIUM/LOW).
+
+## Phase 4 — Anti-loop rule
+
+
+If the same approach fails twice in a row (same test failing for the
+same reason, same lint error reappearing after a fix attempt, same
+build break), **stop**. Do not try the same shape of fix a third time.
+
+- Write down the dead end: what you tried, why it failed, what you now
+  believe is true.
+- Switch strategy: re-read the failing output carefully, change the
+  hypothesis, ask the operator if the brief itself is wrong.
+- Persistent dead ends should land in `failures/` once the task is done.
+
+This rule exists because the most expensive failure mode is grinding
+on a broken approach. Cheap to notice, cheap to recover.
+
+**Perplexity note:**
+
+
+Do not re-research a question already answered without new signal. Same or near-same queries looping → stop and change strategy or escalate.
+
+## Phase 5 — Verification
+
+
+Run the verification commands from `PROGRAM.md`. Walk through each
+Ideal State Criterion and confirm it is met.
+
+Order of checks:
+
+1. **Deterministic checks first** — type checking, linting, unit tests,
+   build, schema validation, anything that returns a clear pass/fail.
+   These are cheap and unambiguous. Run them before anything subjective.
+2. **Behavioral checks** — run the actual feature, follow the golden
+   path, hit the edge cases named in the brief.
+3. **Subjective checks** — code quality, UX, anything that requires
+   judgment. Only after the deterministic and behavioral checks pass.
+
+If a criterion cannot be checked mechanically, state how you confirmed
+it and accept the lower confidence.
+
+**Perplexity note:**
+
+
+1. Coverage of Ideal State Criteria (binary).
+2. Citation and currency checks (time-sensitive claims prefer recent sources).
+3. Surface source conflicts explicitly.
+4. Only then finalize synthesis.
 
 ## Phase 6 — Rate
 
-Append one JSON object per line to `ratings.jsonl`, using the core schema (`ts` ISO-8601,
-`criteria_met`/`criteria_total` integers, `rating` **integer 1–10**) plus the
-Perplexity-specific extension fields:
 
-```json
-{"ts": "...", "task": "...", "brief": "...", "criteria_met": 5, "criteria_total": 6, "rating": 8, "mode": "full", "notes": "...", "adapter": "perplexity", "citation_quality": "high|medium|low", "handoff_ready": true|false}
-```
+Append one line to `ratings.jsonl` describing the run. **One JSON
+object per line.** Do not use a JSON array. Do not wrap multiple runs
+in a single line.
 
-**Perplexity note:** Be honest. Flag if the research produced lower-confidence findings. Downstream agents make better decisions when they know the confidence level of what they received.
+Recommended fields (see schema line at the top of `ratings.jsonl`):
 
----
+- `ts` — ISO-8601 timestamp.
+- `task` — short task slug.
+- `brief` — path to the brief, or inline summary.
+- `criteria_met` / `criteria_total` — integers.
+- `rating` — **integer 1–10** for overall outcome.
+- `mode` — optional: `full` or `lightweight` (which workflow variant you ran).
+- `notes` — free text, optional.
+- `failure_ref` — path under `failures/` if a failure was captured.
 
-## Phase 7 — Failure Capture
+Legacy field names (`timestamp`, `score`, `criteria_passed`) may appear in
+older project logs; new entries should use the schema above.
 
-Same as core, with one Perplexity addition:
+Ratings are how you learn whether the workflow is helping. Be honest;
+a low rating on a real run is more useful than a generous one.
 
-When capturing failures, consider:
-- Was the query decomposition too broad or too narrow?
-- Was the wrong Focus mode used?
-- Would a different query angle have surfaced better sources?
-- Did the research rabbit-hole beyond its intended scope?
+**Where to append:** a run’s rating lives where its artifacts live. In an installed
+project, that is `.ai/ratings.jsonl`. In this source repo, `core/ratings.jsonl` is a
+live ledger for work whose subject is this repo (brief under `core/tasks/`), and it
+keeps the labeled example entries at the top — not an examples-only file.
 
-Document these so future research sessions improve.
+**Perplexity note:**
 
----
+
+Use core ratings fields (`ts`, `criteria_met`, `criteria_total`, `rating` 1–10). Optional extensions: `adapter: perplexity`, `citation_quality`, `handoff_ready`. Flag low-confidence research honestly.
+
+## Phase 7 — Failure capture
+
+
+If you hit a repeatable failure — something that would trip you (or
+another contributor) again — copy `templates/failure-capture.md` into
+`failures/` with a descriptive filename.
+
+Capture, at minimum:
+
+- **Expected** behavior.
+- **Actual** behavior.
+- **Root cause** (or honest "unknown" + best guess).
+- **Detection** — how to notice this earlier next time.
+- **Resolution** — what fixed it.
+- **Prevention** — the durable change (rule, test, doc) that stops
+  recurrence.
+- **Follow-up** — concrete next action: add a test, write a rule,
+  update a doc. Link to the resulting PR or issue if any.
+
+The goal is not to log every bug, only patterns worth remembering.
+
+**Perplexity note:**
+
+
+Capture query decomposition issues, wrong Focus mode, and rabbit-hole scope failures so later research sessions improve.
 
 ## Phase 8 — Handoff
 
-Every Full workflow research session should end with a structured handoff document. See `instructions/research-handoff.md` for the template.
 
-The handoff document must include:
-- Synthesized findings (not raw Perplexity output)
-- Open questions and risks
-- Recommended next steps for the receiving agent
-- Confidence levels on key findings
+Before declaring done:
+
+- Summarize what changed, what was verified, and what is explicitly
+  not done (out-of-scope, parked, follow-ups).
+- Surface any approval gates that were hit, and their outcome.
+- Name any dead ends from phase 4 worth remembering.
+- Point at the rating entry and any new `failures/` file.
+
+The handoff is the artifact the next person (or next session) reads
+to pick up the work. Optimize for the reader, not for completeness.
+
+**Perplexity note:**
+
+
+End Full research sessions with a structured handoff (see `instructions/research-handoff.md` when present): synthesized findings, open questions/risks, next steps for the receiving agent, confidence levels.
+
+## Weekly refine
+
+
+Once a week, copy `templates/weekly-refine.md` and use it to skim recent
+ratings and failures. Convert repeated failures into tests, docs, or
+rules. Prune stale rules. Update `PROGRAM.md` if it has drifted.
 
 ---
 
-**Remember:** This is an optimized *adaptation*, not a replacement.
-The source of truth remains in `core/`. Use `../sync/check-core.sh` frequently, especially before important work.
+
+**Remember:** This is an optimized *adaptation*, not a replacement. The source of truth remains in `core/`. Use `../sync/check-core.sh` frequently. Hand implementation work to a coding adapter after research is ready.
