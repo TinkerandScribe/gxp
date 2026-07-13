@@ -4,6 +4,30 @@ All notable changes to the public [GXP](https://github.com/TinkerandScribe/gxp) 
 documented here. Versioning follows [SemVer](https://semver.org/) for the methodology
 package as a whole (core + adapters + install/verify scripts).
 
+## [1.1.3] - 2026-07-13
+
+### Fixed
+
+- **Grok `check-core.sh` def-order** — the "Last synced from core" NOTE used `log` /
+  `$YELLOW` before those helpers were defined, so a regex-matching real SHA crashed under
+  `set -u`. The NOTE now runs after helpers are defined (behaviorally verified).
+
+### Added
+
+- **GxP naming disclaimer** in `README.md` — Guided eXecution Protocol is unrelated to
+  regulated-industry GxP (GMP/GLP/GCP).
+- **`ROADMAP.md`** — verification-hardening sequence from the 2026-07 external audit
+  review: corrected order P0-2 → P0-1 → P0-3, three interaction corrections with evidence,
+  P1/P2 dispositions, and deliberately-not-adopted items.
+- **P0 draft briefs** — `core/tasks/real-diff-sync-checks.md`,
+  `core/tasks/ci-verify-workflow.md`, `core/tasks/staleness-marker-real-sha.md` (binary
+  criteria, out-of-scope, verification plan, explicit Depends-on). The staleness brief
+  records a post-audit defect: the marker regex requires `core: <hex>` but the bold
+  marker format renders `core:** <hex>`, so even a real SHA never matches.
+- **`core/failures/jsonl-append-via-shell-heredoc-corrupts-escapes.md`** — shell heredoc
+  `\$` lands as an invalid JSON escape in `ratings.jsonl`.
+- Review/task briefs for the audit review and this unblocker run under `core/tasks/`.
+
 ## [1.1.2] - 2026-07-11
 
 ### Changed
@@ -85,6 +109,7 @@ package as a whole (core + adapters + install/verify scripts).
 - Cross-platform installer (`.ps1` + `.sh`) and adapter-parity check (`verify.sh`).
 - MIT license, `CODE_OF_CONDUCT`, and `SECURITY` policy.
 
+[1.1.3]: https://github.com/TinkerandScribe/gxp/releases/tag/v1.1.3
 [1.1.2]: https://github.com/TinkerandScribe/gxp/releases/tag/v1.1.2
 [1.1.1]: https://github.com/TinkerandScribe/gxp/releases/tag/v1.1.1
 [1.1.0]: https://github.com/TinkerandScribe/gxp/releases/tag/v1.1.0

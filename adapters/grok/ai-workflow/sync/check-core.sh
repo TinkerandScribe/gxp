@@ -95,14 +95,8 @@ if [ -f "$GROK_WORKFLOW" ]; then
     fi
 fi
 
-if [ -n "$LAST_SYNCED_SHA" ]; then
-    if command -v git >/dev/null 2>&1 && git -C "$REPO_ROOT" rev-parse --verify "$LAST_SYNCED_SHA" >/dev/null 2>&1; then
-        commits_since=$(git -C "$REPO_ROOT" rev-list --count "$LAST_SYNCED_SHA..HEAD" -- core/ 2>/dev/null || echo "?")
-        if [ "$commits_since" != "0" ] && [ "$commits_since" != "?" ]; then
-            log "${YELLOW}NOTE${RESET}   Core has advanced $commits_since commit(s) since last recorded sync ($LAST_SYNCED_SHA)"
-        fi
-    fi
-fi
+# (The staleness NOTE for this marker is emitted in Main Checks below — after
+# the log/color helpers are defined; emitting it here crashes under set -u.)
 
 # --- Drift Allowlist ---
 ALLOWLIST_FILE="$ADAPTER_ROOT/sync/drift-allowlist.txt"
@@ -251,6 +245,15 @@ log "Repo root: $REPO_ROOT"
 log "Core:      $CORE_DIR"
 log "Adapter:   $ADAPTER_ROOT"
 echo
+
+if [ -n "$LAST_SYNCED_SHA" ]; then
+    if command -v git >/dev/null 2>&1 && git -C "$REPO_ROOT" rev-parse --verify "$LAST_SYNCED_SHA" >/dev/null 2>&1; then
+        commits_since=$(git -C "$REPO_ROOT" rev-list --count "$LAST_SYNCED_SHA..HEAD" -- core/ 2>/dev/null || echo "?")
+        if [ "$commits_since" != "0" ] && [ "$commits_since" != "?" ]; then
+            log "${YELLOW}NOTE${RESET}   Core has advanced $commits_since commit(s) since last recorded sync ($LAST_SYNCED_SHA)"
+        fi
+    fi
+fi
 
 print_header "Critical Methodology"
 compare_file "workflow.md" "instructions/workflow.md" "Workflow Definition" "true"

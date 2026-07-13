@@ -2,6 +2,13 @@
 
 **A verification-first, binary-criteria workflow for bounded AI agents.**
 
+> **Naming note:** "GXP" here stands for **Guided eXecution Protocol**, an AI-coding
+> workflow discipline. It is unrelated to — and makes no claim of compliance with —
+> regulated-industry "GxP" (Good Manufacturing / Laboratory / Clinical Practice:
+> GMP/GLP/GCP) frameworks used in pharmaceutical, biotech, and medical-device
+> validation. Do not use this project as a substitute for validated GxP compliance
+> tooling.
+
 GXP is a lightweight methodology for getting reliable work out of AI coding agents. The
 core idea: before any non-trivial task, write **4–8 binary, checkable criteria** for what
 "done" means; pass a self-evaluation gate; make the smallest viable change; **stop after
@@ -121,7 +128,9 @@ bash scripts/verify.sh   # required files present + adapter sync checks pass (dr
 
 ## Releases
 
-See [`CHANGELOG.md`](CHANGELOG.md). Latest: **v1.1.2** (live-for-fork-work ratings policy; webfetch-summarizer failure capture).
+See [`CHANGELOG.md`](CHANGELOG.md). Latest: **v1.1.3** (grok sync-check def-order fix; GxP naming disclaimer; verification-hardening roadmap + P0 briefs).
+
+Planned work lives in [`ROADMAP.md`](ROADMAP.md) (verification-hardening sequence from the 2026-07 external audit review).
 
 ## License
 
