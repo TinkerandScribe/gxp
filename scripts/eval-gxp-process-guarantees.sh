@@ -180,9 +180,8 @@ RESULTS_FILE="$OUT_DIR/process-guarantees-raw.txt"
 } | tee -a "$RESULTS_FILE"
 
 # Build markdown report
-# Probe executability — on Windows Git Bash, `python3` may be the Microsoft Store stub.
-PY=python3
-"$PY" -c "" >/dev/null 2>&1 || PY=python
+# shellcheck source=lib/find-python.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/find-python.sh"
 "$PY" - "$OUT_DIR" "$BEFORE_REF" "$AFTER_REF" <<'PY'
 import sys, re, json
 from pathlib import Path

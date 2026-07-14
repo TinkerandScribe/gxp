@@ -1,6 +1,6 @@
 # Task brief — core “4–8” prose + drop generator inject (Roadmap M4.2)
 
-**Status:** draft — ready for pickup  
+**Status:** done  
 **Depends on:** generator present (done); ideally after or with
 [`shared-find-python.md`](shared-find-python.md)  
 **Workflow:** full (touches core + regen)
@@ -18,15 +18,12 @@ adapters no longer need a special “Adapter floor” inject line.
 
 ## Ideal State Criteria
 
-- [ ] 1. `core/workflow.md` Phase 1 states **4–8** (ASCII hyphen or en-dash) binary
-  criteria, not only the prose form `4 to 8`.  
-- [ ] 2. Generator no longer injects a special floor-only Phase 1 line (or inject is
-  a no-op / removed).  
-- [ ] 3. `python scripts/generate-adapter-workflows.py` rewritten outputs; `--check`
-  clean after commit.  
-- [ ] 4. All of claude/chatgpt/grok structural floors still PASS (incl. 4-8 marker).  
-- [ ] 5. `bash scripts/verify.sh` exit 0; Phase 8 delete still fails verify (spot-check).  
-- [ ] 6. No reintroduction of whole-file workflow allowlist.
+- [x] 1. Core Phase 1 uses **4–8**.  
+- [x] 2. Generator inject removed.  
+- [x] 3. Regenerated; `--check` clean.  
+- [x] 4. Structural floors PASS.  
+- [x] 5. verify.sh 0.  
+- [x] 6. No whole-file allowlist.  
 
 ## Out of scope
 

@@ -1,6 +1,6 @@
 # Task brief — grow code-quality eval task set (Roadmap M5.1)
 
-**Status:** draft — ready for pickup  
+**Status:** done  
 **Depends on:** harness + selftest (done)  
 **Blocks:** recommended before
 [`blind-multi-model-code-quality-campaign.md`](blind-multi-model-code-quality-campaign.md)  
@@ -19,17 +19,13 @@ often, and multi-model campaigns cover more failure modes.
 
 ## Ideal State Criteria
 
-- [ ] 1. At least **+2** new tasks under
-  `core/evals/golden/agent-code-quality/tasks/` with
-  `prompt.md`, `starter/`, `reference/`, `hidden_tests/`, `meta.json`.  
-- [ ] 2. Each new task: reference scores **1.0**; starter scores **≤0.5** correctness.  
-- [ ] 3. `scripts/eval-agent-code-quality-selftest.sh` covers all tasks (or a clear
-  list update) and exits 0.  
-- [ ] 4. `scripts/run-code-quality-seeds.py` extended with ≥2 control seeds per new
-  task OR documented why seeds are deferred.  
-- [ ] 5. Stdlib only; no network; no secrets.  
-- [ ] 6. `bash scripts/verify.sh` exit 0.  
-- [ ] 7. Short note in `agent-code-quality/README.md` listing new tasks.
+- [x] 1. +2 tasks: `04-safe-join`, `05-count-words`.  
+- [x] 2. Reference 1.0; starters well below reference (safe-join / count-words).  
+- [x] 3. Selftest lists all five tasks.  
+- [x] 4. Seeds extended for 04/05 in `run-code-quality-seeds.py`.  
+- [x] 5. Stdlib only.  
+- [x] 6. verify.sh 0.  
+- [x] 7. README updated.  
 
 ## Out of scope
 

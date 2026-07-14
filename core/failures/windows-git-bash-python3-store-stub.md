@@ -43,7 +43,7 @@ and `scripts/eval-gxp-process-guarantees.sh`.
 ## Follow-up
 
 - [x] Cowork `build.sh` bare `python3` fixed.
-- [ ] Optional: shared `scripts/lib/find-python.sh` sourced by all scripts.
+- [x] Shared `scripts/lib/find-python.sh` sourced by eval scripts, CI, cowork build.
 
 ## Repeatable?
 

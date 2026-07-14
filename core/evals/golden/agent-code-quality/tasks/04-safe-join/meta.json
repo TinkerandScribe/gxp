@@ -1,0 +1,5 @@
+{
+  "impl_file": "safe_join.py",
+  "env_var": "IMPL_PATH",
+  "title": "Safe path join under a root"
+}

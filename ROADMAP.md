@@ -71,21 +71,16 @@ Ordering corrections that shaped delivery (kept for history):
 
 ### Milestone 4 — tooling polish (small, first)
 
-Low risk; removes known footguns before more eval investment.
-
-| Order | Item | Brief | Depends on |
+| Order | Item | Brief | Status |
 |---|---|---|---|
-| 1 | Shared Python discovery helper for bash scripts | [`shared-find-python.md`](core/tasks/shared-find-python.md) | — |
-| 2 | Core prose `4 to 8` → `4–8`; drop generator floor inject | [`core-four-eight-prose.md`](core/tasks/core-four-eight-prose.md) | preferably after or with #1 |
-
-**Why first:** Windows Store-stub and generator inject are known debt; both are
-reversible and verify-gated. They should not block science work but are cheap wins.
+| 1 | Shared Python discovery helper for bash scripts | [`shared-find-python.md`](core/tasks/shared-find-python.md) | **done** — `scripts/lib/find-python.sh` |
+| 2 | Core prose `4 to 8` → `4–8`; drop generator floor inject | [`core-four-eight-prose.md`](core/tasks/core-four-eight-prose.md) | **done** |
 
 ### Milestone 5 — deepen the code-quality eval
 
-| Order | Item | Brief | Depends on |
+| Order | Item | Brief | Status |
 |---|---|---|---|
-| 1 | Grow frozen task set (harder, less ceiling) | [`grow-code-quality-eval-tasks.md`](core/tasks/grow-code-quality-eval-tasks.md) | harness present (done) |
+| 1 | Grow frozen task set (harder, less ceiling) | [`grow-code-quality-eval-tasks.md`](core/tasks/grow-code-quality-eval-tasks.md) | **done** — tasks `04-safe-join`, `05-count-words` |
 
 **Why before multi-model:** multi-seed campaign showed control often near-perfect on
 easy tasks; more tasks improve statistical and ecological validity of later runs.

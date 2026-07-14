@@ -35,6 +35,8 @@ agent-code-quality/
     01-parse-kv/
     02-slugify/
     03-merge-intervals/
+    04-safe-join/
+    05-count-words/
   trials/                   # recorded campaign runs (optional)
 ```
 

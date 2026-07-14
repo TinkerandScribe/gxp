@@ -6,10 +6,8 @@ SCORE=core/evals/golden/agent-code-quality/harness/score_trial.py
 TASK=01-parse-kv
 BASE=core/evals/golden/agent-code-quality/tasks/$TASK
 
-# Probe executability, not just existence — on Windows, `command -v python3`
-# matches the Microsoft Store stub, which cannot run (see cowork check-core fix).
-PY=python3
-"$PY" -c "" >/dev/null 2>&1 || PY=python
+# shellcheck source=lib/find-python.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/find-python.sh"
 
 # One temp dir, passed to python via argv — hardcoding /tmp inside the heredoc
 # breaks on Git Bash/Windows, where bash converts /tmp in *arguments* to the
@@ -17,7 +15,7 @@ PY=python3
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
-for TASK in 01-parse-kv 02-slugify 03-merge-intervals; do
+for TASK in 01-parse-kv 02-slugify 03-merge-intervals 04-safe-join 05-count-words; do
   BASE="core/evals/golden/agent-code-quality/tasks/$TASK"
   echo "=== selftest $TASK ==="
   "$PY" "$SCORE" --task "$TASK" --result "$BASE/starter" --out "$TMP_DIR/starter-$TASK.json"

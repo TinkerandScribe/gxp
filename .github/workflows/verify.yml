@@ -23,8 +23,8 @@ jobs:
       - name: Generated adapter workflows in sync
         shell: bash
         run: |
-          PY=python3
-          "$PY" -c "" >/dev/null 2>&1 || PY=python
+          # shellcheck source=scripts/lib/find-python.sh
+          source scripts/lib/find-python.sh
           "$PY" scripts/generate-adapter-workflows.py --check
 
       - name: Adapter parity (verify.sh)

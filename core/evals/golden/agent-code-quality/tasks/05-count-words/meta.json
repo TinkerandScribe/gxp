@@ -1,0 +1,5 @@
+{
+  "impl_file": "count_words.py",
+  "env_var": "IMPL_PATH",
+  "title": "Word frequency counter"
+}

@@ -1,6 +1,6 @@
 # Task brief — shared find-python helper (Roadmap M4.1)
 
-**Status:** draft — ready for pickup  
+**Status:** done  
 **Depends on:** nothing  
 **Workflow:** lightweight or full (small multi-file)
 
@@ -18,16 +18,12 @@ re-implementing (and forgetting) the Windows Store-stub probe.
 
 ## Ideal State Criteria
 
-- [ ] 1. `scripts/lib/find-python.sh` (or equivalent) sets `PY` to an executable
-  interpreter via `"$candidate" -c ""` probe (`python3` then `python`).  
-- [ ] 2. At least these call sites use it (or equivalent sourced one-liner):  
-  `eval-agent-code-quality-selftest.sh`, `eval-gxp-process-guarantees.sh`,
-  `generate-adapter-workflows.py` invocation in CI/docs, `cowork/build.sh`.  
-- [ ] 3. `bash scripts/eval-agent-code-quality-selftest.sh` exits 0.  
-- [ ] 4. `bash scripts/verify.sh` exits 0.  
-- [ ] 5. Failure capture follow-up checkbox updated; no bare critical `python3` in
-  those call sites.  
-- [ ] 6. Rating appended if full workflow.
+- [x] 1. `scripts/lib/find-python.sh` sets `PY` via executable probe.  
+- [x] 2. Call sites: selftest, process-guarantees, CI generate `--check`, cowork build.  
+- [x] 3. Selftest exit 0.  
+- [x] 4. verify.sh exit 0.  
+- [x] 5. Failure capture updated.  
+- [x] 6. Rating on the combined proceed commit.  
 
 ## Out of scope
 

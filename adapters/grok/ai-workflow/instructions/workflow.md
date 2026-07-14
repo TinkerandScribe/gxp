@@ -123,17 +123,15 @@ A brief contains:
 - **Goal** — one sentence on what success looks like.
 - **Context** — links to relevant files, prior PRs, tickets, plus
   anything surfaced in phase 0.
-- **Ideal State Criteria** — **4 to 8 binary, checkable statements**
+- **Ideal State Criteria** — **4–8 binary, checkable statements**
   that will be true when the task is done. "Tests pass" is too vague;
   "running `pytest tests/test_foo.py` exits 0 with no warnings" is
   checkable.
 - **Out of scope** — what you are deliberately not doing.
 - **Verification plan** — how each criterion will be checked.
 
-If you cannot write 4 binary criteria, the task is not understood yet.
+If you cannot write 4 strong binary criteria, the task is not understood yet.
 Stop and clarify.
-
-Adapter floor: Ideal State Criteria count is **4–8** (binary, checkable) — same rule as core's “4 to 8”.
 
 **Grok note:**
 

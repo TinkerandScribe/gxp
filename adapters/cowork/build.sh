@@ -72,9 +72,8 @@ cp "$CORE_DIR/templates/task-brief.md"                    "$BRIEF_REFS/task-brie
 cp "$CORE_DIR/templates/failure-capture.md"               "$FAIL_REFS/failure-capture-template.md"
 
 # 5. Validate SKILL.md frontmatter
-# Probe executability — Windows Git Bash may resolve python3 to the Store stub.
-PY=python3
-"$PY" -c "" >/dev/null 2>&1 || PY=python
+# shellcheck source=../../scripts/lib/find-python.sh
+source "$REPO_ROOT/scripts/lib/find-python.sh"
 echo "[cowork build] validating SKILL.md frontmatter..."
 "$PY" - "$STAGE_DIR" <<'PY'
 import os, re, sys

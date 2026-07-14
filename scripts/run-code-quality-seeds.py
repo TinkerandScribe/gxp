@@ -24,7 +24,7 @@ AQ = ROOT / "core/evals/golden/agent-code-quality"
 TASKS = AQ / "tasks"
 SCORE = AQ / "harness/score_trial.py"
 COMPARE = AQ / "harness/compare_scores.py"
-OUT = AQ / "trials/2026-07-13-multiseed"
+OUT = AQ / "trials/2026-07-14-multiseed"
 PY = sys.executable
 
 # Control seeds: incomplete implementations (common agent mistakes)
@@ -135,12 +135,39 @@ def slugify(text: str) -> str:
     return out
 ''',
     },
+    "04-safe-join": {
+        "s1_no_check": '''import os
+def safe_join(root: str, *parts: str) -> str:
+    return os.path.join(root, *parts)
+''',
+        "s2_norm_only": '''import os
+def safe_join(root: str, *parts: str) -> str:
+    return os.path.normpath(os.path.join(root, *parts))
+''',
+    },
+    "05-count-words": {
+        "s1_naive": '''def count_words(text: str) -> dict:
+    counts = {}
+    for w in text.split():
+        counts[w] = counts.get(w, 0) + 1
+    return counts
+''',
+        "s2_lower_only": '''def count_words(text: str) -> dict:
+    counts = {}
+    for w in text.split():
+        k = w.lower()
+        counts[k] = counts.get(k, 0) + 1
+    return counts
+''',
+    },
 }
 
 IMPL_NAME = {
     "01-parse-kv": "parse_kv.py",
     "02-slugify": "slugify.py",
     "03-merge-intervals": "merge_intervals.py",
+    "04-safe-join": "safe_join.py",
+    "05-count-words": "count_words.py",
 }
 
 

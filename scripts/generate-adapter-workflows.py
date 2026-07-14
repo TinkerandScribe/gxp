@@ -184,14 +184,6 @@ def generate_one(adapter: str, core: dict[str, str]) -> str:
         lines.append("")
         lines.append(body.rstrip())
         lines.append("")
-        # Structural floor in adapters requires a 4…8 token (e.g. 4-8 / 4–8).
-        # core/ uses prose "4 to 8", which does not match 4[^alnum]+8.
-        if heading.startswith("Phase 1"):
-            lines.append(
-                "Adapter floor: Ideal State Criteria count is **4–8** "
-                "(binary, checkable) — same rule as core's “4 to 8”."
-            )
-            lines.append("")
         # Adapter note under this phase
         note_key = phase_note_key(heading)
 
