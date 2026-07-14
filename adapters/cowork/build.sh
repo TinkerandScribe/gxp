@@ -72,8 +72,11 @@ cp "$CORE_DIR/templates/task-brief.md"                    "$BRIEF_REFS/task-brie
 cp "$CORE_DIR/templates/failure-capture.md"               "$FAIL_REFS/failure-capture-template.md"
 
 # 5. Validate SKILL.md frontmatter
+# Probe executability — Windows Git Bash may resolve python3 to the Store stub.
+PY=python3
+"$PY" -c "" >/dev/null 2>&1 || PY=python
 echo "[cowork build] validating SKILL.md frontmatter..."
-python3 - "$STAGE_DIR" <<'PY'
+"$PY" - "$STAGE_DIR" <<'PY'
 import os, re, sys
 stage = sys.argv[1]
 errors = []
@@ -105,7 +108,7 @@ print("  + all SKILL.md frontmatter OK")
 PY
 
 # 6. Validate plugin.json parses
-python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$STAGE_DIR/.claude-plugin/plugin.json"
+"$PY" -c "import json,sys; json.load(open(sys.argv[1]))" "$STAGE_DIR/.claude-plugin/plugin.json"
 echo "[cowork build]   + plugin.json parses"
 
 # 7. Zip into dist/gxp.plugin (build in tempdir, atomic copy)

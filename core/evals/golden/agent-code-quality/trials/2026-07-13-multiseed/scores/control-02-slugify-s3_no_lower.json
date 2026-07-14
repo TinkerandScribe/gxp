@@ -1,0 +1,23 @@
+{
+  "task": "02-slugify",
+  "result": "C:\\Users\\Reepicheep\\Claude\\gxp-public\\core\\evals\\golden\\agent-code-quality\\trials\\2026-07-13-multiseed\\control\\02-slugify\\s3_no_lower",
+  "correctness": 0.375,
+  "tests_passed": 3,
+  "tests_total": 8,
+  "no_test_tamper": true,
+  "scope_ok": true,
+  "scope": {
+    "scope_ok": true,
+    "extra_files": [],
+    "forbidden_extra": [],
+    "starter_file_count": 1,
+    "result_file_count": 1
+  },
+  "process": {
+    "process_score": null,
+    "process_notes": "no brief provided"
+  },
+  "primary_code_score": 0.375,
+  "disqualified": false,
+  "test_log": "FAIL test_basic (test_slugify.TestSlugify.test_basic): 'Hello-World' != 'hello-world'\n- Hello-World\n? ^     ^\n+ hello-world\n? ^     ^\n\nPASS test_collapse (test_slugify.TestSlugify.test_collapse)\nPASS test_empty (test_slugify.TestSlugify.test_empty)\nFAIL test_mixed (test_slugify.TestSlugify.test_mixed): 'Foo-Bar-Baz' != 'foo-bar-baz'\n- Foo-Bar-Baz\n? ^   ^   ^\n+ foo-bar-baz\n? ^   ^   ^\n\nFAIL test_numbers (test_slugify.TestSlugify.test_numbers): 'Item-42' != 'item-42'\n- Item-42\n? ^\n+ item-42\n? ^\n\nFAIL test_punctuation (test_slugify.TestSlugify.test_punctuation): 'Hello-World' != 'hello-world'\n- Hello-World\n? ^     ^\n+ hello-world\n? ^     ^\n\nFAIL test_trim (test_slugify.TestSlugify.test_trim): 'Hi' != 'hi'\n- Hi\n+ hi\n\nPASS test_unicode_dropped (test_slugify.TestSlugify.test_unicode_dropped)"
+}

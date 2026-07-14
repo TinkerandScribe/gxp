@@ -1,0 +1,23 @@
+{
+  "task": "03-merge-intervals",
+  "result": "C:\\Users\\Reepicheep\\Claude\\gxp-public\\core\\evals\\golden\\agent-code-quality\\trials\\2026-07-13-multiseed\\control\\03-merge-intervals\\s1_no_sort",
+  "correctness": 0.875,
+  "tests_passed": 7,
+  "tests_total": 8,
+  "no_test_tamper": true,
+  "scope_ok": true,
+  "scope": {
+    "scope_ok": true,
+    "extra_files": [],
+    "forbidden_extra": [],
+    "starter_file_count": 1,
+    "result_file_count": 1
+  },
+  "process": {
+    "process_score": null,
+    "process_notes": "no brief provided"
+  },
+  "primary_code_score": 0.875,
+  "disqualified": false,
+  "test_log": "PASS test_contained (test_merge_intervals.TestMerge.test_contained)\nPASS test_disjoint (test_merge_intervals.TestMerge.test_disjoint)\nPASS test_empty (test_merge_intervals.TestMerge.test_empty)\nPASS test_no_mutate (test_merge_intervals.TestMerge.test_no_mutate)\nPASS test_overlap (test_merge_intervals.TestMerge.test_overlap)\nPASS test_single (test_merge_intervals.TestMerge.test_single)\nPASS test_touching (test_merge_intervals.TestMerge.test_touching)\nFAIL test_unsorted (test_merge_intervals.TestMerge.test_unsorted): Lists differ: [[5, 6]] != [[1, 4], [5, 6]]\n\nFirst differing element 0:\n[5, 6]\n[1, 4]\n\nSecond list contains 1 additional elements.\nFirst extra element 1:\n[5, 6]\n\n- [[5, 6]]\n+ [[1, 4], [5, 6]]"
+}

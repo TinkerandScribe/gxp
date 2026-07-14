@@ -38,11 +38,12 @@ and `scripts/eval-gxp-process-guarantees.sh`.
 
 - Prefer the repo pattern: `PY=python3; "$PY" -c "" >/dev/null 2>&1 || PY=python`.
 - Never hardcode `/tmp` inside mixed bash/Python path construction on Git Bash.
-- Cowork `build.sh` still has a bare `python3` — same class; fix when touched.
+- Cowork `build.sh` now uses the same probe (fixed 2026-07-13).
 
 ## Follow-up
 
-- [ ] Audit remaining `python3` invocations under `scripts/` and `adapters/*/build*`.
+- [x] Cowork `build.sh` bare `python3` fixed.
+- [ ] Optional: shared `scripts/lib/find-python.sh` sourced by all scripts.
 
 ## Repeatable?
 

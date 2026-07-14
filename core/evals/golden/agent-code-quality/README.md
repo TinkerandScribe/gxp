@@ -38,10 +38,14 @@ agent-code-quality/
   trials/                   # recorded campaign runs (optional)
 ```
 
-## Latest campaign
+## Latest campaigns
 
-See [`trials/2026-07-13-campaign/CAMPAIGN_REPORT.md`](trials/2026-07-13-campaign/CAMPAIGN_REPORT.md)
-(control vs GXP, 3 tasks, 1 model seed).
+| Campaign | Path |
+|---|---|
+| Single-seed control vs GXP | [`trials/2026-07-13-campaign/CAMPAIGN_REPORT.md`](trials/2026-07-13-campaign/CAMPAIGN_REPORT.md) |
+| Multi-seed (3 incomplete controls × 3 tasks) + multi-runner selftest attestation | [`trials/2026-07-13-multiseed/CAMPAIGN_REPORT.md`](trials/2026-07-13-multiseed/CAMPAIGN_REPORT.md) |
+
+Regenerate multi-seed: `python scripts/run-code-quality-seeds.py`
 
 ## Quick self-test (proves the scorer works)
 

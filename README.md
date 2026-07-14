@@ -130,7 +130,7 @@ bash scripts/verify.sh   # required files present + adapter sync checks pass (dr
 
 ## Releases
 
-See [`CHANGELOG.md`](CHANGELOG.md). Latest: **v1.2.0** (CI, structural floor, live sync markers, installer dry-run, verification-hardening roadmap complete except doc-dedup).
+See [`CHANGELOG.md`](CHANGELOG.md). Latest: **v1.3.0** (doc-dedup generator, code-quality eval harness, Windows python portability).
 
 Planned work lives in [`ROADMAP.md`](ROADMAP.md) (verification-hardening sequence from the 2026-07 external audit review).
 

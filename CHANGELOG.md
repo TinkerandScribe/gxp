@@ -4,7 +4,7 @@ All notable changes to the public [GXP](https://github.com/TinkerandScribe/gxp) 
 documented here. Versioning follows [SemVer](https://semver.org/) for the methodology
 package as a whole (core + adapters + install/verify scripts).
 
-## [Unreleased]
+## [1.3.0] - 2026-07-13
 
 ### Changed
 
@@ -14,6 +14,17 @@ package as a whole (core + adapters + install/verify scripts).
   `scripts/generate-adapter-workflows.py` (`--check` in CI). Cursor `rule.mdc` and
   Cowork build-time core copy unchanged. Edit core + deltas only; do not hand-edit
   generated workflow bodies.
+
+### Fixed
+
+- **Cowork `build.sh`** — uses executable Python probe (Windows Git Bash Store stub).
+- **Eval scripts** — same probe + Git Bash temp-path handling (see failure capture
+  `windows-git-bash-python3-store-stub.md`).
+
+### Added
+
+- **Agent code-quality eval** — hidden-test harness, 3 tasks, multi-seed campaign runner
+  (`scripts/run-code-quality-seeds.py`), multi-runner selftest attestation.
 
 ## [1.2.0] - 2026-07-13
 
@@ -151,6 +162,7 @@ package as a whole (core + adapters + install/verify scripts).
 - Cross-platform installer (`.ps1` + `.sh`) and adapter-parity check (`verify.sh`).
 - MIT license, `CODE_OF_CONDUCT`, and `SECURITY` policy.
 
+[1.3.0]: https://github.com/TinkerandScribe/gxp/releases/tag/v1.3.0
 [1.2.0]: https://github.com/TinkerandScribe/gxp/releases/tag/v1.2.0
 [1.1.3]: https://github.com/TinkerandScribe/gxp/releases/tag/v1.1.3
 [1.1.2]: https://github.com/TinkerandScribe/gxp/releases/tag/v1.1.2
