@@ -4,12 +4,24 @@
 **Workspaces:** `results/<tool>/<arm>/<task>/` under this directory (starters only).  
 **Frozen at:** before implement sessions (operator desktop launch)
 
-## Models / tools
+## Models / tools (filled after runs — per-trial, not matched across arms)
 
-| Label | Product (fill if you change) |
-|-------|------------------------------|
-| claude | Claude desktop / Claude Code (your default model) |
-| cursor | Cursor desktop (your default agent model) |
+| ID | App | Arm | Task | Model (operator) |
+|----|-----|-----|------|------------------|
+| 1 | Claude | control | 01-parse-kv | fable |
+| 2 | Claude | gxp | 01-parse-kv | opus high |
+| 3 | Claude | control | 04-safe-join | sonnet med |
+| 4 | Claude | gxp | 04-safe-join | haiku |
+| 5 | Claude | control | 05-count-words | sonnet extra |
+| 6 | Claude | gxp | 05-count-words | opus extra |
+| 7 | Cursor | control | 01-parse-kv | auto |
+| 8 | Cursor | gxp | 01-parse-kv | grok 4.5 high fast |
+| 9 | Cursor | control | 04-safe-join | gpt 5.6 terra med |
+| 10 | Cursor | gxp | 04-safe-join | composer 2.5 |
+| 11 | Cursor | control | 05-count-words | composer 2.5 |
+| 12 | Cursor | gxp | 05-count-words | gpt 5.6 terra med |
+
+**Note:** control and GXP used **different** models per task — confounds process with capability.
 
 ## Matrix
 

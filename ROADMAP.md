@@ -87,16 +87,11 @@ easy tasks; more tasks improve statistical and ecological validity of later runs
 
 ### Milestone 6 — evidence (the open scientific question)
 
-| Order | Item | Brief | Depends on |
+| Order | Item | Brief | Status |
 |---|---|---|---|
-| 1 | Blind multi-model control vs GXP campaign | [`blind-multi-model-code-quality-campaign.md`](core/tasks/blind-multi-model-code-quality-campaign.md) | M5 recommended; harness multi-runner selftest done |
+| 1 | Blind multi-model control vs GXP campaign | [`blind-multi-model-code-quality-campaign.md`](core/tasks/blind-multi-model-code-quality-campaign.md) | **run** — [`trials/2026-07-14-operator-blind/`](core/evals/golden/agent-code-quality/trials/2026-07-14-operator-blind/) pre-registered rule **FAIL** (ceiling: all 1.0; models not matched across arms). Earlier local pack: `trials/2026-07-13-blind/`. |
 
-**Why this is the real “prove it” item:** prior campaigns used fixture authors or
-incomplete one-shot seeds. This requires **independent agents** that did not write
-hidden tests, with frozen prompts and score-only operator.
-
-**Claim gate:** do not market “GXP makes agents write better code” until this (or
-equivalent) passes pre-registered success criteria in its brief.
+**Claim gate:** still **do not** market “GXP makes agents write better code” — both desktop blinds failed the pre-registered lift rule (ceiling / confounders). Next: harder tasks + **matched models** across control/GXP.
 
 ### Milestone 7 — product dogfood (parallel track)
 
