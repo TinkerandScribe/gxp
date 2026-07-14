@@ -132,7 +132,8 @@ bash scripts/verify.sh   # required files present + adapter sync checks pass (dr
 
 See [`CHANGELOG.md`](CHANGELOG.md). Latest: **v1.3.0** (doc-dedup generator, code-quality eval harness, Windows python portability).
 
-Planned work lives in [`ROADMAP.md`](ROADMAP.md) (verification-hardening sequence from the 2026-07 external audit review).
+Planned work lives in [`ROADMAP.md`](ROADMAP.md) (Part A: completed verification hardening;
+Part B: next polish → eval depth → blind multi-model evidence → dogfood).
 
 ## License
 
