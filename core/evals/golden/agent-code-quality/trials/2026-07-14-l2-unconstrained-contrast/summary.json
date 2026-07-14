@@ -1,0 +1,11 @@
+{
+  "campaign": "2026-07-14-l2-unconstrained-contrast",
+  "task": "10-circuit-breaker",
+  "mean_control": 0.95455,
+  "mean_gxp": 0.95455,
+  "gap": 0.0,
+  "wins": {"gxp": 0, "control": 0, "tie": 2},
+  "rule_pass": false,
+  "verdict": "FAIL",
+  "note": "Contrast: unconstrained best-effort control matches GXP; public_green design remains the PASS condition"
+}
