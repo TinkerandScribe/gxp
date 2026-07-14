@@ -62,6 +62,17 @@ agent-code-quality/
   trials/
 ```
 
+## Transcript metrics (L2 tool loops)
+
+Secondary process signals from `agent_tool_log.jsonl` (do not replace hidden correctness):
+
+```bash
+python core/evals/golden/agent-code-quality/harness/score_transcript.py --scan-trials \
+  --out core/evals/golden/agent-code-quality/trials/TRANSCRIPT_METRICS.json
+```
+
+See [`trials/TRANSCRIPT_METRICS.md`](trials/TRANSCRIPT_METRICS.md).
+
 ## Task difficulty bands
 
 | Band | Tasks | Notes |
