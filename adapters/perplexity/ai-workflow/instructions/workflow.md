@@ -6,7 +6,7 @@
 -->
 # Perplexity-Optimized Workflow (v1.1)
 
-> **Last synced from core:** fb992d161501570826e8a79c9ebe5c576733f5b6 (2026-07-14)
+> **Last synced from core:** 27db6485668402cb753db8fe7fbedf76e9072f0c (2026-07-14)
 > This file is generated from `core/workflow.md` plus the perplexity delta. Tool-specific notes are in the delta; shared methodology is core. Run `../sync/check-core.sh` regularly.
 
 This is a **Perplexity-optimized** adaptation of the core AI Workflow methodology, oriented toward research and handoff rather than in-repo implementation.
