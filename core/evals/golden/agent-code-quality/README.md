@@ -57,9 +57,17 @@ agent-code-quality/
   harness/score_trial.py
   harness/compare_scores.py
   tasks/
-    01-parse-kv/ … 05-count-words/
+    01-parse-kv/ … 05-count-words/   # easier (often ceiling on strong models)
+    06-lru-ttl/ 07-deep-merge/ 08-line-chunker/  # hard pack (headroom)
   trials/
 ```
+
+## Task difficulty bands
+
+| Band | Tasks | Notes |
+|------|-------|--------|
+| Easy / ceiling-prone | `01`–`05` | Strong models often score 1.0 single-shot |
+| **Hard (prefer for claims)** | `06-lru-ttl`, `07-deep-merge`, `08-line-chunker` | Multi-rule + stateful traps; see [`core/tasks/hard-code-quality-eval-tasks.md`](../../../tasks/hard-code-quality-eval-tasks.md) |
 
 ## Latest campaigns
 
@@ -67,6 +75,7 @@ agent-code-quality/
 |---|---|
 | Single-seed control vs GXP | [`trials/2026-07-13-campaign/CAMPAIGN_REPORT.md`](trials/2026-07-13-campaign/CAMPAIGN_REPORT.md) |
 | Multi-seed (3 incomplete controls × 3 tasks) + multi-runner selftest attestation | [`trials/2026-07-13-multiseed/CAMPAIGN_REPORT.md`](trials/2026-07-13-multiseed/CAMPAIGN_REPORT.md) |
+| Matched Grok + Qwen (ceiling FAIL on 01/04/05) | [`trials/2026-07-14-matched-grok-qwen/CAMPAIGN_REPORT.md`](trials/2026-07-14-matched-grok-qwen/CAMPAIGN_REPORT.md) |
 
 Regenerate multi-seed: `python scripts/run-code-quality-seeds.py`
 

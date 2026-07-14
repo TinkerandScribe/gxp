@@ -1,0 +1,5 @@
+{
+  "impl_file": "deep_merge.py",
+  "env_var": "IMPL_PATH",
+  "title": "Deep merge with list modes and None-delete"
+}
