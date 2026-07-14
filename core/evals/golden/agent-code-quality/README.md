@@ -23,21 +23,36 @@ For each trial, the scorer produces objective metrics:
 A condition “wins” on code quality only if **correctness** is higher with equal or
 better `no_test_tamper` and `scope`. Process scores never override test failures.
 
+## Operator entrypoint (Claude / Cursor)
+
+**Tell the agent:**
+
+> Follow `core/evals/golden/agent-code-quality/OPERATOR_RUNBOOK.md` end to end.
+
+| File | Role |
+|------|------|
+| [`OPERATOR_RUNBOOK.md`](OPERATOR_RUNBOOK.md) | Seed → 12 implement chats → score → report |
+| [`prompts/control.md`](prompts/control.md) | One implement session (no GXP) |
+| [`prompts/gxp.md`](prompts/gxp.md) | One implement session (GXP) |
+| [`scripts/seed-operator-blind.sh`](scripts/seed-operator-blind.sh) | Create workspaces |
+| [`scripts/score-operator-blind.sh`](scripts/score-operator-blind.sh) | Score all results |
+
 ## Layout
 
 ```
 agent-code-quality/
-  README.md                 # this file
-  PROTOCOL.md               # how to run a fair A/B trial
-  harness/score_trial.py    # automatic scorer
+  README.md
+  OPERATOR_RUNBOOK.md       # operator entrypoint
+  PROTOCOL.md
+  prompts/control.md
+  prompts/gxp.md
+  scripts/seed-operator-blind.sh
+  scripts/score-operator-blind.sh
+  harness/score_trial.py
   harness/compare_scores.py
   tasks/
-    01-parse-kv/
-    02-slugify/
-    03-merge-intervals/
-    04-safe-join/
-    05-count-words/
-  trials/                   # recorded campaign runs (optional)
+    01-parse-kv/ … 05-count-words/
+  trials/
 ```
 
 ## Latest campaigns
