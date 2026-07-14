@@ -1,0 +1,17 @@
+{
+  "campaign": "2026-07-14-l2-pilot",
+  "task": "09-rate-limit-service",
+  "mean_control": 0.95835,
+  "mean_gxp": 0.95835,
+  "gap": 0.0,
+  "wins": {"gxp": 0, "control": 0, "tie": 2},
+  "rule_pass": false,
+  "verdict": "FAIL",
+  "rows": [
+    {"model": "grok", "arm": "control", "correctness": 1.0, "passed": "12/12"},
+    {"model": "grok", "arm": "gxp", "correctness": 1.0, "passed": "12/12", "process": 1.0},
+    {"model": "qwen", "arm": "control", "correctness": 0.9167, "passed": "11/12"},
+    {"model": "qwen", "arm": "gxp", "correctness": 0.9167, "passed": "11/12", "process": 1.0}
+  ],
+  "notes": "Both Qwen arms miss test_invalid_config_fail_closed only. L2 breaks all-1.0 ceiling for qwen3.6:27b."
+}

@@ -178,6 +178,15 @@ def score_scope(task_id: str, result_dir: Path, starter_dir: Path) -> dict:
         "BRIEF",
         "HANDOFF",
     )
+    # Tool-using agent telemetry / notes (not product scope creep)
+    allowed_exact = {
+        "BRIEF.md",
+        "HANDOFF.md",
+        "ERROR.txt",
+        "agent_tool_log.jsonl",
+        "raw_last_model.md",
+        "raw_model_output.md",
+    }
     extra = result_files - starter_files
     forbidden = {
         e
@@ -185,7 +194,8 @@ def score_scope(task_id: str, result_dir: Path, starter_dir: Path) -> dict:
         if not e.startswith(allowed_new_prefixes)
         and e not in starter_files
         and not e.endswith(".md")  # allow notes
-        and Path(e).name not in ("BRIEF.md", "HANDOFF.md")
+        and Path(e).name not in allowed_exact
+        and e not in allowed_exact
     }
     # Overwriting hidden_tests is handled separately; if agent created hidden_tests, forbid
     forbidden |= {e for e in extra if e.startswith("hidden_tests/")}
