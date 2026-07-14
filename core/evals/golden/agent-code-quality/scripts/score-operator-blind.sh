@@ -5,7 +5,8 @@
 #     core/evals/golden/agent-code-quality/trials/YYYY-MM-DD-operator-blind
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
+# scripts/ -> agent-code-quality -> golden -> evals -> core -> repo root
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../../.." && pwd)"
 cd "$ROOT"
 
 # shellcheck source=../../../../scripts/lib/find-python.sh

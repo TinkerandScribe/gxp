@@ -1,6 +1,8 @@
 # Operator runbook — blind control vs GXP (Claude + Cursor)
 
-**Tell the agent:**  
+**Desktop apps (simplest):** open [`DESKTOP_LAUNCH.md`](DESKTOP_LAUNCH.md) — one paste, set `TRIAL_ID`.
+
+**Tell a shell agent:**  
 > Follow `core/evals/golden/agent-code-quality/OPERATOR_RUNBOOK.md` end to end. Do not create a git tag or GitHub release unless I explicitly ask.
 
 This file is the single entrypoint for an **operator-led** M6-style blind campaign.  

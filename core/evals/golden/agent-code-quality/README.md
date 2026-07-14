@@ -25,7 +25,13 @@ better `no_test_tamper` and `scope`. Process scores never override test failures
 
 ## Operator entrypoint (Claude / Cursor)
 
-**Tell the agent:**
+**Desktop apps (Claude / Cursor) — one paste per trial:**
+
+> Open `core/evals/golden/agent-code-quality/DESKTOP_LAUNCH.md` and run the single launch prompt with `TRIAL_ID = N`.
+
+Workspaces for **2026-07-14** are pre-seeded under `trials/2026-07-14-operator-blind/`.
+
+**Full operator agent (shell):**
 
 > Follow `core/evals/golden/agent-code-quality/OPERATOR_RUNBOOK.md` end to end.
 

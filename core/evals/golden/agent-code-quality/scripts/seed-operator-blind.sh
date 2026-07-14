@@ -5,7 +5,8 @@
 #   bash .../seed-operator-blind.sh 2026-07-14   # optional date stamp
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
+# scripts/ -> agent-code-quality -> golden -> evals -> core -> repo root
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../../.." && pwd)"
 cd "$ROOT"
 
 DATE="${1:-$(date +%Y-%m-%d)}"
