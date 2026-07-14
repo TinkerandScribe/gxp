@@ -1,0 +1,29 @@
+"""Config loader — starter fail-open."""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+DEFAULTS = {"failure_threshold": 3, "success_threshold": 2, "open_seconds": 30.0}
+
+
+def load_breaker_config(path: str | None) -> dict:
+    if path is None:
+        return dict(DEFAULTS)
+    p = Path(path)
+    if not p.is_file():
+        # BUG: fail open — huge failure threshold, never opens
+        return {"failure_threshold": 10**9, "success_threshold": 1, "open_seconds": 0.001}
+    cfg = dict(DEFAULTS)
+    try:
+        for raw in p.read_text(encoding="utf-8").splitlines():
+            line = raw.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            k, v = line.split("=", 1)
+            k, v = k.strip(), v.strip()
+            if k in cfg:
+                cfg[k] = int(v) if k != "open_seconds" else float(v)
+    except Exception:
+        return {"failure_threshold": 10**9, "success_threshold": 1, "open_seconds": 0.001}
+    return cfg

@@ -16,7 +16,7 @@ TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
 for TASK in 01-parse-kv 02-slugify 03-merge-intervals 04-safe-join 05-count-words \
-  06-lru-ttl 07-deep-merge 08-line-chunker 09-rate-limit-service; do
+  06-lru-ttl 07-deep-merge 08-line-chunker 09-rate-limit-service 10-circuit-breaker; do
   BASE="core/evals/golden/agent-code-quality/tasks/$TASK"
   echo "=== selftest $TASK ==="
   "$PY" "$SCORE" --task "$TASK" --result "$BASE/starter" --out "$TMP_DIR/starter-$TASK.json"

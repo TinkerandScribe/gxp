@@ -68,7 +68,7 @@ agent-code-quality/
 |------|-------|--------|
 | Easy / ceiling-prone | `01`–`05` | Strong models often score 1.0 single-shot |
 | Hard single-shot | `06-lru-ttl`, `07-deep-merge`, `08-line-chunker` | Multi-rule traps; still often ceiling |
-| **L2 tool-using multi-factor** | `09-rate-limit-service` | Multi-file + `.ai/` memory + weak public tests; use [`prompts/control-tools.md`](prompts/control-tools.md) / [`gxp-tools.md`](prompts/gxp-tools.md); brief [`l2-tool-using-multi-factor-eval.md`](../../../tasks/l2-tool-using-multi-factor-eval.md) |
+| **L2 tool-using multi-factor** | `09-rate-limit-service`, `10-circuit-breaker` | Multi-file + `.ai/` + weak public green trap; public_green vs GXP wins on both; prompts `control-public-green.md` / `gxp-tools.md` |
 
 ## Latest campaigns
 

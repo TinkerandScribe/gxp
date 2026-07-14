@@ -1,0 +1,33 @@
+{
+  "task": "10-circuit-breaker",
+  "result": "C:\\Users\\Reepicheep\\Claude\\gxp-public\\core\\evals\\golden\\agent-code-quality\\trials\\2026-07-14-l2-task10-pg-vs-gxp\\results\\qwen\\gxp\\10-circuit-breaker",
+  "correctness": 0.9091,
+  "tests_passed": 10,
+  "tests_total": 11,
+  "no_test_tamper": true,
+  "scope_ok": true,
+  "scope": {
+    "scope_ok": true,
+    "extra_files": [
+      "BRIEF.md",
+      "HANDOFF.md",
+      "agent_tool_log.jsonl",
+      "raw_last_model.md"
+    ],
+    "forbidden_extra": [],
+    "starter_file_count": 10,
+    "result_file_count": 14
+  },
+  "process": {
+    "process_score": 1.0,
+    "process_checks": {
+      "has_goal": true,
+      "has_out_of_scope": true,
+      "criteria_count_ge_4": true,
+      "mentions_verify": true
+    }
+  },
+  "primary_code_score": 0.9091,
+  "disqualified": false,
+  "test_log": "PASS test_defaults_none (test_circuit_breaker.TestCircuitBreaker.test_defaults_none)\nPASS test_half_open_failure_reopens (test_circuit_breaker.TestCircuitBreaker.test_half_open_failure_reopens)\nPASS test_half_open_needs_success_threshold (test_circuit_breaker.TestCircuitBreaker.test_half_open_needs_success_threshold)\nFAIL test_invalid_config_fail_closed (test_circuit_breaker.TestCircuitBreaker.test_invalid_config_fail_closed): 3 != 1\nPASS test_missing_config_fail_closed (test_circuit_breaker.TestCircuitBreaker.test_missing_config_fail_closed)\nPASS test_open_does_not_allow_before_timer (test_circuit_breaker.TestCircuitBreaker.test_open_does_not_allow_before_timer)\nPASS test_open_to_half_open_after_timer (test_circuit_breaker.TestCircuitBreaker.test_open_to_half_open_after_timer)\nPASS test_opens_after_threshold_failures (test_circuit_breaker.TestCircuitBreaker.test_opens_after_threshold_failures)\nPASS test_stdlib_only (test_circuit_breaker.TestCircuitBreaker.test_stdlib_only)\nPASS test_success_resets_failure_streak (test_circuit_breaker.TestCircuitBreaker.test_success_resets_failure_streak)\nPASS test_valid_config (test_circuit_breaker.TestCircuitBreaker.test_valid_config)"
+}

@@ -21,9 +21,8 @@ MODEL = os.environ.get("GXP_QWEN_MODEL", "qwen3.6:27b")
 URL = os.environ.get("OLLAMA_HOST", "http://127.0.0.1:11434").rstrip("/") + "/api/chat"
 MAX_STEPS = int(os.environ.get("GXP_L2_MAX_STEPS", "12"))
 ROOT = Path(__file__).resolve().parents[5]
-PROMPT_TASK = (
-    ROOT / "core/evals/golden/agent-code-quality/tasks/09-rate-limit-service/prompt.md"
-)
+AQ = ROOT / "core/evals/golden/agent-code-quality"
+DEFAULT_TASK = "09-rate-limit-service"
 
 
 def chat(messages: list[dict]) -> str:
@@ -168,8 +167,8 @@ def run_tool(ws: Path, action: dict, *, arm: str = "control") -> str:
     return f"ERROR: unknown action {act}"
 
 
-def system_prompt(arm: str) -> str:
-    task = PROMPT_TASK.read_text(encoding="utf-8")
+def system_prompt(arm: str, task_prompt: str) -> str:
+    task = task_prompt
     base = f"""You fix a Python package in a workspace using tools.
 Reply each turn with ONE JSON object only (optional ```json fence):
 {{"action":"list"|"read"|"write"|"run"|"done", "path":"...", "content":"...", "cmd":"..."}}
@@ -219,11 +218,21 @@ def main() -> int:
         required=True,
     )
     ap.add_argument("--workspace", type=Path, required=True)
+    ap.add_argument(
+        "--task",
+        default=DEFAULT_TASK,
+        help="task id under agent-code-quality/tasks (for prompt.md)",
+    )
     args = ap.parse_args()
     ws = args.workspace.resolve()
     if not ws.is_dir():
         print("bad workspace", ws)
         return 2
+    prompt_path = AQ / "tasks" / args.task / "prompt.md"
+    if not prompt_path.is_file():
+        print("missing task prompt", prompt_path)
+        return 2
+    task_prompt = prompt_path.read_text(encoding="utf-8")
 
     if args.arm == "public_green":
         user0 = (
@@ -268,7 +277,7 @@ def main() -> int:
             return 0
 
     messages = [
-        {"role": "system", "content": system_prompt(args.arm)},
+        {"role": "system", "content": system_prompt(args.arm, task_prompt)},
         {"role": "user", "content": user0},
     ]
 

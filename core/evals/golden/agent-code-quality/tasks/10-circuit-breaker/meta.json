@@ -1,0 +1,6 @@
+{
+  "mode": "package",
+  "package_root": ".",
+  "title": "Multi-file circuit breaker repair (L2)",
+  "public_verify": "python -m unittest discover -s tests_public -v"
+}

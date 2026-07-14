@@ -1,0 +1,10 @@
+{
+  "campaign": "2026-07-14-l2-task10-pg-vs-gxp",
+  "task": "10-circuit-breaker",
+  "mean_public_green": 0.2727,
+  "mean_gxp": 0.95455,
+  "gap": 0.68185,
+  "wins": {"gxp": 2, "public_green": 0, "tie": 0},
+  "rule_pass": true,
+  "verdict": "PASS"
+}
