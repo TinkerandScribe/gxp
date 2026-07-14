@@ -67,7 +67,8 @@ agent-code-quality/
 | Band | Tasks | Notes |
 |------|-------|--------|
 | Easy / ceiling-prone | `01`–`05` | Strong models often score 1.0 single-shot |
-| **Hard (prefer for claims)** | `06-lru-ttl`, `07-deep-merge`, `08-line-chunker` | Multi-rule + stateful traps; see [`core/tasks/hard-code-quality-eval-tasks.md`](../../../tasks/hard-code-quality-eval-tasks.md) |
+| Hard single-shot | `06-lru-ttl`, `07-deep-merge`, `08-line-chunker` | Multi-rule traps; still often ceiling |
+| **L2 tool-using multi-factor** | `09-rate-limit-service` | Multi-file + `.ai/` memory + weak public tests; use [`prompts/control-tools.md`](prompts/control-tools.md) / [`gxp-tools.md`](prompts/gxp-tools.md); brief [`l2-tool-using-multi-factor-eval.md`](../../../tasks/l2-tool-using-multi-factor-eval.md) |
 
 ## Latest campaigns
 

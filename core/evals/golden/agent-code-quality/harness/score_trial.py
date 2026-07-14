@@ -69,6 +69,42 @@ def load_meta(task_id: str) -> dict:
     return {"impl_file": "parse_kv.py", "env_var": "IMPL_PATH"}
 
 
+def _run_unittest_dir(td_path: Path, env: dict) -> tuple[float, int, int, str]:
+    old = os.environ.copy()
+    os.environ.clear()
+    os.environ.update(env)
+    try:
+        loader = unittest.TestLoader()
+        suite = loader.discover(str(td_path), pattern="test_*.py")
+        buf_out: list[str] = []
+
+        class L(unittest.TextTestResult):
+            def addSuccess(self, test):
+                super().addSuccess(test)
+                buf_out.append(f"PASS {test}")
+
+            def addFailure(self, test, err):
+                super().addFailure(test, err)
+                buf_out.append(f"FAIL {test}: {err[1]}")
+
+            def addError(self, test, err):
+                super().addError(test, err)
+                buf_out.append(f"ERROR {test}: {err[1]}")
+
+        runner = unittest.TextTestRunner(
+            verbosity=0, resultclass=L, stream=open(os.devnull, "w")
+        )
+        result = runner.run(suite)
+    finally:
+        os.environ.clear()
+        os.environ.update(old)
+    total = result.testsRun
+    failed = len(result.failures) + len(result.errors)
+    passed = total - failed
+    correctness = (passed / total) if total else 0.0
+    return correctness, passed, total, "\n".join(buf_out)
+
+
 def run_hidden_tests(task_id: str, result_dir: Path) -> tuple[float, int, int, str]:
     """Return (correctness, passed, total, log)."""
     task_dir = TASKS / task_id
@@ -77,6 +113,33 @@ def run_hidden_tests(task_id: str, result_dir: Path) -> tuple[float, int, int, s
         raise SystemExit(f"No hidden_tests for task {task_id}")
 
     meta = load_meta(task_id)
+    mode = meta.get("mode", "single_file")
+
+    # Package mode: grade a multi-file tree (L2 tool-using tasks).
+    if mode == "package":
+        package_root = meta.get("package_root", ".")
+        with tempfile.TemporaryDirectory() as td:
+            td_path = Path(td)
+            # Copy result tree under pkg/ so imports are stable
+            pkg = td_path / "pkg"
+            src = result_dir
+            if package_root not in (".", "", None):
+                src = result_dir / package_root
+            if not src.is_dir():
+                return 0.0, 0, 0, f"missing package root {src}"
+            shutil.copytree(
+                src,
+                pkg,
+                ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "hidden_tests"),
+            )
+            for f in hidden.glob("test_*.py"):
+                shutil.copy2(f, td_path / f.name)
+            env = os.environ.copy()
+            env["RESULT_ROOT"] = str(pkg.resolve())
+            env["IMPL_PATH"] = str(pkg.resolve())
+            env["PYTHONPATH"] = str(pkg.resolve()) + os.pathsep + env.get("PYTHONPATH", "")
+            return _run_unittest_dir(td_path, env)
+
     impl_name = meta.get("impl_file", "parse_kv.py")
     env_var = meta.get("env_var", "IMPL_PATH")
 
@@ -96,38 +159,7 @@ def run_hidden_tests(task_id: str, result_dir: Path) -> tuple[float, int, int, s
         env["IMPL_PATH"] = str(impl.resolve())  # generic fallback
         # Also place a copy for default path resolution beside tests
         shutil.copy2(impl, td_path / impl_name)
-        old = os.environ.copy()
-        os.environ.update(env)
-        try:
-            loader = unittest.TestLoader()
-            suite = loader.discover(str(td_path), pattern="test_*.py")
-            buf_out = []
-
-            class L(unittest.TextTestResult):
-                def addSuccess(self, test):
-                    super().addSuccess(test)
-                    buf_out.append(f"PASS {test}")
-
-                def addFailure(self, test, err):
-                    super().addFailure(test, err)
-                    buf_out.append(f"FAIL {test}: {err[1]}")
-
-                def addError(self, test, err):
-                    super().addError(test, err)
-                    buf_out.append(f"ERROR {test}: {err[1]}")
-
-            runner = unittest.TextTestRunner(
-                verbosity=0, resultclass=L, stream=open(os.devnull, "w")
-            )
-            result = runner.run(suite)
-        finally:
-            os.environ.clear()
-            os.environ.update(old)
-        total = result.testsRun
-        failed = len(result.failures) + len(result.errors)
-        passed = total - failed
-        correctness = (passed / total) if total else 0.0
-        return correctness, passed, total, "\n".join(buf_out)
+        return _run_unittest_dir(td_path, env)
 
 
 def score_scope(task_id: str, result_dir: Path, starter_dir: Path) -> dict:
@@ -139,7 +171,13 @@ def score_scope(task_id: str, result_dir: Path, starter_dir: Path) -> dict:
         return {f for f in s if "__pycache__" not in f and not f.endswith(".pyc")}
 
     starter_files, result_files = clean(starter_files), clean(result_files)
-    allowed_new_prefixes = ("test_", "tests/")
+    allowed_new_prefixes = (
+        "test_",
+        "tests/",
+        "tests_public/",
+        "BRIEF",
+        "HANDOFF",
+    )
     extra = result_files - starter_files
     forbidden = {
         e
@@ -147,6 +185,7 @@ def score_scope(task_id: str, result_dir: Path, starter_dir: Path) -> dict:
         if not e.startswith(allowed_new_prefixes)
         and e not in starter_files
         and not e.endswith(".md")  # allow notes
+        and Path(e).name not in ("BRIEF.md", "HANDOFF.md")
     }
     # Overwriting hidden_tests is handled separately; if agent created hidden_tests, forbid
     forbidden |= {e for e in extra if e.startswith("hidden_tests/")}

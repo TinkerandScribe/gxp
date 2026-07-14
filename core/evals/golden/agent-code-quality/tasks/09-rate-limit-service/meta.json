@@ -1,0 +1,6 @@
+{
+  "mode": "package",
+  "package_root": ".",
+  "title": "Multi-file rate limiter repair (L2 tool-using)",
+  "public_verify": "python -m unittest discover -s tests_public -v"
+}

@@ -21,4 +21,4 @@ human-readable signals.
 
 | Path | Purpose |
 |---|---|
-| [`golden/agent-code-quality/`](golden/agent-code-quality/) | **Prove whether agents write better code** (control vs GXP). Tasks **01–05** (easier) + hard pack **06–08** (`lru-ttl`, `deep-merge`, `line-chunker`) for ceiling headroom. Self-test: `bash scripts/eval-agent-code-quality-selftest.sh`. Multi-seed: `python scripts/run-code-quality-seeds.py` → [`trials/2026-07-13-multiseed/`](golden/agent-code-quality/trials/2026-07-13-multiseed/). |
+| [`golden/agent-code-quality/`](golden/agent-code-quality/) | **Prove whether agents write better code** (control vs GXP). Tasks **01–05** (easy), **06–08** (hard single-shot), **09** L2 multi-file tool-using rate-limit repair. Self-test: `bash scripts/eval-agent-code-quality-selftest.sh`. |
