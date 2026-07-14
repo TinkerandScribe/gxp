@@ -1,0 +1,32 @@
+{
+  "task": "08-line-chunker",
+  "result": "C:\\Users\\Reepicheep\\Claude\\gxp-public\\core\\evals\\golden\\agent-code-quality\\trials\\2026-07-14-matched-hard-grok-qwen\\results\\qwen\\gxp\\08-line-chunker",
+  "correctness": 0.9286,
+  "tests_passed": 13,
+  "tests_total": 14,
+  "no_test_tamper": true,
+  "scope_ok": true,
+  "scope": {
+    "scope_ok": true,
+    "extra_files": [
+      "BRIEF.md",
+      "HANDOFF.md",
+      "raw_model_output.md"
+    ],
+    "forbidden_extra": [],
+    "starter_file_count": 1,
+    "result_file_count": 4
+  },
+  "process": {
+    "process_score": 1.0,
+    "process_checks": {
+      "has_goal": true,
+      "has_out_of_scope": true,
+      "criteria_count_ge_4": true,
+      "mentions_verify": true
+    }
+  },
+  "primary_code_score": 0.9286,
+  "disqualified": false,
+  "test_log": "PASS test_basic_single_feed (test_line_chunker.TestLineChunker.test_basic_single_feed)\nPASS test_binary_safe (test_line_chunker.TestLineChunker.test_binary_safe)\nPASS test_close_flushes_remainder (test_line_chunker.TestLineChunker.test_close_flushes_remainder)\nPASS test_crlf_multibyte (test_line_chunker.TestLineChunker.test_crlf_multibyte)\nPASS test_empty_feed (test_line_chunker.TestLineChunker.test_empty_feed)\nPASS test_empty_lines (test_line_chunker.TestLineChunker.test_empty_lines)\nPASS test_feed_after_close (test_line_chunker.TestLineChunker.test_feed_after_close)\nPASS test_max_line_content_too_long_with_delim (test_line_chunker.TestLineChunker.test_max_line_content_too_long_with_delim)\nPASS test_max_line_exact_ok (test_line_chunker.TestLineChunker.test_max_line_exact_ok)\nFAIL test_max_line_on_buffer_without_delim (test_line_chunker.TestLineChunker.test_max_line_on_buffer_without_delim): ValueError not raised\nPASS test_partial_multibyte_delimiter (test_line_chunker.TestLineChunker.test_partial_multibyte_delimiter)\nPASS test_rejects_bad_max_line (test_line_chunker.TestLineChunker.test_rejects_bad_max_line)\nPASS test_rejects_empty_newline (test_line_chunker.TestLineChunker.test_rejects_empty_newline)\nPASS test_split_across_feeds (test_line_chunker.TestLineChunker.test_split_across_feeds)"
+}

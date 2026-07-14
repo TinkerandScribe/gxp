@@ -1,0 +1,26 @@
+{
+  "campaign": "2026-07-14-matched-hard-grok-qwen",
+  "qwen_model": "qwen3.6:27b",
+  "tasks": ["06-lru-ttl", "07-deep-merge", "08-line-chunker"],
+  "mean_control": 1.0,
+  "mean_gxp": 0.9881,
+  "gap": -0.0119,
+  "wins": {"gxp": 0, "control": 1, "tie": 5},
+  "rule_pass": false,
+  "verdict": "FAIL",
+  "note": "Only non-1.0 cell: qwen gxp 08-line-chunker 0.9286 (missed max_line without delim)",
+  "rows": [
+    {"model": "grok", "arm": "control", "task": "06-lru-ttl", "correctness": 1.0},
+    {"model": "grok", "arm": "control", "task": "07-deep-merge", "correctness": 1.0},
+    {"model": "grok", "arm": "control", "task": "08-line-chunker", "correctness": 1.0},
+    {"model": "grok", "arm": "gxp", "task": "06-lru-ttl", "correctness": 1.0, "process": 1.0},
+    {"model": "grok", "arm": "gxp", "task": "07-deep-merge", "correctness": 1.0, "process": 1.0},
+    {"model": "grok", "arm": "gxp", "task": "08-line-chunker", "correctness": 1.0, "process": 1.0},
+    {"model": "qwen", "arm": "control", "task": "06-lru-ttl", "correctness": 1.0},
+    {"model": "qwen", "arm": "control", "task": "07-deep-merge", "correctness": 1.0},
+    {"model": "qwen", "arm": "control", "task": "08-line-chunker", "correctness": 1.0},
+    {"model": "qwen", "arm": "gxp", "task": "06-lru-ttl", "correctness": 1.0, "process": 1.0},
+    {"model": "qwen", "arm": "gxp", "task": "07-deep-merge", "correctness": 1.0, "process": 1.0},
+    {"model": "qwen", "arm": "gxp", "task": "08-line-chunker", "correctness": 0.9286, "process": 1.0}
+  ]
+}

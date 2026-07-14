@@ -32,13 +32,18 @@ AQ = ROOT / "core/evals/golden/agent-code-quality"
 TASKS_DIR = AQ / "tasks"
 SCORE = AQ / "harness/score_trial.py"
 DATE = datetime.now().strftime("%Y-%m-%d")
+# Overridden in main() via CLI / env
 BASE = AQ / f"trials/{DATE}-matched-grok-qwen"
 TASKS = ["04-safe-join", "05-count-words", "01-parse-kv"]
 IMPL = {
     "01-parse-kv": "parse_kv.py",
     "04-safe-join": "safe_join.py",
     "05-count-words": "count_words.py",
+    "06-lru-ttl": "lru_ttl.py",
+    "07-deep-merge": "deep_merge.py",
+    "08-line-chunker": "line_chunker.py",
 }
+HARD_TASKS = ["06-lru-ttl", "07-deep-merge", "08-line-chunker"]
 OLLAMA_MODEL = os.environ.get("GXP_QWEN_MODEL", "qwen3.6:27b")
 OLLAMA_URL = os.environ.get("OLLAMA_HOST", "http://127.0.0.1:11434").rstrip("/")
 PY314 = Path(r"C:\Python314\python.exe")
@@ -58,16 +63,18 @@ def seed() -> None:
                 for f in (TASKS_DIR / task / "starter").iterdir():
                     if f.is_file():
                         shutil.copy2(f, dest / f.name)
+    pack = "hard pack (ceiling-break)" if set(TASKS) == set(HARD_TASKS) else "standard"
     (BASE / "PROTOCOL_FROZEN.md").write_text(
-        f"""# PROTOCOL_FROZEN — matched Grok + local Qwen
+        f"""# PROTOCOL_FROZEN — matched Grok + local Qwen ({pack})
 
 **Date:** {DATE}  
+**Trial dir:** `{BASE.name}`  
 **Models (matched within model):**  
-- `qwen` — Ollama `{OLLAMA_MODEL}`  
+- `qwen` — Ollama `{OLLAMA_MODEL}` (`think: false`)  
 - `grok` — session implement / subagent (same process both arms)  
 
 **Tasks:** {", ".join(TASKS)}  
-**Cells:** 12 (2 models × 2 arms × 3 tasks)
+**Cells:** {2 * 2 * len(TASKS)} (2 models × 2 arms × {len(TASKS)} tasks)
 
 ## Success rule
 PASS if (mean GXP − mean control correctness ≥ 0.10) OR (GXP wins majority of
@@ -75,6 +82,9 @@ matched task comparisons), AND no GXP `no_test_tamper=false`.
 
 ## Isolation
 Implement path must not read `hidden_tests/` or `reference/`.
+
+## Qwen runner
+Ollama chat with **`think: false`** (thinking can empty `message.content`).
 """,
         encoding="utf-8",
     )
@@ -255,12 +265,13 @@ def score_all() -> list[dict]:
 
 def write_report(rows: list[dict]) -> None:
     lines = [
-        f"# CAMPAIGN_REPORT — {DATE} matched Grok + Qwen",
+        f"# CAMPAIGN_REPORT — {BASE.name}",
         "",
-        f"**Qwen model:** `{OLLAMA_MODEL}` (Ollama)",
+        f"**Qwen model:** `{OLLAMA_MODEL}` (Ollama, think=false)",
         f"**Grok:** session/orchestrator implement (matched control vs GXP)",
         f"**Tasks:** {', '.join(TASKS)}",
         f"**Scorer:** `{PY}`",
+        f"**Protocol:** [`PROTOCOL_FROZEN.md`](PROTOCOL_FROZEN.md)",
         "",
         "## Correctness (matched pairs)",
         "",
@@ -321,6 +332,7 @@ def write_report(rows: list[dict]) -> None:
         "- Qwen is single-shot codegen via Ollama (no multi-turn tools).",
         "- Grok cells depend on orchestrator fill quality.",
         "- In-repo fixtures; not a consumer product field study.",
+        "- If all cells are 1.0: ceiling again — hard pack did not create headroom for these models.",
         "",
     ]
     report = BASE / "CAMPAIGN_REPORT.md"
@@ -363,27 +375,66 @@ def write_report(rows: list[dict]) -> None:
 
 
 def main() -> int:
+    global BASE, TASKS, DATE
     ap = argparse.ArgumentParser()
     ap.add_argument("--score-only", action="store_true")
     ap.add_argument("--skip-qwen", action="store_true")
+    ap.add_argument("--skip-seed", action="store_true", help="do not reseed (keep existing results)")
     ap.add_argument("--grok-reference", action="store_true", help="smoke only — not science")
+    ap.add_argument(
+        "--hard",
+        action="store_true",
+        help="use hard pack 06-lru-ttl, 07-deep-merge, 08-line-chunker",
+    )
+    ap.add_argument(
+        "--tasks",
+        default="",
+        help="comma-separated task ids (overrides --hard / defaults)",
+    )
+    ap.add_argument(
+        "--trial",
+        default="",
+        help="trial directory name under trials/ (default: DATE-matched-...)",
+    )
     args = ap.parse_args()
+
+    if args.tasks.strip():
+        TASKS = [t.strip() for t in args.tasks.split(",") if t.strip()]
+    elif args.hard:
+        TASKS = list(HARD_TASKS)
+    for t in TASKS:
+        if t not in IMPL:
+            raise SystemExit(f"unknown task {t}; known: {sorted(IMPL)}")
+        if not (TASKS_DIR / t / "starter").is_dir():
+            raise SystemExit(f"missing starter for {t}")
+
+    if args.trial.strip():
+        BASE = AQ / "trials" / args.trial.strip()
+        # keep DATE from dirname prefix if YYYY-MM-DD
+        name = BASE.name
+        if len(name) >= 10 and name[4] == "-" and name[7] == "-":
+            DATE = name[:10]
+    elif args.hard:
+        BASE = AQ / f"trials/{DATE}-matched-hard-grok-qwen"
+    else:
+        BASE = AQ / f"trials/{DATE}-matched-grok-qwen"
 
     print(f"ROOT={ROOT}")
     print(f"BASE={BASE}")
+    print(f"TASKS={TASKS}")
     print(f"PY={PY}")
     print(f"OLLAMA={OLLAMA_MODEL} @ {OLLAMA_URL}")
 
     if not args.score_only:
-        seed()
-        print("Seeded.")
+        if not args.skip_seed:
+            seed()
+            print("Seeded.")
         if not args.skip_qwen:
             for arm in ("control", "gxp"):
                 for task in TASKS:
                     run_qwen(task, arm)
         if args.grok_reference:
             print("Filling Grok from reference (SMOKE ONLY)")
-            fill_grok = True
             for arm in ("control", "gxp"):
                 for task in TASKS:
                     dest = BASE / "results" / "grok" / arm / task

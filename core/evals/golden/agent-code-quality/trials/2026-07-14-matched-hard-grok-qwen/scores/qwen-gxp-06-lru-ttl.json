@@ -1,0 +1,32 @@
+{
+  "task": "06-lru-ttl",
+  "result": "C:\\Users\\Reepicheep\\Claude\\gxp-public\\core\\evals\\golden\\agent-code-quality\\trials\\2026-07-14-matched-hard-grok-qwen\\results\\qwen\\gxp\\06-lru-ttl",
+  "correctness": 1.0,
+  "tests_passed": 12,
+  "tests_total": 12,
+  "no_test_tamper": true,
+  "scope_ok": true,
+  "scope": {
+    "scope_ok": true,
+    "extra_files": [
+      "BRIEF.md",
+      "HANDOFF.md",
+      "raw_model_output.md"
+    ],
+    "forbidden_extra": [],
+    "starter_file_count": 1,
+    "result_file_count": 4
+  },
+  "process": {
+    "process_score": 1.0,
+    "process_checks": {
+      "has_goal": true,
+      "has_out_of_scope": true,
+      "criteria_count_ge_4": true,
+      "mentions_verify": true
+    }
+  },
+  "primary_code_score": 1.0,
+  "disqualified": false,
+  "test_log": "PASS test_basic_get_set (test_lru_ttl.TestLruTtl.test_basic_get_set)\nPASS test_capacity_rejects_negative (test_lru_ttl.TestLruTtl.test_capacity_rejects_negative)\nPASS test_capacity_rejects_zero (test_lru_ttl.TestLruTtl.test_capacity_rejects_zero)\nPASS test_contains_expired_false_and_reaps (test_lru_ttl.TestLruTtl.test_contains_expired_false_and_reaps)\nPASS test_contains_no_recency_change (test_lru_ttl.TestLruTtl.test_contains_no_recency_change)\nPASS test_delete_expired_still_true (test_lru_ttl.TestLruTtl.test_delete_expired_still_true)\nPASS test_get_does_not_refresh_ttl (test_lru_ttl.TestLruTtl.test_get_does_not_refresh_ttl)\nPASS test_len_reaps_expired (test_lru_ttl.TestLruTtl.test_len_reaps_expired)\nPASS test_lru_eviction_order (test_lru_ttl.TestLruTtl.test_lru_eviction_order)\nPASS test_reap_before_evict_when_expired_fill_capacity (test_lru_ttl.TestLruTtl.test_reap_before_evict_when_expired_fill_capacity)\nPASS test_set_refreshes_ttl_and_recency (test_lru_ttl.TestLruTtl.test_set_refreshes_ttl_and_recency)\nPASS test_ttl_expire_on_get_removes (test_lru_ttl.TestLruTtl.test_ttl_expire_on_get_removes)"
+}
