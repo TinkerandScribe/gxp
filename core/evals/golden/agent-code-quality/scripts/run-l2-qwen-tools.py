@@ -162,8 +162,17 @@ TASK:
 GXP mode:
 1) First list and read .ai/PROGRAM.md, rules, failures.
 2) Write BRIEF.md with goal, 4-8 binary criteria, out of scope, verification.
-3) Fix code; run public tests; re-check criteria.
-4) Write HANDOFF.md; then action done.
+3) Fix code against prompt + failure notes; public tests alone are NOT enough.
+4) Run public tests; re-check criteria (fail-closed config, isolation, window).
+5) Write HANDOFF.md; then action done.
+"""
+    elif arm == "public_green":
+        base += """
+PUBLIC-GREEN control mode (strict):
+1) Run: python -m unittest discover -s tests_public -v
+2) If exit=0, IMMEDIATELY action done. Do not edit service/ further.
+3) Only edit if public tests fail; stop as soon as they pass again.
+4) Do not invent edge-case tests. Do not rewrite "for quality."
 """
     else:
         base += """
@@ -175,7 +184,11 @@ Run public tests before done.
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--arm", choices=["control", "gxp"], required=True)
+    ap.add_argument(
+        "--arm",
+        choices=["control", "gxp", "public_green"],
+        required=True,
+    )
     ap.add_argument("--workspace", type=Path, required=True)
     args = ap.parse_args()
     ws = args.workspace.resolve()
@@ -183,12 +196,24 @@ def main() -> int:
         print("bad workspace", ws)
         return 2
 
+    if args.arm == "public_green":
+        user0 = (
+            f"Workspace ready at {ws.name}. "
+            "Run public unittest first. If green, done immediately."
+        )
+    elif args.arm == "gxp":
+        user0 = (
+            f"Workspace ready at {ws.name}. "
+            "Start Phase 0: list and read .ai/, then BRIEF, then fix fully."
+        )
+    else:
+        user0 = (
+            f"Workspace is ready at {ws.name}. Start by listing files, then fix the service."
+        )
+
     messages = [
         {"role": "system", "content": system_prompt(args.arm)},
-        {
-            "role": "user",
-            "content": f"Workspace is ready at {ws.name}. Start by listing files, then fix the service.",
-        },
+        {"role": "user", "content": user0},
     ]
     log_path = ws / "agent_tool_log.jsonl"
     if log_path.exists():
@@ -215,6 +240,31 @@ def main() -> int:
                     f.write(json.dumps({"step": step, "action": action, "obs": obs[:500]}) + "\n")
                 print("  DONE", flush=True)
                 return 0
+            # public_green: hard stop as soon as public verify is green
+            if (
+                args.arm == "public_green"
+                and (action.get("action") or "").lower() == "run"
+                and "unittest" in (action.get("cmd") or action.get("command") or "unittest")
+                and obs.startswith("exit=0")
+            ):
+                with log_path.open("a", encoding="utf-8") as f:
+                    f.write(
+                        json.dumps(
+                            {
+                                "step": step,
+                                "action": action,
+                                "obs_preview": obs[:500],
+                                "auto": "public_green_stop_on_exit_0",
+                            }
+                        )
+                        + "\n"
+                    )
+                print("  AUTO-DONE public_green (public verify exit=0)", flush=True)
+                (ws / "ARM_NOTE.md").write_text(
+                    "public_green: auto-stopped after public verify exit=0\n",
+                    encoding="utf-8",
+                )
+                return 0
         with log_path.open("a", encoding="utf-8") as f:
             f.write(
                 json.dumps(
@@ -228,12 +278,10 @@ def main() -> int:
                 + "\n"
             )
         messages.append({"role": "assistant", "content": raw})
-        messages.append(
-            {
-                "role": "user",
-                "content": f"TOOL_RESULT:\n{obs}\n\nNext: one JSON action only.",
-            }
-        )
+        follow = f"TOOL_RESULT:\n{obs}\n\nNext: one JSON action only."
+        if args.arm == "public_green" and obs.startswith("exit=0"):
+            follow += "\nPublic tests GREEN. You MUST reply {\"action\":\"done\"} now."
+        messages.append({"role": "user", "content": follow})
 
     print("max steps", flush=True)
     (ws / "ERROR.txt").write_text("max steps without done\n", encoding="utf-8")

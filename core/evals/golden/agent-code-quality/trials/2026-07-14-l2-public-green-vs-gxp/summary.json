@@ -1,0 +1,16 @@
+{
+  "campaign": "2026-07-14-l2-public-green-vs-gxp",
+  "task": "09-rate-limit-service",
+  "mean_public_green": 0.5417,
+  "mean_gxp": 0.95835,
+  "gap": 0.41665,
+  "wins": {"gxp": 1, "public_green": 0, "tie": 1},
+  "rule_pass": true,
+  "verdict": "PASS",
+  "rows": [
+    {"model": "grok", "arm": "public_green", "correctness": 0.1667},
+    {"model": "grok", "arm": "gxp", "correctness": 1.0, "process": 1.0},
+    {"model": "qwen", "arm": "public_green", "correctness": 0.9167},
+    {"model": "qwen", "arm": "gxp", "correctness": 0.9167, "process": 1.0}
+  ]
+}
