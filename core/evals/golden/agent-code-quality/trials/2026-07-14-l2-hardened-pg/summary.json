@@ -1,0 +1,19 @@
+{
+  "campaign": "2026-07-14-l2-hardened-pg",
+  "task": "09-rate-limit-service",
+  "mean_public_green": 0.1667,
+  "mean_gxp": 0.9375,
+  "gap": 0.7708,
+  "wins": {"gxp": 4, "public_green": 0, "tie": 0},
+  "rule_pass": true,
+  "verdict": "PASS",
+  "rows": [
+    {"model": "grok", "arm": "public_green", "correctness": 0.1667},
+    {"model": "grok", "arm": "gxp", "correctness": 1.0},
+    {"model": "qwen", "arm": "public_green", "correctness": 0.1667},
+    {"model": "qwen", "arm": "gxp", "seed": "s1", "correctness": 0.9167},
+    {"model": "qwen", "arm": "gxp", "seed": "s2", "correctness": 0.9167},
+    {"model": "qwen", "arm": "gxp", "seed": "s3", "correctness": 0.9167}
+  ],
+  "hardening": "public_green preflight exit=0 => zero writes"
+}

@@ -84,7 +84,25 @@ def safe_rel(ws: Path, rel: str) -> Path | None:
     return p
 
 
-def run_tool(ws: Path, action: dict) -> str:
+def public_verify(ws: Path) -> tuple[bool, str]:
+    """Run weak public tests. Returns (green, tool-style output)."""
+    cmd = f"{sys.executable} -m unittest discover -s tests_public -v"
+    try:
+        r = subprocess.run(
+            cmd,
+            shell=True,
+            cwd=str(ws),
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        out = (r.stdout or "") + (r.stderr or "")
+        return r.returncode == 0, f"exit={r.returncode}\n{out[:8000]}"
+    except Exception as e:
+        return False, f"ERROR: {e!r}"
+
+
+def run_tool(ws: Path, action: dict, *, arm: str = "control") -> str:
     act = (action.get("action") or "").lower().strip()
     if act == "list":
         rel = action.get("path") or "."
@@ -107,6 +125,14 @@ def run_tool(ws: Path, action: dict) -> str:
         text = p.read_text(encoding="utf-8", errors="replace")
         return text[:12000]
     if act == "write":
+        # public_green: never rewrite when public suite is already green (starter trap)
+        if arm == "public_green":
+            green, _ = public_verify(ws)
+            if green:
+                return (
+                    "ERROR: public_green arm forbids writes while public tests pass. "
+                    'Use {"action":"done"} now.'
+                )
         p = safe_rel(ws, action.get("path") or "")
         content = action.get("content")
         if p is None or content is None:
@@ -118,7 +144,10 @@ def run_tool(ws: Path, action: dict) -> str:
         return f"OK wrote {p.relative_to(ws)} ({len(str(content))} chars)"
     if act == "run":
         cmd = action.get("cmd") or action.get("command") or ""
-        # allow only unittest discover for safety
+        if not cmd.strip():
+            # default public verify
+            green, out = public_verify(ws)
+            return out
         if "unittest" not in cmd and "python" not in cmd:
             return "ERROR: only python/unittest commands allowed"
         try:
@@ -211,13 +240,37 @@ def main() -> int:
             f"Workspace is ready at {ws.name}. Start by listing files, then fix the service."
         )
 
+    log_path = ws / "agent_tool_log.jsonl"
+    if log_path.exists():
+        log_path.unlink()
+
+    # public_green preflight: if weak public suite already green, stop with zero edits
+    if args.arm == "public_green":
+        green, out = public_verify(ws)
+        with log_path.open("a", encoding="utf-8") as f:
+            f.write(
+                json.dumps(
+                    {
+                        "step": 0,
+                        "auto": "public_green_preflight",
+                        "green": green,
+                        "obs_preview": out[:500],
+                    }
+                )
+                + "\n"
+            )
+        if green:
+            (ws / "ARM_NOTE.md").write_text(
+                "public_green: preflight public verify exit=0; zero writes enforced\n",
+                encoding="utf-8",
+            )
+            print("  PREFLIGHT AUTO-DONE public_green (already green)", flush=True)
+            return 0
+
     messages = [
         {"role": "system", "content": system_prompt(args.arm)},
         {"role": "user", "content": user0},
     ]
-    log_path = ws / "agent_tool_log.jsonl"
-    if log_path.exists():
-        log_path.unlink()
 
     for step in range(1, MAX_STEPS + 1):
         print(f"[{args.arm} step {step}] calling {MODEL}...", flush=True)
@@ -234,19 +287,14 @@ def main() -> int:
             print("  parse fail", flush=True)
         else:
             print(f"  action={action.get('action')} path={action.get('path')}", flush=True)
-            obs = run_tool(ws, action)
+            obs = run_tool(ws, action, arm=args.arm)
             if (action.get("action") or "").lower() == "done":
                 with log_path.open("a", encoding="utf-8") as f:
                     f.write(json.dumps({"step": step, "action": action, "obs": obs[:500]}) + "\n")
                 print("  DONE", flush=True)
                 return 0
             # public_green: hard stop as soon as public verify is green
-            if (
-                args.arm == "public_green"
-                and (action.get("action") or "").lower() == "run"
-                and "unittest" in (action.get("cmd") or action.get("command") or "unittest")
-                and obs.startswith("exit=0")
-            ):
+            if args.arm == "public_green" and obs.startswith("exit=0"):
                 with log_path.open("a", encoding="utf-8") as f:
                     f.write(
                         json.dumps(
@@ -281,6 +329,8 @@ def main() -> int:
         follow = f"TOOL_RESULT:\n{obs}\n\nNext: one JSON action only."
         if args.arm == "public_green" and obs.startswith("exit=0"):
             follow += "\nPublic tests GREEN. You MUST reply {\"action\":\"done\"} now."
+        if args.arm == "public_green" and obs.startswith("ERROR: public_green"):
+            follow += "\nWrites blocked. Reply {\"action\":\"done\"} now."
         messages.append({"role": "user", "content": follow})
 
     print("max steps", flush=True)

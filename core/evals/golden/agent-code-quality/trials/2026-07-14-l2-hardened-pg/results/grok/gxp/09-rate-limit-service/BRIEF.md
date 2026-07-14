@@ -1,0 +1,1 @@
+# GXP brief\n\n## Goal\nFull multi-factor fix.\n\n## Ideal State Criteria\n- [ ] check-then-record\n- [ ] isolation\n- [ ] sliding window\n- [ ] fail-closed config\n- [ ] public green\n- [ ] stdlib\n\n## Out of scope\nHidden tests.\n\n## Verification\nPublic unittest + criteria.\n
