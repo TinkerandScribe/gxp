@@ -1,69 +1,138 @@
 <#
 .SYNOPSIS
-    Installs or updates the GXP skill into your local Grok skills directory.
+    Installs or updates the GXP skill (and optional personas) into local Grok paths.
 
 .DESCRIPTION
-    Copies (or symlinks when possible) this Grok adapter into:
-    $HOME\.grok\skills\gxp-ai-workflow
+    Links this Grok adapter into:
+      $HOME\.grok\skills\gxp-ai-workflow
 
-    This makes the skill available in your Grok chats.
+    Also re-points the legacy skill path (if present or always as alias):
+      $HOME\.grok\skills\tinker-tools-ai-workflow
+    so chats that still load the old folder name get the current GXP skill.
+
+    Optionally installs example personas into:
+      $HOME\.grok\personas\*.toml
+    (Grok discovers file-based personas there; a bare file named "personas" is fixed.)
 
 .PARAMETER Force
-    Overwrite existing installation without prompting.
+    Overwrite existing skill install and refresh personas without prompting.
+
+.PARAMETER SkipPersonas
+    Do not install/update ~/.grok/personas/*.toml
 
 .EXAMPLE
     .\install-grok-skill.ps1
     .\install-grok-skill.ps1 -Force
+    .\install-grok-skill.ps1 -Force -SkipPersonas
 #>
 
 [CmdletBinding()]
 param(
-    [switch]$Force
+    [switch]$Force,
+    [switch]$SkipPersonas
 )
 
-$SourceDir = Split-Path -Parent $PSScriptRoot   # When run from the sync/ folder, this points to the ai-workflow folder itself
-$TargetDir = Join-Path $HOME ".grok\skills\gxp-ai-workflow"
+$ErrorActionPreference = "Stop"
+
+$SourceDir = Split-Path -Parent $PSScriptRoot   # ai-workflow folder
+$SkillsRoot = Join-Path $HOME ".grok\skills"
+$TargetDir = Join-Path $SkillsRoot "gxp-ai-workflow"
+$LegacyDir = Join-Path $SkillsRoot "tinker-tools-ai-workflow"
+$PersonasDir = Join-Path $HOME ".grok\personas"
+$PersonasSrc = Join-Path $SourceDir "examples\grok-build-strategy\personas"
+
+function New-SkillJunction {
+    param(
+        [Parameter(Mandatory)][string]$LinkPath,
+        [Parameter(Mandatory)][string]$TargetPath,
+        [string]$Label = "skill"
+    )
+
+    if (Test-Path $LinkPath) {
+        if (-not $Force) {
+            $response = Read-Host "Target already exists at $LinkPath. Overwrite? (y/N)"
+            if ($response -ne 'y' -and $response -ne 'Y') {
+                Write-Host "Skipped $Label ($LinkPath)." -ForegroundColor Yellow
+                return $false
+            }
+        }
+        # Junctions and dirs: -Force remove
+        Remove-Item $LinkPath -Recurse -Force
+    }
+
+    $parent = Split-Path -Parent $LinkPath
+    New-Item -ItemType Directory -Force -Path $parent | Out-Null
+
+    $null = cmd /c "mklink /J `"$LinkPath`" `"$TargetPath`"" 2>&1
+    if (Test-Path $LinkPath) {
+        Write-Host "Linked $Label -> $LinkPath" -ForegroundColor Green
+        return $true
+    }
+
+    Copy-Item $TargetPath $LinkPath -Recurse -Force
+    Write-Host "Copied $Label to $LinkPath (not linked)" -ForegroundColor Yellow
+    return $true
+}
+
+function Install-GxpPersonas {
+    if (-not (Test-Path $PersonasSrc)) {
+        Write-Host "No personas source at $PersonasSrc - skipping personas." -ForegroundColor Yellow
+        return
+    }
+
+    # Grok expects ~/.grok/personas/*.toml - a plain file named "personas" breaks discovery.
+    if (Test-Path $PersonasDir) {
+        $item = Get-Item $PersonasDir -Force
+        if (-not $item.PSIsContainer) {
+            $backup = Join-Path $HOME (".grok\personas.file-backup-{0}.toml" -f (Get-Date -Format "yyyyMMdd-HHmmss"))
+            Move-Item -LiteralPath $PersonasDir -Destination $backup -Force
+            Write-Host "Moved mis-shaped personas file to $backup" -ForegroundColor Yellow
+            New-Item -ItemType Directory -Force -Path $PersonasDir | Out-Null
+        }
+    } else {
+        New-Item -ItemType Directory -Force -Path $PersonasDir | Out-Null
+    }
+
+    $copied = 0
+    Get-ChildItem -Path $PersonasSrc -Filter "*.toml" | ForEach-Object {
+        $dest = Join-Path $PersonasDir $_.Name
+        if ((Test-Path $dest) -and -not $Force) {
+            $response = Read-Host "Persona $($_.Name) exists. Overwrite? (y/N)"
+            if ($response -ne 'y' -and $response -ne 'Y') {
+                Write-Host "  skipped $($_.Name)" -ForegroundColor Yellow
+                return
+            }
+        }
+        Copy-Item $_.FullName $dest -Force
+        $copied++
+        Write-Host "  persona: $($_.Name)" -ForegroundColor Green
+    }
+    Write-Host "Installed $copied persona file(s) into $PersonasDir" -ForegroundColor Cyan
+}
 
 Write-Host "Installing Grok AI Workflow skill..." -ForegroundColor Cyan
 Write-Host "Source: $SourceDir"
 Write-Host "Target: $TargetDir"
+Write-Host "Legacy alias: $LegacyDir"
 
-if (Test-Path $TargetDir) {
-    if (-not $Force) {
-        $response = Read-Host "Target already exists. Overwrite? (y/N)"
-        if ($response -ne 'y' -and $response -ne 'Y') {
-            Write-Host "Installation cancelled." -ForegroundColor Yellow
-            exit 0
-        }
-    }
-    Remove-Item $TargetDir -Recurse -Force
+$ok = New-SkillJunction -LinkPath $TargetDir -TargetPath $SourceDir -Label "gxp-ai-workflow"
+if (-not $ok) {
+    Write-Host "Primary skill install cancelled." -ForegroundColor Yellow
+    exit 0
 }
 
-try {
-    # Try to create a junction (symlink-like) on Windows for easier updates
-    $parent = Split-Path -Parent $TargetDir
-    New-Item -ItemType Directory -Force -Path $parent | Out-Null
+# Always keep legacy folder name pointed at the same adapter so "gxp" skill discovery
+# that still resolves tinker-tools-ai-workflow is not stale.
+$null = New-SkillJunction -LinkPath $LegacyDir -TargetPath $SourceDir -Label "tinker-tools-ai-workflow (legacy alias)"
 
-    cmd /c "mklink /J `"$TargetDir`" `"$SourceDir`"" 2>$null | Out-Null
-
-    if (Test-Path $TargetDir) {
-        Write-Host "Created directory junction (live link) at $TargetDir" -ForegroundColor Green
-        Write-Host "Changes in this repo will be immediately visible to Grok."
-    } else {
-        # Fallback to copy
-        Copy-Item $SourceDir $TargetDir -Recurse -Force
-        Write-Host "Copied skill to $TargetDir (not linked)" -ForegroundColor Yellow
-        Write-Host "Re-run this script after updates, or use -Force."
-    }
-} catch {
-    # Final fallback
-    Copy-Item $SourceDir $TargetDir -Recurse -Force
-    Write-Host "Copied skill to $TargetDir" -ForegroundColor Yellow
+if (-not $SkipPersonas) {
+    Write-Host "`nInstalling GXP example personas..." -ForegroundColor Cyan
+    Install-GxpPersonas
 }
 
-Write-Host "`nDone! The skill should now be available under the short name 'gxp' (recommended) or 'gxp-ai-workflow' in your Grok chats." -ForegroundColor Green
-Write-Host "Recommended: Run the check script after installation:"
+Write-Host "`nDone! Skill short name: 'gxp' (or 'gxp-ai-workflow')." -ForegroundColor Green
+Write-Host "Changes in this repo are live via junction(s)."
+Write-Host "Recommended check:"
 Write-Host "  .\sync\check-core.ps1" -ForegroundColor Cyan
-Write-Host ""
-Write-Host "For even easier access, source gxp.ps1 in your profile." -ForegroundColor Yellow
-Write-Host "See GETTING_STARTED.md for instructions." -ForegroundColor Yellow
+Write-Host "Personas (if installed): /personas in Grok Build - expect gxp-verifier, grok-native-planner, composer-coder."
+Write-Host "See GETTING_STARTED.md for Plan Mode + GXP usage." -ForegroundColor Yellow

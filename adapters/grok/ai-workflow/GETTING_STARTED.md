@@ -19,9 +19,11 @@ cd path\to\gxp\adapters\grok\ai-workflow\sync
 
 **macOS / Linux:** `bash sync/install-grok-skill.sh`
 
-This installs (junction or copy) to `~/.grok/skills/gxp-ai-workflow/`. The skill is then
-available in Grok chats as **gxp** (just say "use gxp") or the long name `gxp-ai-workflow`.
-Manual alternative: copy or symlink `adapters/grok/ai-workflow/` to that path.
+This installs (junction or symlink) to `~/.grok/skills/gxp-ai-workflow/` and re-points the
+legacy alias `~/.grok/skills/tinker-tools-ai-workflow/` to the same adapter so old skill
+paths stay current. It also installs example personas into `~/.grok/personas/*.toml`
+(use `-Force` / `--force` to refresh without prompts; `-SkipPersonas` / `--skip-personas`
+to skip). The skill is available as **gxp** (say "use gxp") or `gxp-ai-workflow`.
 
 ## 2. Verify it works
 
@@ -77,8 +79,9 @@ Example personas under `examples/grok-build-strategy/personas/`:
 | `composer-coder` | Coherent multi-file implement |
 | `gxp-verifier` | Criteria-only verify after implement |
 
-Install or copy into `~/.grok/personas/` or project `.grok/personas/` as your Grok Build
-docs describe.
+`install-grok-skill` copies these into `~/.grok/personas/*.toml` (Grok discovers
+file-based personas there — a single file named `personas` is wrong and is repaired).
+Or copy into project `.grok/personas/` for repo-local personas. Manage via `/personas`.
 
 ## Staying in sync (anti-entropy)
 
