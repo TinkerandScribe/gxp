@@ -15,6 +15,7 @@ Primary metric remains **hidden correctness**. Secondary: process / transcript.
 | L2 unconstrained contrast 10 | best-effort control | **0** | **FAIL** |
 | L2 control without `.ai/` | Phase-0 isolation | **0** | **FAIL** |
 | L2 short prompt + Phase 0 | underspec prompt both; `.ai/` available | **+0.14** | **PASS** |
+| L2 short prompt + control no `.ai/` | underspec + strip control memory | **+0.14** | **PASS** |
 
 ## Claim policy (honest)
 

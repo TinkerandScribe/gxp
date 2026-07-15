@@ -1,0 +1,10 @@
+{
+  "campaign": "2026-07-14-l2-short-no-ai",
+  "task": "10-circuit-breaker",
+  "mean_control": 0.77275,
+  "mean_gxp": 0.9091,
+  "gap": 0.13635,
+  "wins": {"gxp": 1, "control": 0, "tie": 1},
+  "rule_pass": true,
+  "verdict": "PASS"
+}
