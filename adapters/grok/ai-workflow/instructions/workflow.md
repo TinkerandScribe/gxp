@@ -41,12 +41,14 @@ Pick the variant before starting:
 
 - **Full workflow** — phases 0 through 8 below. Use for any task that
   changes behavior, touches more than one file in a non-trivial way, or
-  could plausibly regress something. The default.
+  could plausibly regress something. The default. Also use full when the
+  smoke/public verify suite is thin relative to the criteria, or the
+  operator ask is underspecified (you must invent most criteria).
 - **Lightweight workflow** — phases 1, 2, 3, 5 only. Skip the repo audit,
   rating, failure capture, and handoff. Use only for trivial,
-  single-file, easily reversible changes (typo, comment, one-line fix).
-  If you start lightweight and find the task is bigger than expected,
-  upgrade to full.
+  single-file, easily reversible changes (typo, comment, one-line fix)
+  where strong deterministic verify is already defined. If you start
+  lightweight and find the task is bigger than expected, upgrade to full.
 
 When in doubt, run the full workflow. The overhead is small; the cost of
 skipping it on a real change is much larger.
@@ -76,6 +78,19 @@ this task, name it explicitly in the brief.
 
 
 Use `read_file` and directory listing tools aggressively. On large repos, start from files named in the brief, then expand with search. Resolve uncertainty with tools rather than guessing.
+
+**Thin / underspecified operator ask (evidence-backed):** If the request does not
+already contain about 4+ binary criteria, or the goal is multi-factor and vague:
+
+1. **Do not implement yet.**  
+2. Open `.ai/PROGRAM.md`, `rules/`, and `failures/` when present (or state they are
+   missing).  
+3. Write Ideal State Criteria that name edges smoke tests often miss (fail-closed,
+   isolation, state transitions, multi-key, etc.).  
+4. Cite any applicable failure notes in the brief before coding.
+
+Frontier models can code well without this; they still skip Phase 0 under short asks
+and leave multi-factor bugs. Phase 0 is the fix for that failure mode.
 
 ## Phase 0.5 — Strategy & Model Selection
 
@@ -164,6 +179,12 @@ If any gate fails, fix the brief before continuing.
 
 Be strict on Verification and Approval gates. If a criterion cannot be checked mechanically, say so and propose how you will handle uncertainty.
 
+**Lightweight vs full (Grok Build):** Use full workflow when the change is multi-file
+or multi-constraint, or when project smoke/public verify is thin relative to the
+criteria. Lightweight is OK for single-file trivial edits with a clear strong verify
+path—evals show full GXP process adds little correctness when the prompt and tools
+already force best-effort multi-factor work.
+
 ## Phase 3 — Implementation
 
 
@@ -215,6 +236,25 @@ Order of checks:
 3. **Subjective checks** — code quality, UX, anything that requires
    judgment. Only after the deterministic and behavioral checks pass.
 
+### Verification ladder (do not skip)
+
+Smoke or “public” suites are **necessary, not always sufficient**.
+
+Treat project verify exit 0 as **insufficient alone** when any of:
+
+- The change is multi-file or multi-constraint (state machines, isolation,
+  fail-closed config, security/path edges).
+- The operator prompt is incomplete or criteria were mostly written by you.
+- You know the suite is thin relative to the Ideal State Criteria.
+
+Then:
+
+1. Walk **each** Ideal State Criterion and name the tool check you used.  
+2. Prefer a **second layer** of verification (extra asserts, a focused
+   script, or criterion-by-criterion tool checks) for edges smoke tests miss.  
+3. **Anti-pattern:** claiming done solely because a thin public/smoke suite
+   exited 0 while criteria remain unchecked.
+
 If a criterion cannot be checked mechanically, state how you confirmed
 it and accept the lower confidence.
 
@@ -224,6 +264,15 @@ it and accept the lower confidence.
 1. Deterministic checks first (type/lint/test/build) via tools with real output.
 2. Behavioral checks using execution/REPL tools when available.
 3. Subjective review only after the above.
+
+**Weak green (do not stop early):** After any suite exits 0 (`unittest`, `pytest`,
+build, etc.), re-walk Ideal State Criteria that thin smoke tests miss. On multi-file
+or multi-constraint tasks, run a **second layer** (extra asserts, a focused script, or
+criterion-by-criterion tool checks) before claiming done.
+
+**Anti-pattern:** “Public tests passed” as the only done signal on multi-module or
+fail-closed / state-machine work. That failure mode is exactly where GXP showed large
+correctness lifts in evals.
 
 ## Phase 6 — Rate
 

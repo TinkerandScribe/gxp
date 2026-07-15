@@ -83,8 +83,14 @@ If the same approach fails twice, **stop**. Document the dead end and change str
 **Phase 5 – Verification**  
 Run verification in this order:
 1. Deterministic checks first (lint, types, tests, builds)
-2. Behavioral checks
+2. Behavioral checks (including edges smoke tests miss)
 3. Subjective review (last)
+
+**Do not claim done** solely because a thin public/smoke suite exited 0 on multi-file
+or multi-constraint work—walk each Ideal State Criterion with a tool check.
+
+**Thin operator asks:** Before coding, open PROGRAM/rules/failures when present and
+write 4–8 binary criteria. Phase 0 is required when the ask is underspecified.
 
 **Phase 6 – Rate**  
 Give an honest 1–10 rating. Be rigorous.

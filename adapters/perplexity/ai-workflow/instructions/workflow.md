@@ -40,12 +40,14 @@ Pick the variant before starting:
 
 - **Full workflow** — phases 0 through 8 below. Use for any task that
   changes behavior, touches more than one file in a non-trivial way, or
-  could plausibly regress something. The default.
+  could plausibly regress something. The default. Also use full when the
+  smoke/public verify suite is thin relative to the criteria, or the
+  operator ask is underspecified (you must invent most criteria).
 - **Lightweight workflow** — phases 1, 2, 3, 5 only. Skip the repo audit,
   rating, failure capture, and handoff. Use only for trivial,
-  single-file, easily reversible changes (typo, comment, one-line fix).
-  If you start lightweight and find the task is bigger than expected,
-  upgrade to full.
+  single-file, easily reversible changes (typo, comment, one-line fix)
+  where strong deterministic verify is already defined. If you start
+  lightweight and find the task is bigger than expected, upgrade to full.
 
 When in doubt, run the full workflow. The overhead is small; the cost of
 skipping it on a real change is much larger.
@@ -218,6 +220,25 @@ Order of checks:
    path, hit the edge cases named in the brief.
 3. **Subjective checks** — code quality, UX, anything that requires
    judgment. Only after the deterministic and behavioral checks pass.
+
+### Verification ladder (do not skip)
+
+Smoke or “public” suites are **necessary, not always sufficient**.
+
+Treat project verify exit 0 as **insufficient alone** when any of:
+
+- The change is multi-file or multi-constraint (state machines, isolation,
+  fail-closed config, security/path edges).
+- The operator prompt is incomplete or criteria were mostly written by you.
+- You know the suite is thin relative to the Ideal State Criteria.
+
+Then:
+
+1. Walk **each** Ideal State Criterion and name the tool check you used.  
+2. Prefer a **second layer** of verification (extra asserts, a focused
+   script, or criterion-by-criterion tool checks) for edges smoke tests miss.  
+3. **Anti-pattern:** claiming done solely because a thin public/smoke suite
+   exited 0 while criteria remain unchecked.
 
 If a criterion cannot be checked mechanically, state how you confirmed
 it and accept the lower confidence.

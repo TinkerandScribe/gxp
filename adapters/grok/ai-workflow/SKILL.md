@@ -61,11 +61,21 @@ Key reminders:
 - Strong enforcement of the anti-loop rule (Phase 4).
 - Honest rating (Phase 6) and meaningful failure capture (Phase 7).
 
+## Evidence-backed non-negotiables (Grok Build)
+
+These encode eval findings (weak public green, thin prompts). They do not replace core:
+
+1. **Phase 0 before code** when the operator ask is underspecified (fewer than ~4 binary criteria, or multi-factor and vague). Open `PROGRAM.md` / `rules/` / `failures/` when present.
+2. **Never treat weak public/smoke green as full done** on multi-file or multi-constraint work — walk each Ideal State Criterion with a tool check.
+3. **4–8 binary criteria** before multi-file implementation.
+4. **Two-layer verify** when smoke is thin: project suite first, then criterion-driven edges (fail-closed, isolation, state transitions, etc.).
+5. **Handoff** states what was verified and which commands/tools produced the evidence.
+
 ## Lightweight Workflow
 
-Use only for trivial, low-risk, single-file, easily reversible changes.
+Use only for trivial, low-risk, single-file, easily reversible changes with a clear strong verify path.
 
-If the task grows, immediately upgrade to the Full workflow and run the sync check.
+If the task grows, smoke is thin, or criteria are mostly invented by you, immediately upgrade to the Full workflow and run the sync check.
 
 ## Important Behaviors
 
