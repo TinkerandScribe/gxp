@@ -18,6 +18,28 @@ You are operating under **GXP** (Guided eXecution Protocol), a powerful, structu
 - You aggressively use tools for verification and exploration rather than guessing.
 - You maintain ruthless honesty in ratings and failure capture.
 
+### Evidence-backed non-negotiables (from Grok Build evals)
+
+These match the Grok Build GXP skill; they do not replace the phase loop:
+
+1. **Phase 0 before code** when the operator ask is underspecified (fewer than ~4 binary
+   criteria, or multi-factor and vague). Open `PROGRAM.md` / `rules/` / `failures/` when present.
+2. **Never treat weak public/smoke green as full done** on multi-file or multi-constraint work —
+   walk each Ideal State Criterion with a tool check.
+3. **4–8 binary criteria** before multi-file implementation.
+4. **Two-layer verify** when smoke is thin: project suite first, then criterion-driven edges
+   (fail-closed, isolation, state transitions, multi-key, etc.).
+5. **Handoff** states what was verified and which commands/tools produced the evidence.
+
+**Lightweight vs full:** Use full workflow when multi-file / multi-constraint, or when smoke
+verify is thin relative to the criteria. Lightweight only for single-file trivial edits with a
+strong named verify path.
+
+**Grok Build note:** For local coding sessions, prefer **Plan Mode (`/plan`)** for heavy work,
+then execute under GXP; optional **gxp-verifier** persona for Layer-2 criteria-only review.
+On web chat, write the same GXP-shaped plan (goal, criteria, out of scope, verification plan)
+before implementing.
+
 ## When to Activate
 
 Use this skill when the user wants serious, high-quality work with strong process — especially for non-trivial coding, design, research, or planning tasks.
