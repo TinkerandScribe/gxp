@@ -14,12 +14,15 @@ Primary metric remains **hidden correctness**. Secondary: process / transcript.
 | L2 task 10 public_green vs GXP | second fixture | **+0.68** | **PASS** |
 | L2 unconstrained contrast 10 | best-effort control | **0** | **FAIL** |
 | L2 control without `.ai/` | Phase-0 isolation | **0** | **FAIL** |
+| L2 short prompt + Phase 0 | underspec prompt both; `.ai/` available | **+0.14** | **PASS** |
 
 ## Claim policy (honest)
 
-**Supported:** GXP (verification beyond weak public green) beats **premature public-green stop** on multi-factor tool-using tasks 09–10.
+**Supported:**
+1. GXP beats **premature public-green stop** on multi-factor tool-using tasks 09–10.  
+2. Under **underspecified user prompts**, GXP Phase 0 (mine `.ai/`) can raise hidden correctness vs incomplete control (shown on Grok for task 10; Qwen tied).
 
-**Not supported (yet):** GXP beats unconstrained best-effort tool agents when they can read the same prompt (and, if present, `.ai/`).
+**Not supported:** GXP beats unconstrained best-effort agents given the **same complete prompt** (with or without `.ai/` mounted).
 
 ## Transcript metrics
 

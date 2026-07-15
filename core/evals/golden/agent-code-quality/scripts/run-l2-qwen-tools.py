@@ -223,12 +223,24 @@ def main() -> int:
         default=DEFAULT_TASK,
         help="task id under agent-code-quality/tasks (for prompt.md)",
     )
+    ap.add_argument(
+        "--prompt-file",
+        default="",
+        help="override prompt path (e.g. tasks/10-.../prompt.short.md)",
+    )
     args = ap.parse_args()
     ws = args.workspace.resolve()
     if not ws.is_dir():
         print("bad workspace", ws)
         return 2
-    prompt_path = AQ / "tasks" / args.task / "prompt.md"
+    if args.prompt_file.strip():
+        prompt_path = Path(args.prompt_file)
+        if not prompt_path.is_file():
+            prompt_path = ROOT / args.prompt_file
+        if not prompt_path.is_file():
+            prompt_path = AQ / args.prompt_file
+    else:
+        prompt_path = AQ / "tasks" / args.task / "prompt.md"
     if not prompt_path.is_file():
         print("missing task prompt", prompt_path)
         return 2
