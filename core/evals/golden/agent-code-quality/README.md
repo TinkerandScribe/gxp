@@ -62,6 +62,13 @@ agent-code-quality/
   trials/
 ```
 
+## Meaningful GXP wins (summary)
+
+See [`trials/GXP_WINS.md`](trials/GXP_WINS.md) and [`trials/SCORECARD.md`](trials/SCORECARD.md).
+
+**Supported:** public-green stop vs GXP (tasks 09–10); short-prompt + Phase 0.  
+**Not supported:** same complete prompt, unconstrained best-effort control vs GXP.
+
 ## Transcript metrics (L2 tool loops)
 
 Secondary process signals from `agent_tool_log.jsonl` (do not replace hidden correctness):

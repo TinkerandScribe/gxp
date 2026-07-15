@@ -28,3 +28,8 @@ Primary metric remains **hidden correctness**. Secondary: process / transcript.
 ## Transcript metrics
 
 See [`TRANSCRIPT_METRICS.md`](TRANSCRIPT_METRICS.md). BRIEF rates higher on GXP; phase0 alone does not create hidden Δ when `.ai/` is mounted for control.
+
+## Goal status
+
+**Meaningful GXP wins: YES** — see [`GXP_WINS.md`](GXP_WINS.md).  
+Recurring iterate-until-win loops should stop or retarget; do not re-run public_green for another PASS.
