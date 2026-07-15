@@ -145,19 +145,19 @@ bash core/evals/golden/agent-code-quality/scripts/score-operator-blind.sh \
   core/evals/golden/agent-code-quality/trials/<DATE>-operator-blind
 ```
 
-Then have an agent write `CAMPAIGN_REPORT.md` + `CONTAMINATION.md` from the score JSONs (same structure as `trials/2026-07-13-blind/`).
+Then have an agent write `CAMPAIGN_REPORT.md` + `CONTAMINATION.md` from the score JSONs under **local** `BASE` (same structure as prior operator-blind packs). Trial trees are **gitignored** — keep reports on disk for analysis.
 
 ---
 
-## Phase D — Commit (optional)
+## Phase D — Do not commit trial trees
 
-Only if you want artifacts on `main`:
+`core/evals/**/trials/` is local-only (see root `.gitignore` and
+`core/rules/02-local-context-never-committed.md`).
 
-```text
-Commit the operator-blind trial tree (exclude **/__pycache__ and *.pyc).
-Update ROADMAP M6 status if the pre-registered rule is evaluated.
-Do not tag or create a GitHub release unless I explicitly ask.
-```
+- Do **not** stage or push `trials/`, scores, or CAMPAIGN_REPORT packs.
+- Optional: update public claim summaries (`GXP_WINS.md` / `SCORECARD.md`) if the
+  operator deliberately wants the **methodology** docs to reflect a new PASS/FAIL boundary.
+- Do not tag or create a GitHub release unless explicitly asked.
 
 ---
 

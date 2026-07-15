@@ -1,1 +1,0 @@
-{"step": 0, "auto": "public_green_preflight", "green": true, "obs_preview": "exit=0\ntest_first_allow (test_smoke.TestSmoke.test_first_allow) ... ok\ntest_from_config_none (test_smoke.TestSmoke.test_from_config_none) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.000s\n\nOK\n"}

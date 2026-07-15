@@ -29,7 +29,7 @@ better `no_test_tamper` and `scope`. Process scores never override test failures
 
 > Open `core/evals/golden/agent-code-quality/DESKTOP_LAUNCH.md` and run the single launch prompt with `TRIAL_ID = N`.
 
-Workspaces for **2026-07-14** are pre-seeded under `trials/2026-07-14-operator-blind/`.
+**Trial workspaces and scores are local-only** (gitignored under `trials/`). Seed them on your machine with the scripts below; do not commit run trees.
 
 **Full operator agent (shell):**
 
@@ -59,26 +59,27 @@ agent-code-quality/
   tasks/
     01-parse-kv/ … 05-count-words/   # easier (often ceiling on strong models)
     06-lru-ttl/ 07-deep-merge/ 08-line-chunker/  # hard pack (headroom)
-  trials/
+    09-rate-limit-service/ 10-circuit-breaker/  # L2 multi-file
+  trials/                   # LOCAL ONLY — gitignored run outputs
+  _grok_fill/               # LOCAL ONLY — implement scratch
 ```
 
 ## Meaningful GXP wins (summary)
 
-See [`trials/GXP_WINS.md`](trials/GXP_WINS.md) and [`trials/SCORECARD.md`](trials/SCORECARD.md).
+See [`GXP_WINS.md`](GXP_WINS.md) and [`SCORECARD.md`](SCORECARD.md).
 
 **Supported:** public-green stop vs GXP (tasks 09–10); short-prompt + Phase 0.  
 **Not supported:** same complete prompt, unconstrained best-effort control vs GXP.
 
 ## Transcript metrics (L2 tool loops)
 
-Secondary process signals from `agent_tool_log.jsonl` (do not replace hidden correctness):
+Secondary process signals from `agent_tool_log.jsonl` (do not replace hidden correctness).
+Write outputs under local `trials/` (gitignored):
 
 ```bash
 python core/evals/golden/agent-code-quality/harness/score_transcript.py --scan-trials \
   --out core/evals/golden/agent-code-quality/trials/TRANSCRIPT_METRICS.json
 ```
-
-See [`trials/TRANSCRIPT_METRICS.md`](trials/TRANSCRIPT_METRICS.md).
 
 ## Task difficulty bands
 
@@ -88,15 +89,14 @@ See [`trials/TRANSCRIPT_METRICS.md`](trials/TRANSCRIPT_METRICS.md).
 | Hard single-shot | `06-lru-ttl`, `07-deep-merge`, `08-line-chunker` | Multi-rule traps; still often ceiling |
 | **L2 tool-using multi-factor** | `09-rate-limit-service`, `10-circuit-breaker` | Multi-file + `.ai/` + weak public green trap; public_green vs GXP wins on both; prompts `control-public-green.md` / `gxp-tools.md` |
 
-## Latest campaigns
+## Campaign runs (local only)
 
-| Campaign | Path |
-|---|---|
-| Single-seed control vs GXP | [`trials/2026-07-13-campaign/CAMPAIGN_REPORT.md`](trials/2026-07-13-campaign/CAMPAIGN_REPORT.md) |
-| Multi-seed (3 incomplete controls × 3 tasks) + multi-runner selftest attestation | [`trials/2026-07-13-multiseed/CAMPAIGN_REPORT.md`](trials/2026-07-13-multiseed/CAMPAIGN_REPORT.md) |
-| Matched Grok + Qwen (ceiling FAIL on 01/04/05) | [`trials/2026-07-14-matched-grok-qwen/CAMPAIGN_REPORT.md`](trials/2026-07-14-matched-grok-qwen/CAMPAIGN_REPORT.md) |
+Full campaign packs (results, scores, CAMPAIGN_REPORT, CONTAMINATION) live under
+`trials/<date>-…/` and are **gitignored**. Re-run with harness scripts / operator
+runbook; keep outputs on disk for your own analysis. Public claim summaries stay in
+`GXP_WINS.md` / `SCORECARD.md` only.
 
-Regenerate multi-seed: `python scripts/run-code-quality-seeds.py`
+Regenerate multi-seed locally: `python scripts/run-code-quality-seeds.py`
 
 ## Quick self-test (proves the scorer works)
 
@@ -121,7 +121,7 @@ See [`PROTOCOL.md`](PROTOCOL.md). Summary:
 1. Copy `tasks/<id>/starter` to two clean work dirs (`control/`, `gxp/`).  
 2. Run the **same** model/tooling twice with only the condition prompt differing.  
 3. Score both result trees with `score_trial.py`.  
-4. Record JSON rows in `trials/` (gitignored or committed as results).  
+4. Record JSON rows under local `trials/` (**never commit** — gitignored).  
 5. Verdict from **correctness** delta across ≥3 tasks or ≥3 seeds when possible.
 
 ## Limitations (read before claiming proof)

@@ -13,6 +13,13 @@ Never commit (and never *suggest* committing):
 - `adapters/local/` — private or project-specific skills and personas
 - `local/` — any other local-only working files
 - `core/tasks/generated/` and run-log dirs — machine-generated artifacts (already ignored)
+- `core/evals/**/trials/` — campaign run trees, scores, CAMPAIGN_REPORT / CONTAMINATION
+  packs, transcript scans (gitignored). Re-run locally; do not publish results.
+- `core/evals/**/_grok_fill/` and other implement scratch dirs (gitignored)
+
+Golden **task fixtures** under `core/evals/**/tasks/` (starter / reference / hidden_tests)
+and harness/prompts may stay tracked so operators can run selftests locally — but **trial
+outputs and ad-hoc test runs** stay local-only.
 
 The principle is broader than the list: if content describes **this specific project or
 deployment** rather than **the methodology**, it is local-only — regardless of path. When

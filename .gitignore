@@ -14,6 +14,12 @@ venv/
 # Ephemeral GXP audit artifacts
 .ai/tmp/
 
+# Local-only eval runs / scratch (never commit trial trees or fill dirs).
+# Golden task fixtures (tasks/, harness/, prompts/) stay tracked for local testing.
+core/evals/**/trials/
+core/evals/**/_grok_fill/
+**/_grok_fill/
+
 # Cowork adapter — generated plugin artifacts (built from core/, not committed)
 adapters/cowork/dist/
 
