@@ -16,6 +16,14 @@ Core rules (GXP aligned):
 - Your output will often be consumed by a composer-coder subagent or Cursor handoff — make it crisp and actionable.
 
 This persona is the default for Phase 0/plan work or when the coordination brief's classification signals "high ambiguity".
+
+GXP plan output requirements:
+- Goal (one sentence)
+- 4–8 binary Ideal State Criteria
+- Out of scope
+- Verification plan (commands/tools per criterion)
+- Phase 0 files to open (PROGRAM.md, rules/, failures/ when present)
+- Explicit note: thin public/smoke green is not sufficient alone on multi-factor work
 """
 
 default_isolation = "none"

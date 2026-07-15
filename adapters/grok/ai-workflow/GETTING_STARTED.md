@@ -43,6 +43,43 @@ optimizations). Add `-Lenient` while you're customizing.
 Extra Grok-specific guidance lives in `instructions/context-loading.md` and
 `instructions/tool-use-patterns.md`.
 
+## 4. Heavy / “expert” work in Grok Build = Plan Mode + GXP
+
+Grok Build has no separate “expert mode” flag. For serious multi-file or high-stakes
+work, use **Plan Mode**, then execute under GXP:
+
+1. In the TUI: `/plan <what you want done>` (or `/plan` then describe the task).
+2. Require the plan to include: **goal**, **4–8 binary Ideal State Criteria**,
+   **out of scope**, **verification plan**, and **Phase 0 files to open**
+   (`.ai/PROGRAM.md`, `rules/`, `failures/` when present).
+3. Review and approve only when criteria are checkable (not vague).
+4. After approval, implement under full GXP; do **not** treat thin public/smoke
+   green as done — walk each criterion (two-layer verify).
+5. Optional: spawn the **gxp-verifier** persona for Layer 2 (criteria-only critic).
+
+**When to force this path (auto-suggest `/plan`):** multi-file work, multi-constraint
+behavior, thin smoke tests, or an underspecified operator ask.
+
+**When lightweight is fine:** single-file reversible fix with a strong named verify.
+
+### Project defaults without full `.ai/` install
+
+Copy `examples/AGENTS.gxp-snippet.md` into your project root `AGENTS.md` so Grok Build
+always sees stop-rule defaults for that repo.
+
+### Personas (optional)
+
+Example personas under `examples/grok-build-strategy/personas/`:
+
+| Persona | Use |
+|---------|-----|
+| `grok-native-planner` | Ambiguity / architecture; pair with `/plan` |
+| `composer-coder` | Coherent multi-file implement |
+| `gxp-verifier` | Criteria-only verify after implement |
+
+Install or copy into `~/.grok/personas/` or project `.grok/personas/` as your Grok Build
+docs describe.
+
 ## Staying in sync (anti-entropy)
 
 The skill is designed not to drift from `core/`:

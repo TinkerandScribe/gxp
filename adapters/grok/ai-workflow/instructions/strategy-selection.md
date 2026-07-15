@@ -20,10 +20,12 @@ choose least-capable engine with margin, record, re-evaluate) lives in core.
 Run this **early** (end of Phase 0 or start of Phase 1/3) for any non-trivial goal. Use GXP language for the classification.
 
 Trigger signals (lightweight version of self-evaluation gate):
-- High ambiguity, architecture, planning, research → Grok native + plan mode
+- High ambiguity, architecture, planning, research → Grok native + **`/plan` mode**
+- Underspecified multi-factor ask or thin smoke verify → **`/plan` first**, then full GXP execute (suggest `/plan` explicitly in transcript)
 - Coherent multi-file edits, long-running implementation, "make it work end-to-end", large refactors → Composer 2.5
 - "Visual", "side-by-side", "in the IDE", "Cursor specific", "browse files visually" → Cursor handoff
-- Quick terminal/debug/small reversible change → Fast native Grok
+- After implement on multi-file / multi-constraint work → optional **gxp-verifier** persona (criteria-only; no product edits)
+- Quick terminal/debug/small reversible change → Fast native Grok (lightweight GXP OK)
 
 Always produce a short "Strategy Decision" note using GXP style:
 - Goal classification
@@ -75,6 +77,12 @@ See examples in this adapter (created as part of prototype).
   Always produce clean diffs. Follow GXP: use binary Ideal State Criteria thinking for verification steps.
   Prefer action_spec style when possible.
   """
+  ```
+
+- **gxp-verifier.toml** (Layer 2 verify / critic)
+  ```toml
+  # See examples/grok-build-strategy/personas/gxp-verifier.toml
+  # Criteria-only; runs tests; does not edit product code.
   ```
 
 - **grok-native-planner.toml**

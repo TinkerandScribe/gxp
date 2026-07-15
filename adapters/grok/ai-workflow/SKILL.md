@@ -45,11 +45,24 @@ Always be aware of which version you are following.
 
 When you detect a task that would benefit from Composer 2.5 or a Cursor handoff, run the logic in `instructions/strategy-selection.md` early.
 
-Use personas (composer-coder, grok-native-planner) with `spawn_subagent` for automatic switching inside the session.
+Use personas (composer-coder, grok-native-planner, **gxp-verifier**) with `spawn_subagent` for automatic switching inside the session.
 
 For Cursor: emit a self-contained GXP brief + ready-to-paste prompt that follows the Cursor adapter rules.
 
 Always log the decision with binary justification and a capability note. This advances the coordination brief at `core/tasks/EXAMPLE-feature-brief.md`.
+
+### Plan Mode = heavy GXP front half (Grok Build)
+
+There is no separate “expert mode.” For serious work, prefer:
+
+1. Suggest **`/plan <task>`** when the ask is multi-file, multi-constraint, high-stakes,
+   or underspecified (operator did not supply ~4+ binary criteria).
+2. Plan content must be GXP-shaped: goal, 4–8 Ideal State Criteria, out of scope,
+   verification plan, Phase 0 files to read.
+3. Do not treat plan approval as “tests already passed” — after execute, still run
+   Phase 5 (two-layer verify). Optionally spawn **gxp-verifier** for criteria-only review.
+
+See `GETTING_STARTED.md` §4 and `examples/AGENTS.gxp-snippet.md` for project defaults.
 
 ## Full Workflow (Phases 0–8)
 
