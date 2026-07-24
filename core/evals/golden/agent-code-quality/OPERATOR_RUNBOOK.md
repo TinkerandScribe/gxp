@@ -121,8 +121,8 @@ Then implement only under DEST.
 | 11 | cursor | control | 05-count-words | ☐ |
 | 12 | cursor | gxp | 05-count-words | ☐ |
 
-**DEST example (Windows):**  
-`C:\Users\Reepicheep\Claude\gxp-public\core\evals\golden\agent-code-quality\trials\2026-07-14-operator-blind\results\claude\control\01-parse-kv`
+**DEST example (Windows, relative to your repo checkout):**  
+`<repo>\core\evals\golden\agent-code-quality\trials\<date>-operator-blind\results\claude\control\01-parse-kv`
 
 ---
 

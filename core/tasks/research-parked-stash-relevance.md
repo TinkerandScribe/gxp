@@ -94,11 +94,11 @@ stash or on main. Cite concrete paths.
 
 ## Ideal State Criteria (for the research run itself)
 
-- [ ] Every stash theme A–E has a KEEP / SUPERSEDED / PARTIAL / DROP / CONFLICT label.
-- [ ] Blind `stash pop` safety answered with evidence from current main.
-- [ ] Residual work (if any) is split into ≤3 focused PR proposals — or “none”.
-- [ ] Absolute-path runbook item called out if still present on main.
-- [ ] No recommendation weakens `core/workflow.md` / `core/routing.md` gates.
+- [x] Every stash theme A–E has a KEEP / SUPERSEDED / PARTIAL / DROP / CONFLICT label.
+- [x] Blind `stash pop` safety answered with evidence from current main.
+- [x] Residual work (if any) is split into ≤3 focused PR proposals — or “none”.
+- [x] Absolute-path runbook item called out if still present on main.
+- [x] No recommendation weakens `core/workflow.md` / `core/routing.md` gates.
 
 ## Verification (after research returns)
 
@@ -111,8 +111,53 @@ classifications before any restore PR.
 - Shipping 1.3.1 tag/release
 - New gxp-refine experiments
 
+
+
+---
+
+## RESEARCH RESULTS (2026-07-24, main `4202a4c`)
+
+Read-only audit of `stash@{0}` / W=`3f03726` vs base `ad72c9f` vs HEAD. **No stash apply.**
+
+### 1. Classification table
+
+| Theme | Classification | Evidence | Residual |
+|---|---|---|---|
+| A Release packaging (CHANGELOG/README 1.3.1) | **PARTIAL → KEEP rewrite** | HEAD still shows `## [1.3.0]` and README Latest **v1.3.0**. Stash draft claims skill-zip tracked source (`adapters/claude/skill-src/`, `scripts/build-skill-zip.sh`) — **absent on HEAD**. Verification ladder **is** in `core/workflow.md`; evals/trials + `_grok_fill/` gitignored; Grok productization commits exist but are not narrated in CHANGELOG post-1.3.0; runbook path fix **not** on HEAD. | Rewrite 1.3.1 notes against HEAD only (no blind stash); do **not** claim untracked skill-zip builder; tag/release remains operator-gated. |
+| B Cursor ladder / ratings placement | **KEEP** (+ **CONFLICT** on START_SESSION) | `rule.mdc` lacks Verification ladder + where-to-append; full/lightweight triggers weaker than stash. `TEST_PROMPT.md` still 10 Qs. Cursor README lacks ladder bullets. sync `check-core.{sh,ps1}` lack ladder markers. HEAD `START_SESSION.md` has post-stash **Not gxp-refine** section (PRs #3/#5) that stash tip omits — blind apply would drop it. | Port stash intent into rule/TEST/README/sync; merge START_SESSION (ladder text + keep Not gxp-refine). |
+| C Cowork ratings-schema hash fields | **KEEP** | `adapters/cowork/.../ratings-schema.md` optional table ends at `failure_ref`; no `prev_hash`/`entry_hash`. Core schema line + `scripts/validate-ratings-chain.py` already define the chain. | Add two optional-field rows (stash hunk is correct). |
+| D ratings.jsonl orchestrator line | **DROP** | Stash adds `review-gxp-orchestrator-system-prompt` rating. Brief path **missing** on HEAD; task absent from ledger. Blind apply would collide with post-stash chained lines (`gxp-refine-*`). | Do not re-append orphan rating without public brief + clean chain re-anchor. |
+| E OPERATOR_RUNBOOK absolute path | **KEEP (high)** | Line still has `C:\Users\Reepicheep\Claude\gxp-public\...` DEST example. | Relativize to `<repo>\...\trials\<date>-operator-blind\...` (rule-02 class). |
+
+### 2. Blind `stash pop` safety
+
+**NO.** Evidence: (1) `START_SESSION.md` diverged (gxp-refine disclaimer on HEAD); (2) `core/ratings.jsonl` grew chained refine ratings after stash base — applying stash tip would fight tip/history; (3) CHANGELOG 1.3.1 draft asserts skill-zip builder files that are not on HEAD; (4) multi-file Cursor content needs merge not replace.
+
+### 3. Recommended next PRs (≤3)
+
+1. **restore-parked-hygiene-cursor** — E + C + B (runbook path, cowork schema rows, Cursor ladder/placement + sync markers; preserve Not gxp-refine). Files: `OPERATOR_RUNBOOK.md`, `ratings-schema.md`, `rule.mdc`, `START_SESSION.md`, `TEST_PROMPT.md`, Cursor `README.md`, `sync/check-core.{sh,ps1}`.
+2. **release-notes-1.3.1-rewrite** — rewrite CHANGELOG/README Latest against HEAD truths only; **no tag** until operator asks. Files: `CHANGELOG.md`, `README.md`.
+3. *(none third)* — D dropped; skill-zip builder remains out of scope unless separately briefed.
+
+### 4. Not relevant anymore
+
+- Blind restore of stash ratings.jsonl line (D).
+- Stash 1.3.1 bullet claiming tracked skill-zip builder / `build-skill-zip.sh` (not on tree).
+- Any change that weakens `core/workflow.md` Verification ladder or `core/routing.md` rails (none proposed).
+
+### 5. Confidence
+
+**High** for E/C/B/D and blind-pop=NO (paths read + diffs vs SHAs). **Medium** for A release narrative (skill-zip may exist only as GitHub release asset, not source tree — not fully audited release assets). Not checked: GitHub release asset contents vs changelog claims; non-public local copies of orchestrator brief.
+
+### Spot-check notes (operator)
+
+- `OPERATOR_RUNBOOK.md` absolute path: confirmed present.
+- `rule.mdc`: no "Verification ladder" string.
+- `ratings-schema.md`: no prev_hash/entry_hash rows.
+
 ## Handoff notes
 
-- Sync status at prompt authoring: local `main` fast-forwarded to match `origin/main`;
-  feature PRs #2–#5 already merged/pushed; only remote-ahead item was chore sync markers.
-- Stash remains local-only until deliberately restored.
+- Research executed 2026-07-24 on main `4202a4c` (post PR #6). Stash left parked (no pop).
+- Follow-up briefs: `core/tasks/restore-parked-hygiene-cursor.md` (implement this tick if bounded);
+  `core/tasks/release-notes-1.3.1-rewrite.md` (parked — no tag without operator).
+- Sync status at prompt authoring: local `main` matched `origin/main` through PR #5; PR #6 shipped this prompt.

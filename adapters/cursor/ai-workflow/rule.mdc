@@ -73,9 +73,12 @@ affects what happens next.
 
 - **Full workflow** (default): phases 0–8. Use for anything that changes
   behavior, touches more than one file non-trivially, or could regress
-  something.
+  something. Also use full when the smoke/public verify suite is thin
+  relative to the criteria, or the operator ask is underspecified (you
+  invent most criteria).
 - **Lightweight workflow**: phases 1, 2, 3, 5 only. Use only for
-  trivial, single-file, easily reversible changes.
+  trivial, single-file, easily reversible changes where strong
+  deterministic verify is already defined. Upgrade to full if scope grows.
 
 **Full workflow phases:**
 
@@ -89,11 +92,15 @@ affects what happens next.
    switch strategy.
 5. Verify — run commands from `.ai/PROGRAM.md` (or `core/PROGRAM.template.md`
    in gxp) first; then deterministic checks (type/lint/test/build),
-   behavioral, then subjective.
-6. Append one JSON object per line to `.ai/ratings.jsonl`. Use fields from the
-   schema line (`ts`, `task`, `brief`, `criteria_met`, `criteria_total`,
+   behavioral, then subjective. Honor the **Verification ladder** below.
+6. Append one JSON object per line to `.ai/ratings.jsonl` (in gxp:
+   `core/ratings.jsonl` for work whose subject is this repo). Use fields from
+   the schema line (`ts`, `task`, `brief`, `criteria_met`, `criteria_total`,
    `rating`, optional `mode`, `notes`, `failure_ref`). Rating is integer 1–10.
-   No JSON arrays. Skip the `_schema` line when parsing.
+   No JSON arrays. Skip the `_schema` line when parsing. **Where to append:**
+   a run’s rating lives where its artifacts live — installed projects use
+   `.ai/ratings.jsonl`; this source repo’s ledger is live for fork work, not
+   examples-only.
 7. Capture repeatable failures with expected, actual, root cause,
    detection, resolution, prevention, and follow-up.
 8. Write a short handoff (what changed, what was verified, what is
@@ -138,6 +145,14 @@ Report verification as real output, not inference:
   <actual terminal output>
   ```
 If a command was not run, say "not run" and explain why.
+
+**Verification ladder (do not skip):** Smoke or “public” suites are necessary,
+not always sufficient. Treat project verify exit 0 as **insufficient alone**
+when the change is multi-file/multi-constraint, the operator prompt is
+incomplete / criteria were mostly written by you, or the suite is thin relative
+to Ideal State Criteria. Then: (1) walk **each** criterion and name the tool
+check used; (2) prefer a **second layer** of verification for edges smoke misses;
+(3) anti-pattern — claiming done solely because a thin smoke suite exited 0.
 
 Scope discipline:
 Before writing any code, list anything tempting but out-of-scope:
