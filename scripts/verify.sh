@@ -48,8 +48,18 @@ for sh in adapters/*/ai-workflow/sync/check-core.sh adapters/*/sync/check-core.s
 done
 
 echo ""
+echo "4. gxp-refine selftest (run when present; marker regressions fail the build)"
+if [ -f scripts/eval-gxp-refine-selftest.sh ]; then
+  echo "   - scripts/eval-gxp-refine-selftest.sh"
+  if ! bash scripts/eval-gxp-refine-selftest.sh; then
+    echo "     FAIL: gxp-refine selftest reported errors"
+    fail=1
+  fi
+fi
+
+echo ""
 if [ "$fail" -ne 0 ]; then
-  echo "=== FAIL: missing required files or adapter drift (see above) ==="
+  echo "=== FAIL: missing required files, adapter drift, or gxp-refine selftest (see above) ==="
   exit 1
 fi
-echo "=== PASS: required files present, adapter sync checks clean ==="
+echo "=== PASS: required files present, adapter sync checks clean, gxp-refine selftest clean ==="
