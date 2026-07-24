@@ -20,6 +20,8 @@ The ratings ledger records one honest line per GXP run. **One JSON object per li
 | `mode`        | string | `full` or `lightweight` — which workflow variant ran                   |
 | `notes`       | string | Free text. One line. What's verified, what's parked, why the rating.   |
 | `failure_ref` | string | Path under `failures/` if a failure was captured this run; else `""`   |
+| `prev_hash`   | string | Optional integrity chain: `entry_hash` of the previous chained line; `null` on a genesis/re-anchor line |
+| `entry_hash`  | string | Optional: SHA-256 of this entry without the `entry_hash` field (see `scripts/validate-ratings-chain.py`) |
 
 ## Example lines
 

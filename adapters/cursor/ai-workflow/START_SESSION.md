@@ -11,16 +11,19 @@ it into GXP workflow discipline immediately.
 Use the repo GXP workflow (core/workflow.md v1.1 / .ai/workflow.md).
 
 First decide full vs lightweight:
-- Lightweight: one-line / trivial / single-file / easily reversible -> phases 1, 2, 3, 5
-- Full (default for everything else): phases 0-8
+- Lightweight: one-line / trivial / single-file / easily reversible with strong verify -> phases 1, 2, 3, 5
+- Full (default): phases 0-8 — also when smoke verify is thin or criteria are underspecified
 
 If full:
 1. Read .ai/PROGRAM.md (or core/ if in gxp). Read relevant rules/, failures/, recent ratings.
 2. Write a task brief with 4-8 binary Ideal State Criteria. Stop here if criteria are not clear.
 3. Implement only what the brief covers. List anything out-of-scope before you start.
 4. If an approach fails twice, stop and switch strategy.
-5. Run verification in the terminal. Report: command, exit code, relevant output. Do not claim success without running it.
-6. Append a JSONL rating (integer 1-10, one line, no arrays).
+5. Run verification in the terminal. Report: command, exit code, relevant output.
+   Verification ladder: smoke exit 0 is not enough for multi-constraint work — walk each
+   Ideal State Criterion with a named check; prefer a second verification layer.
+6. Append a JSONL rating (integer 1-10, one line, no arrays) where artifacts live
+   (.ai/ratings.jsonl in target repos; core/ratings.jsonl for gxp fork work).
 7. Capture any repeatable failure with expected/actual/root cause/prevention.
 8. Write a short handoff: what changed, what was verified, what is parked.
 

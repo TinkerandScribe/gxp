@@ -16,6 +16,8 @@ research use Perplexity; for chat-driven reasoning use Claude.)
 - Installs a Cursor `.mdc` rule that enforces the GXP workflow phases
 - Adds Cursor-native operating guidance (Composer, terminal, @-references)
 - Encodes a verification output contract so Phase 5 always produces real evidence
+- Encodes the **Verification ladder** (smoke exit 0 ≠ done for multi-constraint work)
+- Encodes **where to append** ratings (artifacts live with the rating ledger)
 - Scopes Cursor to the task brief, preventing scope expansion during Composer edits
 - Enforces PowerShell-compatible command generation on Windows hosts
 

@@ -101,6 +101,8 @@ else
     check_marker "Capability & Permission" "Capability gate title"
     check_marker "PROGRAM\.md"             "PROGRAM.md verification pointer"
     check_marker "Repo-local Cursor"       "Preserve local rules note"
+    check_marker "Verification ladder"     "Verification ladder (Phase 5)"
+    check_marker "Where to append"         "Ratings where-to-append (Phase 6)"
 fi
 
 # Required support files

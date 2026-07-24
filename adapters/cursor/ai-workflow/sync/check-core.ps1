@@ -47,6 +47,8 @@ Test-Marker "Phase -1"                  "Capability gate section"
 Test-Marker "Capability & Permission"   "Capability gate title"
 Test-Marker "PROGRAM\.md"               "PROGRAM.md verification pointer"
 Test-Marker "Repo-local Cursor"         "Preserve local rules note"
+Test-Marker "Verification ladder"       "Verification ladder (Phase 5)"
+Test-Marker "Where to append"           "Ratings where-to-append (Phase 6)"
 
 Write-Host ""
 Write-Host "=== Cursor Adapter Drift Check ==="
