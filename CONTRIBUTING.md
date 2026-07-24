@@ -37,7 +37,8 @@ docs typos can skip the ceremony.
 
 ## Before you open a PR
 
-- `bash scripts/verify.sh` passes (adapters still ship their required files).
+- `bash scripts/verify.sh` passes (adapters still ship their required files;
+  when present, `scripts/eval-gxp-refine-selftest.sh` runs as part of verify).
 - No secrets and no local/project-specific context — see
   [`core/rules/01-no-secrets-in-git.md`](core/rules/01-no-secrets-in-git.md) and
   [`core/rules/02-local-context-never-committed.md`](core/rules/02-local-context-never-committed.md).

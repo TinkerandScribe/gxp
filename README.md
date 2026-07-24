@@ -126,8 +126,11 @@ scripts/     installer (.ps1 + .sh) and an adapter-parity check (verify.sh)
 
 Operator-invoked only (mutation budget = 1, dual approval gates, no auto-merge).
 How-to: [`core/docs/gxp-refine.md`](core/docs/gxp-refine.md). Design:
-[`core/tasks/gxp-refine-design.md`](core/tasks/gxp-refine-design.md). Cursor paste:
-[`adapters/cursor/ai-workflow/GXP_REFINE.md`](adapters/cursor/ai-workflow/GXP_REFINE.md).
+[`core/tasks/gxp-refine-design.md`](core/tasks/gxp-refine-design.md).
+Invoke paste surfaces (operator-only):
+[`Cursor`](adapters/cursor/ai-workflow/GXP_REFINE.md) ·
+[`Claude`](adapters/claude/ai-workflow/GXP_REFINE.md) ·
+[`Grok`](adapters/grok/ai-workflow/GXP_REFINE.md).
 
 ## Verify the repo
 

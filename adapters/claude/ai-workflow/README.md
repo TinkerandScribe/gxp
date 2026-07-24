@@ -43,6 +43,7 @@ The Claude adapter is intentionally allowed to diverge from core where it produc
 
 - `README.md` — This file (usage instructions for Claude)
 - `custom-instructions.md` — Ready-to-paste block for Claude Custom Instructions or Projects
+- `GXP_REFINE.md` — Operator-invoked `gxp-refine` paste only (not default Project behavior)
 - `instructions/` — Claude-optimized guidance:
   - `workflow.md` — Full Claude-adapted workflow
   - `context-loading.md` — Effective context strategies for Claude

@@ -1,14 +1,18 @@
-# gxp-refine — Cursor invoke prompt
+# gxp-refine — Claude invoke prompt
 
 **Operator-invoked only.** Paste this when you explicitly want a `gxp-refine` run.
 Do **not** paste this for ordinary implement work. Ordinary
-[`START_SESSION.md`](START_SESSION.md) must **not** enter this mode.
+[`custom-instructions.md`](custom-instructions.md) / Project workflow must **not**
+enter this mode.
 
 Trigger phrases that authorize this mode: **`gxp-refine`**, **`run gxp-refine`**.
 
+Canonical how-to: [`core/docs/gxp-refine.md`](../../../core/docs/gxp-refine.md).
+Run template: [`core/templates/gxp-refine-run.md`](../../../core/templates/gxp-refine-run.md).
+
 ---
 
-**Paste this into Cursor:**
+**Paste this into Claude:**
 
 ```
 OPERATOR REQUEST: gxp-refine
@@ -32,9 +36,7 @@ single weakness+hypothesis+target+eval plan, then STOP at GATE 1.
 
 ---
 
-## Sibling surfaces
+## Not always-on
 
-- Claude: [`adapters/claude/ai-workflow/GXP_REFINE.md`](../../claude/ai-workflow/GXP_REFINE.md)
-- Grok: [`adapters/grok/ai-workflow/GXP_REFINE.md`](../../grok/ai-workflow/GXP_REFINE.md)
-
-Always-on `rule.mdc` auto-entry remains forbidden — mode stays explicit.
+This file is paste-only. Do not fold it into Project custom instructions as
+default behavior — entry stays explicit.

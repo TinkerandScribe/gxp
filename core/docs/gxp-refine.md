@@ -11,13 +11,20 @@ Use `gxp-refine` when you want one evidenced methodology weakness turned into **
 reversible candidate change, compared against a pinned baseline, then **stopped for your
 approval**. It is operator-invoked only — never a side effect of ordinary GXP work.
 
-## How to invoke (Cursor)
+## How to invoke
 
-1. Open a **new** chat/Composer session (do not piggyback an ordinary implement thread).
-2. Paste the prompt in [`adapters/cursor/ai-workflow/GXP_REFINE.md`](../../adapters/cursor/ai-workflow/GXP_REFINE.md),
-   **or** say explicitly: `gxp-refine` / `run gxp-refine` and `@` the run template.
-3. Ordinary session start ([`START_SESSION.md`](../../adapters/cursor/ai-workflow/START_SESSION.md))
-   does **not** enter `gxp-refine`.
+Open a **new** session (do not piggyback an ordinary implement thread). Paste the
+adapter invoke prompt, **or** say explicitly: `gxp-refine` / `run gxp-refine`
+and point at the run template.
+
+| Adapter | Invocable surface (paste / `@` only) |
+|---------|--------------------------------------|
+| Cursor | [`adapters/cursor/ai-workflow/GXP_REFINE.md`](../../adapters/cursor/ai-workflow/GXP_REFINE.md) |
+| Claude | [`adapters/claude/ai-workflow/GXP_REFINE.md`](../../adapters/claude/ai-workflow/GXP_REFINE.md) |
+| Grok | [`adapters/grok/ai-workflow/GXP_REFINE.md`](../../adapters/grok/ai-workflow/GXP_REFINE.md) |
+
+Ordinary session start ([`START_SESSION.md`](../../adapters/cursor/ai-workflow/START_SESSION.md),
+Claude custom instructions, Grok `SKILL.md`) does **not** enter `gxp-refine`.
 
 Trigger phrases (required): `gxp-refine`, `run gxp-refine`.
 

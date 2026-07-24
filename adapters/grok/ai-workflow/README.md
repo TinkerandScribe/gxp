@@ -35,6 +35,7 @@ The `SKILL.md` file contains strong instructions telling Grok to require this ch
 ## Directory Structure
 
 - `SKILL.md` — The main skill definition loaded by Grok.
+- `GXP_REFINE.md` — Operator-invoked `gxp-refine` paste only (ordinary skill use does not enter refine).
 - `instructions/` — Grok-specific optimizations and rephrasings of the workflow.
 - `sync/` — Tooling to help keep this adapter aligned with the core methodology.
 
