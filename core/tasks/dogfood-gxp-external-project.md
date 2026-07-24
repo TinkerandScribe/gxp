@@ -1,8 +1,9 @@
 # Task brief — dogfood GXP on an external project (Roadmap M7.1)
 
-**Status:** BLOCKED — waiting on operator to name host repo path/URL  
-**Depends on:** operator names a **host repo** path/URL  
-**Workflow:** full (on the host repo)
+**Status:** DONE (2026-07-24)  
+**Host:** operator-named private Flask business-management app  
+**Retrospective:** [`core/evals/dogfood-m7-external-host-2026-07-24.md`](../evals/dogfood-m7-external-host-2026-07-24.md)  
+**Workflow:** full (on the host repo; closed from existing host evidence + public retrospective)
 
 ## Goal
 
@@ -18,14 +19,14 @@ gxp package repo, to test usefulness (not hidden-test science).
 
 ## Ideal State Criteria
 
-- [ ] 1. Host repo has `.ai/workflow.md` (or equivalent) installed and
+- [x] 1. Host repo has `.ai/workflow.md` (or equivalent) installed and
   `PROGRAM.md` filled with real verify commands.  
-- [ ] 2. One task brief with 4–8 binary ISC completed under host `.ai/tasks/`.  
-- [ ] 3. Implementation merged or PR’d on host; deterministic host verify ran first.  
-- [ ] 4. One rating line in host `.ai/ratings.jsonl`.  
-- [ ] 5. Retrospective (≤1 page) answers: what GXP helped, what hurt, one change
+- [x] 2. One task brief with 4–8 binary ISC completed under host `.ai/tasks/`.  
+- [x] 3. Implementation merged or PR’d on host; deterministic host verify ran first.  
+- [x] 4. One rating line in host `.ai/ratings.jsonl`.  
+- [x] 5. Retrospective (≤1 page) answers: what GXP helped, what hurt, one change
   proposal for gxp core/adapters — **no host secrets**.  
-- [ ] 6. If retrospective is committed to gxp public tree, path is under
+- [x] 6. If retrospective is committed to gxp public tree, path is under
   `core/evals/` or `core/tasks/` and rule 01/02 clean.
 
 ## Out of scope
@@ -39,9 +40,12 @@ Host tests/linters green; brief/rating present; retrospective reviewed for secre
 
 ## Approval gates
 
-- Operator must name the host project before implementation starts.
+- Operator must name the host project before implementation starts. **Named 2026-07-24.**
 
-## BLOCKED (2026-07-24 triage)
+## Close-out (2026-07-24)
 
-Still valuable, but cannot start without a named host project. Operator must provide
-repo path or URL before install/dogfood. Do not invent a host.
+Host already had multi-cycle GXP use (full + lightweight), deterministic verify
+floor, and eleven host rating lines. Public work product is the sanitized
+retrospective only. ROADMAP M7 marked **done**. Follow-up proposal (refresh
+workflow-only recipe + ratings field migration note) is backlog, not required
+to close M7.
