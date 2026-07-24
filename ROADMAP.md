@@ -89,15 +89,15 @@ easy tasks; more tasks improve statistical and ecological validity of later runs
 
 | Order | Item | Brief | Status |
 |---|---|---|---|
-| 1 | Blind multi-model control vs GXP campaign | [`blind-multi-model-code-quality-campaign.md`](core/tasks/blind-multi-model-code-quality-campaign.md) | **run** — [`trials/2026-07-14-operator-blind/`](core/evals/golden/agent-code-quality/trials/2026-07-14-operator-blind/) pre-registered rule **FAIL** (ceiling: all 1.0; models not matched across arms). Earlier local pack: `trials/2026-07-13-blind/`. |
+| 1 | Blind multi-model control vs GXP campaign | [`blind-multi-model-code-quality-campaign.md`](core/tasks/blind-multi-model-code-quality-campaign.md) | **blocked** — prior runs **FAIL** claim gate (ceiling / unmatched models). Next needs operator scope: harder tasks + matched models. Trial refs: [`2026-07-14-operator-blind`](core/evals/golden/agent-code-quality/trials/2026-07-14-operator-blind/), `2026-07-13-blind`. |
 
 **Claim gate:** still **do not** market “GXP makes agents write better code” — both desktop blinds failed the pre-registered lift rule (ceiling / confounders). Next: harder tasks + **matched models** across control/GXP.
 
 ### Milestone 7 — product dogfood (parallel track)
 
-| Order | Item | Brief | Depends on |
-|---|---|---|---|
-| 1 | Dogfood GXP on an external host project | [`dogfood-gxp-external-project.md`](core/tasks/dogfood-gxp-external-project.md) | operator names a repo |
+| Order | Item | Brief | Depends on | Status |
+|---|---|---|---|---|
+| 1 | Dogfood GXP on an external host project | [`dogfood-gxp-external-project.md`](core/tasks/dogfood-gxp-external-project.md) | operator names a repo | **blocked** — no host named |
 
 **Why parallel:** does not improve the methodology package’s scientific claims, but
 is the best test of *usefulness*. Should not steal focus from M6 if the goal is proof.
@@ -106,7 +106,7 @@ is the best test of *usefulness*. Should not steal focus from M6 if the goal is 
 
 | Item | Brief | When |
 |---|---|---|
-| Put Cursor `rule.mdc` on the generator | [`cursor-workflow-on-generator.md`](core/tasks/cursor-workflow-on-generator.md) | After M4–M5 stable; high risk (Phase -1 / rule shape) |
+| Put Cursor `rule.mdc` on the generator | [`cursor-workflow-on-generator.md`](core/tasks/cursor-workflow-on-generator.md) | **deferred** — M4–M5 done; still high risk; wait for explicit operator re-open over M6/M7 |
 
 ### Explicitly still out
 

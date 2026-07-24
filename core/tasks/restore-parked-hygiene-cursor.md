@@ -3,6 +3,7 @@
 **Date:** 2026-07-24
 **Task slug:** restore-parked-hygiene-cursor
 **Workflow:** full
+**Status:** done — shipped PR #7 / `320a5a3`
 
 ## Goal
 

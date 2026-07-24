@@ -1,6 +1,6 @@
 # Task brief — dogfood GXP on an external project (Roadmap M7.1)
 
-**Status:** draft — ready for pickup  
+**Status:** BLOCKED — waiting on operator to name host repo path/URL  
 **Depends on:** operator names a **host repo** path/URL  
 **Workflow:** full (on the host repo)
 
@@ -40,3 +40,8 @@ Host tests/linters green; brief/rating present; retrospective reviewed for secre
 ## Approval gates
 
 - Operator must name the host project before implementation starts.
+
+## BLOCKED (2026-07-24 triage)
+
+Still valuable, but cannot start without a named host project. Operator must provide
+repo path or URL before install/dogfood. Do not invent a host.

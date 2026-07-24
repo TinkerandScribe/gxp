@@ -1,6 +1,6 @@
 # Task brief — Cursor rule on generator (Roadmap M8, deferred)
 
-**Status:** draft — **deferred** until M4–M5 stable; high risk  
+**Status:** deferred — M4–M5 done, but still high risk; leave parked until operator re-opens over M6/M7  
 **Depends on:** generator stable in production use; operator re-open  
 **Workflow:** full  
 
@@ -38,3 +38,8 @@ Cursor sync checks; verify.sh; manual Cursor session smoke (operator).
 ## Default disposition
 
 **Do not pick up** until operator explicitly prioritizes Cursor packaging over M6/M7.
+
+## TRIAGE (2026-07-24)
+
+Still deferred (not closed). M4/M5 are done, but Cursor-on-generator remains high risk
+(Phase -1 / rule shape). Do not pick up without explicit operator priority over M6/M7.
