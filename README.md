@@ -122,6 +122,13 @@ adapters/    per-tool integrations (cursor, grok, claude, chatgpt, perplexity, c
 scripts/     installer (.ps1 + .sh) and an adapter-parity check (verify.sh)
 ```
 
+## Bounded self-refinement (`gxp-refine`)
+
+Operator-invoked only (mutation budget = 1, dual approval gates, no auto-merge).
+How-to: [`core/docs/gxp-refine.md`](core/docs/gxp-refine.md). Design:
+[`core/tasks/gxp-refine-design.md`](core/tasks/gxp-refine-design.md). Cursor paste:
+[`adapters/cursor/ai-workflow/GXP_REFINE.md`](adapters/cursor/ai-workflow/GXP_REFINE.md).
+
 ## Verify the repo
 
 ```bash

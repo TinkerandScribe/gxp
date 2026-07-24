@@ -36,3 +36,11 @@ Use Composer for multi-file edits. Review the full diff before accepting.
 - After a long conversation where context has drifted
 - Handing off from Perplexity research to Cursor implementation
 - When Cursor starts producing out-of-scope changes
+
+---
+
+## Not gxp-refine
+
+This ordinary START prompt does **not** enter `gxp-refine`. To run bounded
+self-refinement, the operator must explicitly say `gxp-refine` / `run gxp-refine`
+and use [`GXP_REFINE.md`](GXP_REFINE.md) (see [`core/docs/gxp-refine.md`](../../../core/docs/gxp-refine.md)).

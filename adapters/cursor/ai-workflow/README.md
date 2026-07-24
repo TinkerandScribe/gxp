@@ -83,3 +83,10 @@ Score: 9-10 correct = working well. Less than 7 = check the rule is installed.
 - Do not mirror the full `core/workflow.md` text into `rule.mdc` — compression is
   intentional. The rule is a behaviour contract, not a documentation copy.
 - Run `sync\check-core.ps1` after any edits to verify structural alignment.
+
+## gxp-refine (optional mode)
+
+Ordinary Cursor sessions follow `rule.mdc` / `START_SESSION.md` and do **not**
+auto-enter refine. To invoke bounded self-refinement, paste
+[`GXP_REFINE.md`](GXP_REFINE.md) (operator must say `gxp-refine`). Operator how-to:
+[`core/docs/gxp-refine.md`](../../../core/docs/gxp-refine.md).
