@@ -1,6 +1,6 @@
 # Task brief — blind multi-model code-quality campaign (Roadmap M6.1)
 
-**Status:** draft — ready for pickup (operator-heavy)  
+**Status:** BLOCKED — claim gate FAIL; needs operator campaign scope (harder tasks + matched models across arms)  
 **Depends on:** recommended
 [`grow-code-quality-eval-tasks.md`](grow-code-quality-eval-tasks.md); harness multi-runner
 selftest already green  
@@ -53,3 +53,14 @@ score-only operators.
 2. Dispatch control and GXP sessions (separate contexts).  
 3. Collect trees → score → report.  
 4. Decide claim language from pre-registered rule only.
+
+## BLOCKED (2026-07-24 triage)
+
+Prior desktop blinds failed the pre-registered lift rule (ceiling / unmatched models).
+Do **not** market code-quality lift. Next campaign requires operator to choose:
+
+1. Harder task set (or new tasks that break ceiling), **and**
+2. Matched models across control/GXP arms, **and**
+3. Frozen protocol + success rule before first run.
+
+No full campaign in this triage tick. Brief left ready once scope is named.

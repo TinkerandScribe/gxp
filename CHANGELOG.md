@@ -4,7 +4,39 @@ All notable changes to the public [GXP](https://github.com/TinkerandScribe/gxp) 
 documented here. Versioning follows [SemVer](https://semver.org/) for the methodology
 package as a whole (core + adapters + install/verify scripts).
 
+## [1.3.1] - 2026-07-24
+
+### Added
+
+- **Bounded self-refinement (`gxp-refine`) v0** — operator-invoked only (mutation budget = 1,
+  dual approval gates, no auto-promote): run template, how-to, Cursor/Claude/Grok paste
+  surfaces, and `scripts/eval-gxp-refine-selftest.sh` wired into `scripts/verify.sh`.
+- **Workflow: Verification ladder** — a thin smoke suite exiting 0 is necessary but not
+  sufficient for multi-constraint changes; walk each Ideal State Criterion with a named
+  check and prefer a second verification layer (core + sharper Cursor adapter triggers /
+  sync markers).
+- **M4/M5 polish** — shared `scripts/lib/find-python.sh`; harder code-quality eval tasks
+  and L2 tool-using / circuit-breaker coverage (claim gate for marketing lift still closed).
+- **Failure capture** — `core/failures/powershell-double-quote-backtick-eats-markdown.md`
+  (Windows PowerShell double-quoted backticks corrupt markdown writes).
+
+### Changed
+
+- **Grok adapter productization** — Plan Mode + GXP heavy path, verifier persona,
+  `AGENTS.md` snippet, install-skill legacy alias + GXP personas.
+- **Eval policy** — trial trees and `_grok_fill/` staging are local-only (gitignored).
+- **Cowork ratings schema** — documents optional `prev_hash` / `entry_hash` with pointer
+  to `scripts/validate-ratings-chain.py`.
+- **Path hygiene** — `OPERATOR_RUNBOOK.md` DEST example uses a relative placeholder
+  (no absolute user path).
+
+### Fixed
+
+- Cursor adapter docs/quiz/sync checks assert Verification ladder and where-to-append
+  ratings placement while preserving the Not gxp-refine disclaimer.
+
 ## [1.3.0] - 2026-07-13
+
 
 ### Changed
 

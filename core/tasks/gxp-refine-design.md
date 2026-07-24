@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-23  
 **Task slug:** gxp-refine-design  
-**Status:** design-only — Option A; **not implemented**  
+**Status:** design done — Option A implemented via PRs #3–#5 (see gxp-refine-implement.md)  
 **Workflow:** full (this document is the deliverable)  
 **Branch convention:** `brief/gxp-refine-design`
 

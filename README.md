@@ -140,7 +140,7 @@ bash scripts/verify.sh   # required files present + adapter sync checks pass (dr
 
 ## Releases
 
-See [`CHANGELOG.md`](CHANGELOG.md). Latest: **v1.3.0** (doc-dedup generator, code-quality eval harness, Windows python portability).
+See [`CHANGELOG.md`](CHANGELOG.md). Latest: **v1.3.1** (gxp-refine v0 + selftest-in-verify, Verification ladder, Grok/Claude surfaces, path hygiene).
 
 Planned work lives in [`ROADMAP.md`](ROADMAP.md) (Part A: completed verification hardening;
 Part B: next polish → eval depth → blind multi-model evidence → dogfood).

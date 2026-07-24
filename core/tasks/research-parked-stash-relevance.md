@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-24  
 **Task slug:** research-parked-stash-relevance  
-**Status:** ready to paste into a research / review agent  
+**Status:** done — executed 2026-07-24; follow-ups #7 + release-notes triage  
 **Stash under review:** `stash@{0}: park-unrelated-before-gxp-refine`  
 **Stash base (when parked):** ~`ad72c9f` (after design PR #2)  
 **Current main at prompt authoring:** pull latest; expect post–PR #5 + sync markers  
@@ -161,3 +161,7 @@ Read-only audit of `stash@{0}` / W=`3f03726` vs base `ad72c9f` vs HEAD. **No sta
 - Follow-up briefs: `core/tasks/restore-parked-hygiene-cursor.md` (implement this tick if bounded);
   `core/tasks/release-notes-1.3.1-rewrite.md` (parked — no tag without operator).
 - Sync status at prompt authoring: local `main` matched `origin/main` through PR #5; PR #6 shipped this prompt.
+
+## CLOSED
+
+Research complete; implement follow-ups handled. Stash residual superseded by #7 + 1.3.1 rewrite; DROP rating not restored.

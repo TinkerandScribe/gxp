@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-23  
 **Task slug:** gxp-refine-implement  
-**Status:** ready for pickup  
+**Status:** done — shipped PRs #3–#5 (v0 + selftest-in-verify + Claude/Grok surfaces)  
 **Depends on:** [`gxp-refine-design.md`](gxp-refine-design.md) (merged on `main`)  
 **Workflow:** full  
 **Suggested branch:** `feat/gxp-refine-v0`
@@ -100,19 +100,19 @@ Search: refine, weekly refine, approval gate, mutation, promote.
    EXAMPLE-gxp-refine-run.md (fictional weakness; no real core edit). Mark as example.
 
 === IDEAL STATE CRITERIA (binary) ===
-- [ ] 1. core/templates/gxp-refine-run.md exists and contains explicit mutation-budget=1,
+- [x] 1. core/templates/gxp-refine-run.md exists and contains explicit mutation-budget=1,
       GATE 1, GATE 2, operator-invoked-only, and “no auto-apply/auto-merge” language.
-- [ ] 2. An operator how-to exists and links to gxp-refine-design.md + the run template;
+- [x] 2. An operator how-to exists and links to gxp-refine-design.md + the run template;
       includes Windows Git Bash verify + selftest commands.
-- [ ] 3. An invocable surface exists that activates only on explicit operator request
+- [x] 3. An invocable surface exists that activates only on explicit operator request
       (documented trigger phrases); ordinary GXP start prompts do not auto-enter refine.
-- [ ] 4. bash scripts/verify.sh exits 0 on the branch.
-- [ ] 5. A new selftest script exits 0 and fails if required markers are removed
+- [x] 4. bash scripts/verify.sh exits 0 on the branch.
+- [x] 5. A new selftest script exits 0 and fails if required markers are removed
       (negative check documented or implemented).
-- [ ] 6. No edits to core/routing.md hard rails; no weakening of Verification ladder /
+- [x] 6. No edits to core/routing.md hard rails; no weakening of Verification ladder /
       anti-loop / approval gates / L3/L4 in core/workflow.md (diff review).
-- [ ] 7. Naming is gxp-refine only (no gxp-rsi / gxp-auto in shipped surface).
-- [ ] 8. DRAFT PR opened; main not merged by the agent; rating line appended to
+- [x] 7. Naming is gxp-refine only (no gxp-rsi / gxp-auto in shipped surface).
+- [x] 8. DRAFT PR opened; main not merged by the agent; rating line appended to
       core/ratings.jsonl for this implement run.
 
 === OUT OF SCOPE ===
