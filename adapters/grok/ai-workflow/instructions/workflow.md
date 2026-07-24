@@ -6,7 +6,7 @@
 -->
 # Grok-Optimized Workflow (v1.1)
 
-> **Last synced from core:** e2ddd8050255fb8057acf7c8609723cf44bc161a (2026-07-23)
+> **Last synced from core:** 09398d5f7dc20ad828464af92e4d0b885f4d010c (2026-07-24)
 > This file is generated from `core/workflow.md` plus the grok delta. Tool-specific notes are in the delta; shared methodology is core. Run `../sync/check-core.sh` regularly.
 
 This is a **Grok-optimized** adaptation of the core AI Workflow methodology.
