@@ -97,7 +97,7 @@ easy tasks; more tasks improve statistical and ecological validity of later runs
 
 | Order | Item | Brief | Depends on | Status |
 |---|---|---|---|---|
-| 1 | Dogfood GXP on an external host project | [`dogfood-gxp-external-project.md`](core/tasks/dogfood-gxp-external-project.md) | operator names a repo | **blocked** — no host named |
+| 1 | Dogfood GXP on an external host project | [`dogfood-gxp-external-project.md`](core/tasks/dogfood-gxp-external-project.md) | operator named host | **done** — private Flask host; retrospective [`core/evals/dogfood-m7-external-host-2026-07-24.md`](core/evals/dogfood-m7-external-host-2026-07-24.md) |
 
 **Why parallel:** does not improve the methodology package’s scientific claims, but
 is the best test of *usefulness*. Should not steal focus from M6 if the goal is proof.
