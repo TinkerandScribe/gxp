@@ -113,13 +113,43 @@ No behavioral or subjective checks — a version string has no runtime behavior 
 
 ## Dead ends
 
-- (none)
+- **Stale `.git/index.lock` blocked the commit (resolved, not abandoned).** First `git commit`
+  died with `Unable to create '.git/index.lock': File exists`. Not retried blindly. Inspection
+  showed a 0-byte lock timestamped 20:39:22 — the exact moment of this session's first
+  `git status -sb`, which had also emitted `warning: unable to unlink .git/index.lock:
+  Operation not permitted`. Root cause: the Cowork folder mount denies `unlink` by default, so
+  any git command that takes the index lock leaves it stranded and wedges every later write.
+  Resolved by granting delete permission for the folder, then `rm -f .git/index.lock`.
+  Belief now: on a Cowork-mounted repo, enable file deletion *before* the first git command
+  that writes, not after one fails.
 
 ## Handoff notes
 
-- What changed:
-- What was verified (and how):
-- Explicitly not done / parked / follow-ups:
-- Approval gates hit and outcomes:
-- New `failures/` entries or rules:
-- Rating entry reference:
+- **What changed:** one line — `adapters/cowork/plugin-src/.claude-plugin/plugin.json`
+  `version` `0.1.0` → `1.3.1`. Plus GXP bookkeeping: this brief, one `core/ratings.jsonl`
+  line. Committed as `60c3b1b` on local `main`, not pushed.
+- **What was verified (and how):** all deterministic. C1 grep; C2 `json.load` exit 0;
+  C3 `adapters/cowork/sync/check-core.sh` exit 0; C4 `scripts/verify.sh` exit 0 (code captured
+  in a variable before any pipe, per `verification-wrapper-swallows-exit-codes.md`);
+  C5 scoped `git diff --stat` = 1 file / 1 insertion / 1 deletion; C6 rebuilt the `.plugin`
+  and hashed all members — 15/15 paths stable, `plugin.json` the only changed member;
+  C7 `validate-ratings-chain.py` exit 0, 15 chained entries; C8 `git status --porcelain`
+  empty, commit local-only. **8/8 met.** No behavioral or subjective checks — a version
+  string has no runtime behavior in this repo.
+- **Explicitly not done / parked / follow-ups:**
+  1. CI guard asserting manifest version == current git tag. Recommended; it would have
+     caught this drift at release time instead of by hand.
+  2. CHANGELOG entry — belongs in the next version's notes, not retroactively inside the
+     already-shipped `1.3.1` section.
+  3. Proposed `core/failures/` entry for the Cowork-mount unlink issue (drafted in Dead ends
+     above, **not** written as a file — adding one was outside this brief's scope).
+  4. Stray untracked root directory literally named `\C:\Users\...\.ai\tmp\gxp-blind`
+     (Windows path-bug artifact). Invisible to `git status`, harmless, left alone.
+- **Approval gates hit and outcomes:** version target `1.3.1` — approved. Commit to local
+  `main` — approved. Both cleared before Phase 3; no new gate hit mid-implementation.
+- **New `failures/` entries or rules:** none written. One candidate proposed (item 3 above).
+- **Rating entry reference:** `core/ratings.jsonl`, last line, `entry_hash`
+  `a9bdf75894c83787894ddb09a8529743e8a935e1a896786bd74ed6e145d6e953`, rating **7/10**.
+  Held below 8 deliberately: half the originally stated scope was a false diagnosis (a
+  gitignored build artifact called a stale checked-in file, because tracked-ness was never
+  checked), and Phase 2 had to reject a non-binary criterion I had written myself.
