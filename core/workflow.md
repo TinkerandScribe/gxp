@@ -20,19 +20,24 @@ back to the operator.
 
 Pick the variant before starting:
 
+- **Lightweight workflow (default for small scope)** — phases 1, 2, 3, 5
+  only. Skip the repo audit, rating, failure capture, and handoff. **Prefer
+  this** when the change is single-file (or equivalent small scope), easily
+  reversible, has no new external dependency, and a strong deterministic
+  verify path is already defined (typo, comment, one-line fix, small doc
+  edit). If you start lightweight and find the task is bigger than expected,
+  upgrade to full.
 - **Full workflow** — phases 0 through 8 below. Use for any task that
-  changes behavior, touches more than one file in a non-trivial way, or
-  could plausibly regress something. The default. Also use full when the
-  smoke/public verify suite is thin relative to the criteria, or the
-  operator ask is underspecified (you must invent most criteria).
-- **Lightweight workflow** — phases 1, 2, 3, 5 only. Skip the repo audit,
-  rating, failure capture, and handoff. Use only for trivial,
-  single-file, easily reversible changes (typo, comment, one-line fix)
-  where strong deterministic verify is already defined. If you start
-  lightweight and find the task is bigger than expected, upgrade to full.
+  changes behavior, touches more than one file in a non-trivial way, could
+  plausibly regress something, has a thin smoke/public verify suite relative
+  to the criteria, or an underspecified operator ask (you must invent most
+  criteria).
 
-When in doubt, run the full workflow. The overhead is small; the cost of
-skipping it on a real change is much larger.
+**Default rule:** if the change is single-file (or equivalent small scope)
+with no new external dependency, start lightweight unless you record a
+one-line justification for full workflow in the brief or task record.
+If the change is multi-file, multi-constraint, high-stakes, or verify is
+thin — use full. When scope is ambiguous after that filter, prefer full.
 
 ## Phase 0 — Repo audit
 
@@ -96,7 +101,11 @@ A brief contains:
 - **Ideal State Criteria** — **4–8 binary, checkable statements**
   that will be true when the task is done. "Tests pass" is too vague;
   "running `pytest tests/test_foo.py` exits 0 with no warnings" is
-  checkable.
+  checkable. Tag each line `[outcome]`, `[guardrail]`, or `[hypothesis]`
+  per `templates/task-brief.md`. Only `[outcome]` and `[guardrail]` are
+  binding for self-eval and verification; `[hypothesis]` lines are revisable.
+  Prefer observable outcomes over implementation mechanisms unless the
+  operator required a specific mechanism.
 - **Out of scope** — what you are deliberately not doing.
 - **Verification plan** — how each criterion will be checked.
 
@@ -109,17 +118,25 @@ Before coding, evaluate the brief against these gates. Each must pass.
 
 - **Completeness** — does the brief cover the actual goal, or just the
   surface request? Is anything load-bearing missing?
-- **Ambiguity** — are any criteria not strictly binary? Rewrite or drop.
+- **Ambiguity** — are any *binding* criteria not strictly binary? Rewrite or drop.
 - **Scope trap** — does the brief include cleanup, refactors, or
   "while we're here" items that are not strictly required? Move them to
   out-of-scope.
-- **Verification** — does every criterion have a concrete check? If a
+- **Verification** — does every *binding* criterion have a concrete check? If a
   criterion can only be confirmed by eyeballing, mark how you will
   confirm and accept the lower confidence.
 - **Approval gates** — are there points in the work where the operator
   must sign off (destructive changes, irreversible operations, schema
   migrations, public-facing copy, anything touching production)? Name
   them in the brief and **stop at each one** until approved.
+- **Criteria quality** — each binding ISC is binary, outcome-focused (or an
+  explicit guardrail), independently checkable, and does not encode a
+  specific mechanism unless the operator required that mechanism. Reject
+  style-only binding criteria (e.g. "clean," "idiomatic," "elegant") —
+  those may appear only as non-binding notes.
+- **Anti-gaming** — does the planned work satisfy the operator's stated
+  objective, not merely the literal checklist? Surface any conflict before
+  implementation.
 
 If any gate fails, fix the brief before continuing.
 
@@ -144,12 +161,18 @@ build break), **stop**. Do not try the same shape of fix a third time.
 
 - Write down the dead end: what you tried, why it failed, what you now
   believe is true.
-- Switch strategy: re-read the failing output carefully, change the
-  hypothesis, ask the operator if the brief itself is wrong.
+- **Mandatory reframe before any further attempt:** restate the problem in
+  one or two sentences and name at least one discarded assumption. Record
+  the reframe in the brief dead-ends section (or equivalent task note).
+- A third attempt that is only a minor variant of attempt one or two
+  **without** that reframe is disallowed. After the reframe, switch
+  strategy: re-read the failing output carefully, change the hypothesis,
+  or ask the operator if the brief itself is wrong.
 - Persistent dead ends should land in `failures/` once the task is done.
 
 This rule exists because the most expensive failure mode is grinding
-on a broken approach. Cheap to notice, cheap to recover.
+on a broken approach — or retrying a fixed idea under a new name.
+Cheap to notice, cheap to recover.
 
 ## Phase 5 — Verification
 
@@ -263,12 +286,18 @@ when refreshing `ai-workflow.mdc`.
 
 Paste this into a new Cursor chat at the start of a task:
 
-> Use the repo `.ai` workflow (v1.1). Decide full vs lightweight first.
+> Use the repo `.ai` workflow (v1.1). Decide full vs lightweight first
+> (lightweight default for single-file / small-scope with no new dependency;
+> full when multi-file, multi-constraint, thin smoke, or underspecified —
+> justify full on small scope in one line).
 > For full: run phase 0 (audit `.ai/PROGRAM.md`, `rules/`, `failures/`),
-> then phase 1 (write a task brief with 4–8 binary Ideal State Criteria),
+> then phase 1 (write a task brief with 4–8 binary Ideal State Criteria,
+> each tagged [outcome]/ [guardrail], or [hypothesis]),
 > then phase 2 self-eval (completeness, ambiguity, scope, verification,
-> approval gates). Code in phase 3, honoring the phase 4 anti-loop rule
-> (stop after two failed attempts on the same approach). Phase 5
+> approval gates, criteria quality, anti-gaming). Code in phase 3, honoring
+> the phase 4 anti-loop rule (after two failed attempts on the same approach,
+> reframe: restate the problem and name a discarded assumption before any
+> further attempt). Phase 5
 > verification runs deterministic checks first. Phase 6: append one
 > JSONL object to `.ai/ratings.jsonl` with `rating` as an integer 1–10
 > — no arrays. Phase 7: capture repeatable failures with

@@ -8,6 +8,15 @@ Perplexity is a **research acceleration tool**, not a replacement for thinking o
 
 Its job in GXP is to rapidly produce high-quality, cited information that feeds into Phase 0 (Context Gathering) and helps create stronger task briefs.
 
+### Trust boundaries
+
+- Scope is **research-stage GXP** (discovery, evidence, synthesis, handoff).
+- Do **not** claim local implementation or verification (edits, tests, lint, build,
+  ledger updates) unless a host tool actually performed them and you cite that evidence.
+- In every durable output, separate **verified findings**, **inferences**, and
+  **open questions**, and mark **repo** vs **external** provenance (see
+  `research-handoff.md`).
+
 ## Recommended Research Process
 
 ### 1. Define the Research Question(s) First

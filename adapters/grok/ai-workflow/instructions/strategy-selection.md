@@ -20,9 +20,9 @@ choose least-capable engine with margin, record, re-evaluate) lives in core.
 Run this **early** (end of Phase 0 or start of Phase 1/3) for any non-trivial goal. Use GXP language for the classification.
 
 Trigger signals (lightweight version of self-evaluation gate):
-- High ambiguity, architecture, planning, research → Grok native + **`/plan` mode**
+- High ambiguity, architecture, planning, research, or multi-constraint underspecified goal → **Parallel research + planning** (gxp-researcher + gxp-architect) then **`/plan`**
 - Underspecified multi-factor ask or thin smoke verify → **`/plan` first**, then full GXP execute (suggest `/plan` explicitly in transcript)
-- Coherent multi-file edits, long-running implementation, "make it work end-to-end", large refactors → Composer 2.5
+- Coherent multi-file edits, long-running implementation, "make it work end-to-end", large refactors → Composer 2.5 (composer-coder)
 - "Visual", "side-by-side", "in the IDE", "Cursor specific", "browse files visually" → Cursor handoff
 - After implement on multi-file / multi-constraint work → optional **gxp-verifier** persona (criteria-only; no product edits)
 - Quick terminal/debug/small reversible change → Fast native Grok (lightweight GXP OK)
@@ -63,42 +63,53 @@ Next: Spawn subagent with composer-coder persona.
 
 ## Recommended Personas (define in ~/.grok/personas/ or project .grok/personas/)
 
-See examples in this adapter (created as part of prototype).
+See examples in this adapter under `examples/grok-build-strategy/personas/`.
+`install-grok-skill` copies them into `~/.grok/personas/*.toml`.
 
-- **composer-coder.toml**
-  ```toml
-  [subagents.personas.composer-coder]
-  description = "Strong specialized coding agent using Cursor's Composer 2.5. Best for coherent multi-file implementation, long-running tasks, following complex instructions."
-  model = "composer-2.5"
-  reasoning_effort = "high"
-  instructions = """
-  You are operating as a Composer 2.5-powered specialist.
-  Focus on high-quality, minimal, correct multi-file changes.
-  Always produce clean diffs. Follow GXP: use binary Ideal State Criteria thinking for verification steps.
-  Prefer action_spec style when possible.
-  """
-  ```
+| Persona | Primary use |
+|---------|-------------|
+| `gxp-researcher` | Parallel research: aggressive tool use, candidate criteria, uncertainty notes |
+| `gxp-architect` | Parallel planning: binary criteria, out-of-scope, verification plan, trade-offs |
+| `grok-native-planner` | Single-agent planning / high-ambiguity (lighter alternative to parallel pair) |
+| `composer-coder` | Coherent multi-file implementation (Composer 2.5) |
+| `gxp-verifier` | Layer-2 criteria-only critic after implement (no product edits) |
 
-- **gxp-verifier.toml** (Layer 2 verify / critic)
-  ```toml
-  # See examples/grok-build-strategy/personas/gxp-verifier.toml
-  # Criteria-only; runs tests; does not edit product code.
-  ```
-
-- **grok-native-planner.toml**
-  ```toml
-  [subagents.personas.grok-native-planner]
-  description = "Native Grok for planning, research, architectural work, and high-ambiguity tasks. Use with plan mode."
-  model = "grok-build"  # or grok-4-fast etc.
-  instructions = """
-  You are a planning/research specialist using native Grok strengths.
-  Produce structured plans, explore with tools aggressively.
-  Surface uncertainty explicitly. Feed GXP critic with clear criteria.
-  """
-  default_isolation = "none"
-  ```
+- **gxp-researcher.toml** / **gxp-architect.toml** — prefer these two in parallel for Heavy-style front-half work.
+- **composer-coder.toml** — model = composer-2.5, clean multi-file diffs.
+- **gxp-verifier.toml** — criteria-only; runs tests; does not edit product code.
+- **grok-native-planner.toml** — native Grok single planner when parallel spawn is unnecessary.
 
 For Cursor handoff, use a skill instead of persona (see below).
+
+## Parallel Research + Planning (Heavy-style front half)
+
+When classification signals high ambiguity, multi-constraint, or underspecified multi-factor goals, prefer a short parallel team instead of a single planner:
+
+1. **Spawn in parallel** (scoped context only):
+   - `gxp-researcher` — explore codebase/docs/failures, surface findings + candidate criteria + residual uncertainty.
+   - `gxp-architect` — shape a GXP plan (goal, 4–8 binary Ideal State Criteria, out-of-scope, verification plan, Phase 0 files).
+
+2. **Parent synthesizes** the two artifacts into one coherent plan. Resolve conflicts in favor of binary, tool-checkable criteria and explicit out-of-scope.
+
+3. **Present the synthesized plan** (or feed it into `/plan`) for operator approval. Do not treat plan approval as “tests already passed.”
+
+4. **After approval**, hand to `composer-coder` (or native implementer) for execution, then optionally `gxp-verifier` for Layer 2.
+
+Example Strategy Decision for this path:
+```
+[Strategy Selection]
+Goal: ...
+Classification:
+- High ambiguity / multi-constraint / underspecified
+- Benefits from parallel research + structured planning before code
+Chosen: parallel gxp-researcher + gxp-architect → synthesize → /plan
+Justification: Matches Heavy-style front-half pattern; keeps Ideal State Criteria binary and Phase 0 first.
+Capability note: external_apis / subagent spawn available.
+Scoped context: brief + 2–4 key files + any existing PROGRAM.md / failures notes only.
+Next: Spawn both personas in parallel; synthesize; request plan approval.
+```
+
+This pattern stays inside GXP rails: no scope expansion without operator approval, binary criteria remain sacred, two-layer verify still required on multi-file work.
 
 ## Cursor Handoff Skill (Prototype)
 

@@ -134,5 +134,5 @@ Write-Host "`nDone! Skill short name: 'gxp' (or 'gxp-ai-workflow')." -Foreground
 Write-Host "Changes in this repo are live via junction(s)."
 Write-Host "Recommended check:"
 Write-Host "  .\sync\check-core.ps1" -ForegroundColor Cyan
-Write-Host "Personas (if installed): /personas in Grok Build - expect gxp-verifier, grok-native-planner, composer-coder."
+Write-Host "Personas (if installed): /personas in Grok Build - expect gxp-researcher, gxp-architect, gxp-verifier, grok-native-planner, composer-coder."
 Write-Host "See GETTING_STARTED.md for Plan Mode + GXP usage." -ForegroundColor Yellow

@@ -52,6 +52,10 @@ Label every bullet **observed** or **proposed**.
 
 **Evidence pointers (paths / lines / rating ts):**
 
+**Ritual audit (standing):** Does this gate / process step still solve a real
+bottleneck, or has it become ritual? (If ritual, prefer delete/simplify over
+adding another gate.)
+
 ---
 
 ## 3. One hypothesis (budget slot)

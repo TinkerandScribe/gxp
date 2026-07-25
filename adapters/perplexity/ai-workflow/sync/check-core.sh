@@ -53,6 +53,24 @@ check "instructions/workflow.md"
 check "sync/check-core.ps1"
 check "sync/check-core.sh"
 
+# Trust-boundary markers (research-stage adapter — must stay durable)
+HO="$ADAPTER_ROOT/instructions/research-handoff.md"
+if [ -f "$HO" ]; then
+    for needle in "Verified findings" "Inferences" "Open questions" "Explicit non-claims" "Research-stage only"; do
+        if ! grep -qF "$needle" "$HO"; then
+            [ "$QUIET" = false ] && echo "  MISSING marker in research-handoff.md: $needle"
+            DRIFT=1
+        fi
+    done
+fi
+if [ -f "$ADAPTER_ROOT/SKILL.md" ]; then
+    if ! grep -qF "No false local-verify" "$ADAPTER_ROOT/SKILL.md" \
+        && ! grep -qF "false local-verify" "$ADAPTER_ROOT/SKILL.md"; then
+        [ "$QUIET" = false ] && echo "  MISSING marker in SKILL.md: false local-verify"
+        DRIFT=1
+    fi
+fi
+
 LAST_SYNCED_SHA=""
 MARKER_STATUS="missing"
 WF="$ADAPTER_ROOT/instructions/workflow.md"

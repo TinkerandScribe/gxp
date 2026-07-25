@@ -116,6 +116,24 @@ is the best test of *usefulness*. Should not steal focus from M6 if the goal is 
 
 ---
 
+## Part C — Methodology hardening (criteria, ceremony, anti-fixation)
+
+From council research + `adapters/artifacts` planning (2026-07-25).
+Brief: [`core/tasks/criteria-hardening-and-anti-fixation.md`](core/tasks/criteria-hardening-and-anti-fixation.md).
+
+| Order | Item | Status |
+|---|---|---|
+| 1 | Criteria taxonomy in brief template (`[outcome]` / `[guardrail]` / `[hypothesis]`) + Phase 2 criteria-quality and anti-gaming gates | **done** |
+| 2 | Ceremony/scale default: lightweight for single-file small scope; one-line justification for full on small scope | **done** |
+| 3 | Anti-loop reframe after second failure (problem restatement + discarded assumption) | **done** |
+| 4 | `gxp-refine` ritual/Verschlimmbesserung audit question | **done** |
+| 5 | Divergent pre-Phase-1 spike for design-shaped tasks | **parked** |
+| 6 | Verify-script behavior-over-markers bar (anti-gaming tooling) | **parked** |
+| 7 | Perplexity adapter greenfield Space package | **n/a** — live adapter exists |
+| 8 | Perplexity trust-boundary hardening (handoff provenance, no false local-verify) | **done** — `core/tasks/perplexity-trust-boundary-hardening.md` |
+
+---
+
 ## How to use this roadmap
 
 1. Operator picks a milestone (default: **M4** if unsure).  

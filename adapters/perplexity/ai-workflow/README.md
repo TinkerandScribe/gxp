@@ -15,6 +15,17 @@ Use it for:
 
 Then bring the synthesized, cited findings back into your coding agent (Grok, Claude, Cursor).
 
+## Trust boundaries
+
+| This adapter does | This adapter does **not** |
+|---|---|
+| Grounded research, citations, synthesis | Edit repository files |
+| Structured handoffs for coding agents | Claim local tests/lint/build ran (unless a host really ran them) |
+| Label **repo** vs **external** provenance | Update ratings or failures ledgers |
+| Separate verified / inference / open questions | Pretend to be a full coding-agent GXP loop |
+
+Handoff contract: `instructions/research-handoff.md`.
+
 ## Recommended Ways to Use
 
 ### 1. Perplexity Collections (Best for Ongoing Work)

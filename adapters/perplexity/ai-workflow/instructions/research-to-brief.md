@@ -12,13 +12,14 @@ Use the templates in `prompt-templates.md` (or your own focused questions) to ga
 Do **not** try to research everything at once. Run 2–4 focused research threads instead of one giant vague one.
 
 ### Step 2: Extract Signal (Synthesis Pass)
-After getting results, go through them and explicitly extract:
+After getting results, go through them and explicitly extract into the same
+epistemic buckets as `research-handoff.md`:
 
-- **Key Facts** — What is verifiably true and relevant?
-- **Strong Consensus** — What do multiple credible sources agree on?
-- **Points of Contention** — Where do sources disagree, and why?
-- **Risks & Trade-offs** — What are the recurring warnings or hidden costs?
-- **Open Questions** — What important things are still unclear?
+- **Verified findings** — What is supported by a clear source (mark Repo vs External)?
+- **Inferences** — What synthesis or recommendation goes beyond a single source?
+- **Open questions** — Conflicts, unknowns, and **Needs local verify** items
+- **Risks & Trade-offs** — Recurring warnings or hidden costs
+- **Strong Consensus** (optional) — Multiple credible external sources agree
 
 ### Step 3: Map Research to Brief Sections
 

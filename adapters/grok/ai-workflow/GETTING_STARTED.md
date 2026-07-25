@@ -75,9 +75,13 @@ Example personas under `examples/grok-build-strategy/personas/`:
 
 | Persona | Use |
 |---------|-----|
-| `grok-native-planner` | Ambiguity / architecture; pair with `/plan` |
+| `gxp-researcher` | Parallel research (tool-heavy exploration + candidate criteria) |
+| `gxp-architect` | Parallel planning (binary criteria, out-of-scope, verification plan) |
+| `grok-native-planner` | Single-agent ambiguity / architecture; pair with `/plan` |
 | `composer-coder` | Coherent multi-file implement |
 | `gxp-verifier` | Criteria-only verify after implement |
+
+For high-ambiguity or multi-constraint work, prefer spawning **gxp-researcher + gxp-architect in parallel**, synthesizing their outputs into one GXP plan, then `/plan` approval. See `instructions/strategy-selection.md` § Parallel Research + Planning.
 
 `install-grok-skill` copies these into `~/.grok/personas/*.toml` (Grok discovers
 file-based personas there — a single file named `personas` is wrong and is repaired).
@@ -99,9 +103,9 @@ When core advances, either adopt the change or add an allowlist line explaining 
   `gxp brief`, `gxp open`, etc. Ready-made snippet: `profile/gxp-profile-snippet.ps1`.
 - **Customize** — this is your toolkit: edit `instructions/workflow.md`, add files under
   `instructions/`, or adjust `SKILL.md`. Keep the sync discipline so the methodology stays coherent.
-- **Grok Build strategy selection (prototype)** — auto-pick a persona (Composer 2.5 vs
-  native planner) or a Cursor handoff. See `instructions/strategy-selection.md` and
-  `examples/grok-build-strategy/`.
+- **Grok Build strategy selection (prototype)** — auto-pick personas (including parallel
+  gxp-researcher + gxp-architect for Heavy-style planning, Composer 2.5, or Cursor handoff).
+  See `instructions/strategy-selection.md` and `examples/grok-build-strategy/`.
 
 ## Next steps
 

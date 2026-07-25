@@ -50,13 +50,26 @@ Use the gxp skill.
 
 Task: Add a small but real feature to the web scraper that requires coherent changes across multiple files (rate limiting + multiple sources + tests).
 
-Classify using the new strategy-selection logic (see instructions/strategy-selection.md).
+Classify using the strategy-selection logic (see instructions/strategy-selection.md).
 Then demonstrate the chosen path:
-- Either spawn a subagent using the composer-coder persona, or
+- For high-ambiguity: parallel gxp-researcher + gxp-architect, or
+- Spawn composer-coder for coherent multi-file implement, or
 - Emit a clean Cursor Composer handoff block.
 
 Show the strategy decision note with GXP-style justification and capability note.
 Keep everything aligned with the coordination brief.
+```
+
+**Parallel research + planning test (Heavy-style front half):**
+```
+Use the gxp skill.
+
+Task: Design and plan a non-trivial multi-file feature that is currently underspecified (e.g. add rate limiting + multi-source support + tests to a scraper). Do not implement yet.
+
+1. Classify via strategy-selection.md.
+2. Spawn gxp-researcher and gxp-architect in parallel (scoped context).
+3. Synthesize their outputs into one GXP-shaped plan (goal, 4–8 binary Ideal State Criteria, out of scope, verification plan, Phase 0 files).
+4. Present the plan for approval. Do not write product code.
 ```
 
 ---

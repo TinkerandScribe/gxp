@@ -71,25 +71,30 @@ affects what happens next.
 
 **Decide full vs lightweight first.**
 
-- **Full workflow** (default): phases 0–8. Use for anything that changes
-  behavior, touches more than one file non-trivially, or could regress
-  something. Also use full when the smoke/public verify suite is thin
-  relative to the criteria, or the operator ask is underspecified (you
-  invent most criteria).
-- **Lightweight workflow**: phases 1, 2, 3, 5 only. Use only for
-  trivial, single-file, easily reversible changes where strong
-  deterministic verify is already defined. Upgrade to full if scope grows.
+- **Lightweight workflow (default for small scope):** phases 1, 2, 3, 5
+  only. Prefer for single-file (or equivalent small scope), easily
+  reversible changes with no new external dependency and a strong
+  deterministic verify path. Upgrade to full if scope grows. If you
+  still choose full for small scope, record a one-line justification
+  in the brief.
+- **Full workflow:** phases 0–8. Use when the change is multi-file,
+  multi-constraint, could regress something, smoke/public verify is
+  thin relative to the criteria, or the operator ask is underspecified
+  (you invent most criteria). When scope is ambiguous after that
+  filter, prefer full.
 
 **Full workflow phases:**
 
 0. Audit `.ai/PROGRAM.md`, `.ai/rules/`, `.ai/failures/`, recent ratings.
 1. Write a task brief from `.ai/templates/task-brief.md` with 4-8 binary
-   Ideal State Criteria.
+   Ideal State Criteria, each tagged `[outcome]`, `[guardrail]`, or
+   `[hypothesis]` (only outcome/guardrail are binding).
 2. Self-eval gate: completeness, ambiguity, scope, verification,
-   approval gates.
+   approval gates, criteria quality, anti-gaming.
 3. Implement, keeping the diff focused on the brief.
-4. Anti-loop: after two failed attempts on the same approach, stop and
-   switch strategy.
+4. Anti-loop: after two failed attempts on the same approach, stop,
+   reframe (restate the problem + name a discarded assumption), then
+   switch strategy — no minor-variant third try without that reframe.
 5. Verify — run commands from `.ai/PROGRAM.md` (or `core/PROGRAM.template.md`
    in gxp) first; then deterministic checks (type/lint/test/build),
    behavioral, then subjective. Honor the **Verification ladder** below.

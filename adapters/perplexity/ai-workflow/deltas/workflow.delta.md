@@ -55,7 +55,21 @@ Capture query decomposition issues, wrong Focus mode, and rabbit-hole scope fail
 
 ## Notes — Phase 8
 
-End Full research sessions with a structured handoff (see `instructions/research-handoff.md` when present): synthesized findings, open questions/risks, next steps for the receiving agent, confidence levels.
+End Full research sessions with a structured handoff per
+`instructions/research-handoff.md`:
+
+- Separate **verified findings**, **inferences**, and **open questions**.
+- Label **repo** vs **external** provenance on load-bearing facts.
+- Include **explicit non-claims** (no file edits, no local tests/lint/build, no
+  ledger updates unless a host actually performed them).
+- Never claim local verification that was not run.
+
+## Trust boundaries (adapter-wide)
+
+- Research-stage only — not a coding agent loop.
+- Do not alter operator intent when rewriting a raw ask into a bounded research brief.
+- Refuse false local-verify claims; park those checks under open questions for the
+  receiving agent.
 
 ## Closing
 

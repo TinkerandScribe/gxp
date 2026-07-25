@@ -1,8 +1,29 @@
 # Research Handoff Template
 
-One of the most valuable uses of Perplexity in the GXP workflow is producing high-quality research that can be handed off to a coding/research agent (Grok, Claude, Cursor, etc.).
+One of the most valuable uses of Perplexity in the GXP workflow is producing
+high-quality research that can be handed off to a coding/research agent
+(Grok, Claude, Cursor, etc.).
 
-This template helps you turn scattered Perplexity threads into clean, high-signal context that another agent can use effectively.
+This template turns scattered Perplexity threads into clean, high-signal
+context with explicit **trust boundaries** so the receiving agent never
+confuses external research with repo ground truth or local verification.
+
+## Trust boundaries (non-negotiable)
+
+1. **Research-stage only.** This handoff does **not** claim that files were
+   edited, tests/lint/build were run, or ratings/failures ledgers were updated.
+   Local verification belongs to the coding agent (or host) after handoff.
+2. **Separate provenance.** Label every load-bearing fact as either
+   **repository-sourced** (from MCP/repo tools or operator-pasted tree state)
+   or **externally researched** (Perplexity search / web / academic sources).
+3. **Separate epistemic status.** Use three buckets below — do not merge
+   verified findings, inferences, and open questions into one undifferentiated
+   bullet list.
+4. **No false local-verify.** Never write language such as “tests pass,”
+   “build is green,” or “verified in the repo” unless the **host** actually
+   ran those checks and the handoff quotes that evidence. If asked to run
+   local commands you cannot run, refuse explicitly and park the check for
+   the receiving agent.
 
 ## Recommended Handoff Structure
 
@@ -14,79 +35,102 @@ When moving research from Perplexity into another agent, use this format:
 **Research Goal:**
 [What decision or part of the brief this research was meant to inform]
 
-**Key Findings:**
-- [Finding 1] (Source: [link or citation])
-- [Finding 2] (Source: ...)
-- ...
+**Handoff Target:**
+[Which coding agent / GXP phase consumes this — e.g. Cursor Phase 1 brief]
 
-**Important Trade-offs:**
-- ...
+### Provenance legend
+- **Repo:** fact observed via repo tools or operator-supplied tree state
+- **External:** fact from Perplexity/web/academic sources (cite URL or title)
 
-**Risks & Failure Modes Observed Elsewhere:**
-- ...
+### Verified findings
+Facts with clear support. Prefer primary sources. Each bullet must carry
+provenance and a citation when External.
 
-**Open Questions / Areas of Uncertainty:**
-- ...
+- [Repo|External] [Finding] (Source: …) — confidence: HIGH|MEDIUM|LOW
 
-**Sources:**
-- [Link 1] - [brief note on why it's relevant]
-- [Link 2] - ...
+### Inferences
+Conclusions that go beyond a single source: synthesis, likely implications,
+recommended approaches. Label as inference so the receiver can re-check.
 
-**Recommended Constraints for the Brief:**
-- [Suggestion 1]
-- [Suggestion 2]
+- [Inference] … — based on: [which findings]
 
-**Suggested Out of Scope Items (based on research):**
-- ...
+### Open questions / unresolved
+Unknowns, conflicts between sources, and checks the **local** agent must run.
+
+- [Open] …
+- [Needs local verify] e.g. whether package X is already a dependency in this repo
+
+### Important trade-offs
+- …
+
+### Risks & failure modes observed elsewhere
+- …
+
+### Sources
+- [Link or title] — why relevant; classification if useful (primary/secondary)
+
+### Suggested Ideal State Criteria (draft for brief)
+- [outcome] …
+- [outcome] …
+- [guardrail] …
+
+### Suggested out of scope
+- …
+
+### Explicit non-claims
+- Did **not** edit repository files.
+- Did **not** run local tests, lint, or build (unless host evidence is attached below).
+- Did **not** append ratings or failure captures.
 ```
 
 ## How to Use This Template
 
-1. After doing research in Perplexity, copy the most important threads.
-2. Fill out the template above (you can do this in Perplexity itself using the Writing focus, or manually).
-3. Paste the completed handoff into your main agent along with your draft task brief.
-4. Ask the agent to incorporate the research into the Context and Out of Scope sections.
+1. After research in Perplexity, synthesize into the structure above (Writing
+   focus works well for the synthesis pass).
+2. Fill provenance and epistemic buckets carefully — if unsure, put the item
+   under **Open questions**, not **Verified findings**.
+3. Paste the handoff into the main coding agent with the draft task brief.
+4. Ask that agent to merge Context / Out of Scope / criteria and to run any
+   **Needs local verify** items.
 
 ## Pro Tips
 
-- **Be selective.** Better to hand off 3–5 high-signal findings with good sources than 20 scattered ones.
-- **Include "so what".** Don't just list facts — briefly note why each finding matters to the decision at hand.
-- **Note contradictions.** If sources disagree, call it out explicitly. This is very useful for the receiving agent.
-- **Use Perplexity's Writing focus** as a final synthesis step before handing off. It often produces much cleaner output than raw research threads.
+- **Be selective.** Prefer 3–5 high-signal verified findings with sources over
+  20 undifferentiated bullets.
+- **Include "so what".** Note why each finding matters to the decision.
+- **Note contradictions** under open questions or as contested inferences.
+- **Repo vs external:** if GitHub MCP or another host read a file, mark **Repo**;
+  pure web research is always **External**.
 
 ## Example Prompt to Generate a Handoff
 
-You can paste this into Perplexity (ideally in Writing focus) after doing research:
+Paste into Perplexity (ideally Writing focus) after research:
 
 ```
-Using the research we've done in this thread, create a clean Research Handoff document in the following format:
+Using the research in this thread, produce a GXP Research Handoff with these
+sections exactly:
 
 ## Research Summary: [Topic]
+**Research Goal:** …
+**Handoff Target:** …
 
-**Research Goal:**
-[What decision or part of the brief this research was meant to inform]
+### Provenance legend
+### Verified findings
+(each bullet: [Repo|External], source, confidence HIGH|MEDIUM|LOW)
+### Inferences
+### Open questions / unresolved
+(include any "Needs local verify" items)
+### Important trade-offs
+### Risks & failure modes observed elsewhere
+### Sources
+### Suggested Ideal State Criteria (draft)
+### Suggested out of scope
+### Explicit non-claims
+(state that you did not edit files, run local tests/lint/build, or update ledgers)
 
-**Key Findings:**
-- [Finding 1] (Source: [link or citation])
-- ...
-
-**Important Trade-offs:**
-- ...
-
-**Risks & Failure Modes Observed Elsewhere:**
-- ...
-
-**Open Questions / Areas of Uncertainty:**
-- ...
-
-**Sources:**
-- ...
-
-**Recommended Constraints for the Brief:**
-- ...
-
-**Suggested Out of Scope Items (based on research):**
-- ...
+Do not claim repository tests or builds passed. Do not invent repo file state.
+If a claim is only an inference, put it under Inferences, not Verified findings.
 ```
 
-This pattern turns Perplexity from a "chat with search" into a powerful **research engine** that feeds directly into high-quality GXP task briefs.
+This pattern turns Perplexity into a **research engine** that feeds GXP briefs
+without blurring trust boundaries.

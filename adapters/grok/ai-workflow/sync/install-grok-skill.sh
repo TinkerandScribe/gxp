@@ -114,5 +114,5 @@ fi
 echo
 echo "Done! Skill short name: 'gxp' (or 'gxp-ai-workflow')."
 echo "Recommended: bash sync/check-core.sh"
-echo "Personas (if installed): /personas in Grok Build - gxp-verifier, grok-native-planner, composer-coder."
+echo "Personas (if installed): /personas in Grok Build - gxp-researcher, gxp-architect, gxp-verifier, grok-native-planner, composer-coder."
 echo "See GETTING_STARTED.md for Plan Mode + GXP usage."

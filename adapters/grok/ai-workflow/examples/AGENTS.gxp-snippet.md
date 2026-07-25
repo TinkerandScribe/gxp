@@ -27,9 +27,10 @@ a full `.ai/` install.
 5. **Handoff** lists commands run and what they proved.
 
 ### Heavy / expert path in Grok Build
-1. `/plan <task>` — plan must include criteria + verification plan.
-2. Approve plan only when criteria are checkable.
-3. Implement under GXP; optionally spawn **gxp-verifier** persona for Layer 2.
+1. For high-ambiguity or multi-constraint goals: spawn **gxp-researcher + gxp-architect** in parallel, synthesize, then `/plan`.
+2. `/plan <task>` — plan must include 4–8 binary criteria + verification plan + out of scope.
+3. Approve plan only when criteria are checkable.
+4. Implement under GXP; optionally spawn **gxp-verifier** persona for Layer 2.
 
 ### Verify
 Prefer commands documented in `.ai/PROGRAM.md` or this section. Example placeholder:

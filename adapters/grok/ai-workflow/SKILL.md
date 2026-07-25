@@ -45,7 +45,7 @@ Always be aware of which version you are following.
 
 When you detect a task that would benefit from Composer 2.5 or a Cursor handoff, run the logic in `instructions/strategy-selection.md` early.
 
-Use personas (composer-coder, grok-native-planner, **gxp-verifier**) with `spawn_subagent` for automatic switching inside the session.
+Use personas (gxp-researcher, gxp-architect, composer-coder, grok-native-planner, **gxp-verifier**) with `spawn_subagent` for automatic switching inside the session. Prefer parallel researcher + architect for high-ambiguity / multi-constraint front-half work (see strategy-selection.md).
 
 For Cursor: emit a self-contained GXP brief + ready-to-paste prompt that follows the Cursor adapter rules.
 

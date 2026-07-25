@@ -40,6 +40,26 @@ Test-File "instructions/workflow.md"
 Test-File "sync/check-core.ps1"
 Test-File "sync/check-core.sh"
 
+# Trust-boundary markers (research-stage adapter — must stay durable)
+$ho = Join-Path $adapterRoot "instructions/research-handoff.md"
+if (Test-Path $ho) {
+    $hoText = Get-Content -Raw $ho
+    foreach ($needle in @("Verified findings", "Inferences", "Open questions", "Explicit non-claims", "Research-stage only")) {
+        if ($hoText -notlike "*$needle*") {
+            if (-not $Quiet) { Write-Host "  MISSING marker in research-handoff.md: $needle" }
+            $script:drift = 1
+        }
+    }
+}
+$skill = Join-Path $adapterRoot "SKILL.md"
+if (Test-Path $skill) {
+    $sk = Get-Content -Raw $skill
+    if ($sk -notmatch "false local-verify|No false local-verify") {
+        if (-not $Quiet) { Write-Host "  MISSING marker in SKILL.md: false local-verify" }
+        $script:drift = 1
+    }
+}
+
 $wf = Join-Path $adapterRoot "instructions/workflow.md"
 $sha = $null
 $status = "missing"
