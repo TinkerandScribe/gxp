@@ -41,6 +41,13 @@ package as a whole (core + adapters + install/verify scripts).
 
 - Adapter workflow bodies that had advanced sync markers without regenerated ontology content.
 
+### Added (tooling)
+
+- **`scripts/sync-gxp-hosts.ps1` / `.sh`** — scan host repos under configurable roots
+  (default `C:\Users\Reepicheep\Claude`), dry-run report by default; `--apply` /
+  `-Apply` refreshes existing `.ai` via `install-ai-from-core --force`; optional
+  `--commit` / `--push` (never force-push).
+
 ## [1.3.1] - 2026-07-24
 
 ### Added

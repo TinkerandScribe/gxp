@@ -61,6 +61,36 @@ powershell -ExecutionPolicy Bypass -File scripts/install-ai-from-core.ps1 -Targe
 
 Then fill in `.ai/PROGRAM.md` with your project's verification commands.
 
+### Refresh GXP across many host repos
+
+Scan a folder of projects (default roots: `C:\Users\Reepicheep\Claude` on this machine /
+`$HOME/Claude` when present), optionally pull, re-apply the scaffold, commit, and push.
+
+**Safe defaults:** report-only dry-run; only repos that already have `.ai/workflow.md`;
+ff-only pull; never force-push. Writing and publishing require explicit flags.
+
+```powershell
+# Report only (default)
+powershell -ExecutionPolicy Bypass -File scripts/sync-gxp-hosts.ps1
+
+# Apply updates to existing .ai trees
+powershell -ExecutionPolicy Bypass -File scripts/sync-gxp-hosts.ps1 -Apply
+
+# Apply + commit + push
+powershell -ExecutionPolicy Bypass -File scripts/sync-gxp-hosts.ps1 -Apply -Commit -Push
+```
+
+```bash
+bash scripts/sync-gxp-hosts.sh
+bash scripts/sync-gxp-hosts.sh --apply
+bash scripts/sync-gxp-hosts.sh --apply --commit --push
+# Custom roots:
+bash scripts/sync-gxp-hosts.sh --roots "$HOME/projects" --apply
+```
+
+Use `--bootstrap` / `-Bootstrap` only if you want GXP installed into git repos that do
+not yet have `.ai/workflow.md`. The GXP monorepo itself is always skipped.
+
 ## Using it
 
 GXP is a discipline you put your AI agent through — there's no binary to run. Two ways to drive it:
