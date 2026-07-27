@@ -1,0 +1,57 @@
+@prefix : <http://example.org/gxp-domain#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# Minimal example domain ontology for GXP ontology guardrails.
+# Purpose: demonstrate typed entities, enumerations, and
+# functional properties that can be checked deterministically.
+#################################################################
+
+:Order a owl:Class ;
+    rdfs:label "Order" ;
+    rdfs:comment "A customer order that moves through a fixed set of statuses." .
+
+:Status a owl:Class ;
+    rdfs:label "Status" .
+
+:Pending a :Status ;
+    rdfs:label "Pending" .
+
+:Paid a :Status ;
+    rdfs:label "Paid" .
+
+:Shipped a :Status ;
+    rdfs:label "Shipped" .
+
+:Refunded a :Status ;
+    rdfs:label "Refunded" .
+
+:Refund a owl:Class ;
+    rdfs:label "Refund" .
+
+:Customer a owl:Class ;
+    rdfs:label "Customer" .
+
+:SupportRep a owl:Class ;
+    rdfs:label "SupportRep" .
+
+# Status is functional: an Order has at most one current Status
+:hasStatus a owl:FunctionalProperty, owl:ObjectProperty ;
+    rdfs:domain :Order ;
+    rdfs:range :Status ;
+    rdfs:label "hasStatus" .
+
+# An Order has at most one active Refund
+:hasRefund a owl:FunctionalProperty, owl:ObjectProperty ;
+    rdfs:domain :Order ;
+    rdfs:range :Refund ;
+    rdfs:label "hasRefund" .
+
+# Customer and SupportRep are disjoint
+:Customer owl:disjointWith :SupportRep .
+
+# Example instance shape (not asserted as data; for illustration)
+# :order-123 a :Order ;
+#     :hasStatus :Paid .

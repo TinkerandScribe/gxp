@@ -1,32 +1,30 @@
-# Example Ontology (GXP template)
+# Example Ontology (GXP templates)
 
-This directory provides a **minimal, optional** domain ontology that projects can copy and adapt.
+This directory contains a **minimal, illustrative** domain ontology for projects that want to use Coyle-style agentic ontology guardrails.
 
-It demonstrates the Coyle-style external ledger pattern used by the optional Phase 5 Ontology Validation step in GXP.
+## Purpose
 
-## When to use
-
-Copy this into a host project under `.ai/ontology/` (or `ontology/`) only when the domain has hard semantic invariants (allowed statuses, functional properties, disjoint classes, etc.) that binary Ideal State Criteria alone are brittle at expressing.
-
-Projects without an ontology skip the Phase 5 ontology step entirely.
-
-## Files
-
-- `example-order-domain.ttl` — tiny Turtle example (Order, Status, Refund, functional properties)
-- This README
-
-## How GXP uses it
-
-1. Declare the ontology path in `PROGRAM.md` or in the task brief.
-2. Reference ontology invariants as `[guardrail]` Ideal State Criteria when relevant.
-3. In Phase 5, after deterministic checks, run validation against the ontology (SHACL, SPARQL, or custom reasoner).
-4. Treat violations as deterministic failures.
+The ontology acts as an external logical ledger. Agents propose changes; the ontology + a deterministic validator enforce hard semantic constraints (allowed values, functional properties, disjoint classes, etc.). Binary Ideal State Criteria remain the primary contract with the operator.
 
 See `core/docs/ontology-guardrails.md` and `core/docs/ontology-integration.md` for the full design.
 
-## Tooling
+## Files
 
-- Python: `rdflib`, `pyshacl`
-- Keep the reasoner offline and deterministic.
+- `example-domain.ttl` — tiny Turtle example (Order / Status / Refund)
+- This README
 
-Start tiny. Only model the constraints that protect against the failures you care about.
+## How to use in a host project
+
+1. Copy or adapt into `.ai/ontology/` (or a path declared in `PROGRAM.md`).
+2. Reference relevant invariants in task-brief Ideal State Criteria as `[guardrail]` lines.
+3. In Phase 5, run ontology validation after deterministic checks and before subjective ones.
+4. Fail closed on violations (treat as a deterministic failure).
+
+## Non-goals of this example
+
+- Completeness
+- Production reasoning performance
+- Closed-world assumption
+- Automatic learning from code
+
+Keep the real ontology as small as the failures you actually need to prevent.
