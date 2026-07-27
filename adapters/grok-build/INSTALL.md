@@ -77,6 +77,22 @@ Those paths belong exclusively to `adapters/grok/ai-workflow/sync/install-grok-s
 
 Add GXP stop rules to your project root `AGENTS.md` (you can copy the snippet from the main Grok adapter examples).
 
+## Sync check
+
+```bash
+# From repo root
+bash adapters/grok-build/sync/check-core.sh
+```
+
+```powershell
+# From this adapter directory
+.\sync\check-core.ps1
+```
+
+Lightweight presence + integrity only (required files, SKILL name, persona model
+convention, install isolation markers). Intentional packaging notes:
+`sync/drift-allowlist.txt`.
+
 ## Heavy pattern quick start
 
 For high-ambiguity or multi-constraint work:

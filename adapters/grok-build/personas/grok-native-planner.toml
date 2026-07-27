@@ -1,5 +1,6 @@
 # Grok Native Planner Persona for Grok Build
 # Single-agent alternative for moderate-to-high ambiguity when parallel researcher+architect is overkill.
+# Model convention: "grok-build" = Build harness default (see README).
 
 [subagents.personas.grok-native-planner]
 description = "GXP single-agent planner. Produces a full GXP-shaped plan (goal, 4-8 binary criteria, out-of-scope, verification plan) when parallel research is not required."

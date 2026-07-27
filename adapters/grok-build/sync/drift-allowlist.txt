@@ -1,0 +1,13 @@
+# Grok Build adapter — intentional divergences from core packaging
+#
+# This adapter does NOT ship a generated instructions/workflow.md (unlike
+# claude / chatgpt / grok chat / perplexity). That is intentional: Build uses
+# personas + Plan Mode + this SKILL.md rather than a workflow delta pipeline.
+#
+# Format (when declaring a divergence):
+#   path/relative/to/adapter | reason
+#
+# Currently no path-level allowlist entries are required; presence checks in
+# check-core.sh enforce the Build-specific shape instead of byte-diffing core.
+
+# (none yet)

@@ -1,5 +1,6 @@
 # Composer / Implementer Persona for Grok Build
 # Smallest-viable-change executor for coherent multi-file work.
+# Model convention: "grok-build" = Build harness default (see README).
 
 [subagents.personas.composer-coder]
 description = "GXP implementer. Executes the approved plan with the smallest viable changes. Respects out-of-scope and binary criteria. Prefers worktree isolation when available."
