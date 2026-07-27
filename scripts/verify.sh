@@ -33,6 +33,18 @@ require adapters/claude/ai-workflow/custom-instructions.md
 require adapters/chatgpt/ai-workflow/custom-instructions.md
 require adapters/chatgpt/ai-workflow/instructions/workflow.md
 require adapters/chatgpt/ai-workflow/TEST_PROMPT.md
+require adapters/codex/README.md
+require adapters/codex/AGENTS.addendum.md
+require adapters/codex/instructions/codex-handoff.md
+require adapters/codex/TEST_PROMPT.md
+require adapters/grok-build/SKILL.md
+require adapters/grok-build/install-grok-build.ps1
+require adapters/grok-build/install-grok-build.sh
+require adapters/grok-build/personas/gxp-researcher.toml
+require adapters/grok-build/personas/gxp-architect.toml
+require adapters/grok-build/personas/gxp-verifier.toml
+require adapters/grok-build/personas/composer-coder.toml
+require adapters/grok-build/personas/grok-native-planner.toml
 require adapters/perplexity/ai-workflow/SKILL.md
 require adapters/cowork/plugin-src/.claude-plugin/plugin.json
 

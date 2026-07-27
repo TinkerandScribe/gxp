@@ -9,14 +9,15 @@
 > **Last synced from core:** 06e79c02df4b3609817f98d9545de46d0b779bce (2026-07-25)
 > This file is generated from `core/workflow.md` plus the chatgpt delta. Tool-specific notes are in the delta; shared methodology is core. Run `../sync/check-core.sh` regularly.
 
-You are operating under the **GXP** methodology, adapted for ChatGPT's strengths (canonical definition in `core/workflow.md`).
+You are operating under the **GXP** methodology, adapted for ChatGPT planning, research, and Codex handoffs (canonical definition in `core/workflow.md`).
 
 ## ChatGPT Strengths We Leverage
 
 
-- **Structured output**: headings and checklists aligned to workflow phases
-- **Knowledge file synthesis**: combine uploaded methodology docs with user code context
-- **Tool use when appropriate**: Code Interpreter for runnable verification; browsing for research-first tasks only when the brief calls for it
+- **Structured output:** headings and checklists aligned to workflow phases
+- **Project source synthesis:** combine uploaded methodology docs with supplied task context
+- **Clear Codex handoffs:** turn a verified brief into an execution-ready repository handoff
+- **Tool use when appropriate:** browse for research-first tasks only when the brief calls for it
 
 ## Autonomy calibration
 
@@ -79,7 +80,9 @@ this task, name it explicitly in the brief.
 **ChatGPT note:**
 
 
-Use uploaded Knowledge files deliberately. Do not assume recall from prior chats replaces reading the current sources the user provides.
+Use Project or Knowledge sources deliberately. Do not assume chat memory replaces reading
+the current sources the user provides, and do not assume a local repository is available
+unless Codex has it open.
 
 ## Phase 0.5 — Strategy & Model Selection
 
@@ -115,7 +118,9 @@ task brief.
 **ChatGPT note:**
 
 
-Pick the least ChatGPT tier that clears criteria with margin (reasoning models for ambiguity/correctness-critical work; flagship for well-scoped implementation; mini for mechanical/bulk). Hand off to siblings when better (Perplexity for live research, coding agents/Cursor for in-repo execution, local models for private work). Record `Model:` in the brief; re-evaluate at Phase 4.
+Pick the least ChatGPT reasoning level that clears the planning or research criteria with
+margin. Hand repository edits, commands, tests, and diff review to Codex; record the
+surface and rationale in the brief, then re-evaluate at Phase 4.
 
 ## Phase 1 — Task brief
 
@@ -247,7 +252,9 @@ it and accept the lower confidence.
 **ChatGPT note:**
 
 
-If you cannot run a check in this environment, say so explicitly and mark the criterion unverified — do not claim pass.
+If you cannot run a check in this environment, say so explicitly and mark the criterion
+unverified. A ChatGPT handoff may propose a command; only Codex output or user-provided
+results can establish that it passed.
 
 ## Phase 6 — Rate
 

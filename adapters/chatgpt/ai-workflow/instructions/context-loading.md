@@ -1,53 +1,64 @@
 # ChatGPT Context Loading Strategies
 
-ChatGPT performs best in GXP when context is deliberate — uploaded Knowledge, user-provided files, and explicit brief constraints — rather than assumed from chat history alone.
+ChatGPT performs best in GXP when context is deliberate: Project sources,
+user-provided files, and explicit brief constraints rather than assumed chat history.
 
-## Core Principles
+## Core principles
 
-- **Quality over quantity.** Prefer well-chosen Knowledge files and task-specific uploads over dumping entire repos into one message.
-- **Progressive disclosure.** Start with the brief and Phase 0 sources; expand only when a criterion requires more.
-- **Explicit gaps.** Say when context is missing instead of guessing.
+- **Quality over quantity:** prefer well-chosen sources to a dumped repository.
+- **Progressive disclosure:** start with the brief and Phase 0 sources; expand only when a
+  criterion requires it.
+- **Explicit gaps:** say when context is missing instead of guessing.
 
-## Recommended Patterns
+## Recommended patterns
 
-### 1. Custom GPT Knowledge (Baseline)
+### 1. ChatGPT Project sources (baseline)
 
-For ongoing GXP work, upload at minimum:
+For ongoing GXP work, create a Project and add at minimum:
 
 - `core/workflow.md`
+- `core/PROGRAM.template.md` (or the project's `PROGRAM.md` when one exists)
 - `core/templates/task-brief.md`
 - `core/templates/failure-capture.md`
-- This adapter's `instructions/model-routing.md`
+- this adapter's `instructions/model-routing.md`
+- `adapters/codex/instructions/codex-handoff.md` (handoff shape for repository execution)
 
-Add project-specific `PROGRAM.md`, rules, and failures when working in a real repo.
+Add project-specific `PROGRAM.md`, rules, and failures when working in a real repository.
+For implementation, hand their paths and the repository location to Codex rather than
+asking ChatGPT to infer local files it cannot read.
 
-### 2. Per-Task File Loading
+### 2. Custom GPT Knowledge (optional)
 
-- Start from the task brief Ideal State Criteria and Phase 0 findings.
+Use a Custom GPT when the same planning persona should be reusable across unrelated
+projects. Its Knowledge is a baseline, not evidence that it has the current repository.
+
+### 3. Per-task loading and Codex handoffs
+
+- Start from the brief's Ideal State Criteria and Phase 0 findings.
 - Ask the user to upload or paste files directly referenced in the brief.
-- Use Code Interpreter for runnable verification only when the verification plan names specific commands.
+- Give Codex the brief, exact paths, constraints, and verification commands for a repo task.
+- Treat command output returned by Codex as execution evidence; otherwise mark the check
+  unverified.
 
-### 3. Web Browsing (Research-First Tasks)
+### 4. Web browsing (research-first tasks)
 
-Enable browsing when Phase 0.5 classifies the task as research-first. Capture sources in the brief Context section with URLs and dates. Prefer handing off deep research to Perplexity when citations and comparison tables are the main deliverable.
+Use browsing when Phase 0.5 classifies the task as research-first. Capture source URLs and
+dates in the brief's Context section. Prefer a specialized research surface when citations
+and comparisons are the main deliverable.
 
-### 4. Chat History Limits
+### 5. Chat history limits
 
-Do not treat prior conversation as a substitute for re-reading sources when:
+Do not treat prior conversation as a substitute for re-reading sources when the user
+changes repositories or branches, criteria name paths or commands, or a prior attempt
+failed.
 
-- The user changes repos or branches
-- Criteria reference specific file paths or test commands
-- A prior attempt failed (anti-loop: re-audit, do not assume)
+## Anti-patterns to avoid
 
-## Anti-Patterns to Avoid
+- Claiming to read files that were never supplied.
+- Treating a Project source as proof of the current checkout state.
+- Letting Phase 0 findings fade during implementation.
+- Using web results without recording sources in the brief.
 
-- Claiming you read files that were never uploaded or pasted
-- Running Code Interpreter speculatively without a verification-plan reason
-- Letting Phase 0 findings fade mid-implementation
-- Using web results without recording them in the brief
-
-## ChatGPT-Specific Tip
-
-Custom GPT Knowledge is static until updated. Before a Full-workflow task, confirm whether `core/workflow.md` in Knowledge matches what the user expects — if the user mentions newer repo state, ask for the current file or a sync note.
-
-Treat context loading as an active part of Phase 0 and Phase 3, not a passive default.
+Project and Custom GPT sources are not replacements for the current checkout. Before a
+Full-workflow task, ask for the current file or a sync note when newer repository state
+matters.

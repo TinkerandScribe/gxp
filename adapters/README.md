@@ -12,7 +12,7 @@ The core methodology lives in `../core/`. Adapters exist to make that methodolog
 - **claude / chatgpt / grok / perplexity:** edit `deltas/workflow.delta.md` (tool-specific)
   and regenerate with `python scripts/generate-adapter-workflows.py`. Do not hand-edit
   generated `instructions/workflow.md` bodies (CI `--check`).
-- **cursor / cowork:** keep their existing models (`rule.mdc`; build-time core copy).
+- **cursor / cowork / codex:** keep their existing models (`rule.mdc`; build-time core copy; Codex references the canonical workflow through repository guidance).
 - Every adapter has sync/check tooling; unjustified drift fails `verify.sh`.
 
 ## Current Adapters
@@ -21,7 +21,8 @@ The core methodology lives in `../core/`. Adapters exist to make that methodolog
 - `grok/` — Installable skill (`gxp`) for grok.com / chat; also ships example Grok Build personas
 - `grok-build/` — **Dedicated Grok Build adapter** (personas, Heavy multi-agent patterns, Plan Mode / Workflows integration). Independent of the chat skill; does not overwrite `adapters/grok/`.
 - `claude/` — Instructions and context-loading patterns (targets the claude.ai web app)
-- `chatgpt/` — Custom GPT instructions, model routing, and context-loading (targets chat.openai.com)
+- `chatgpt/` — ChatGPT Project and Custom GPT planning guidance, context loading, and Codex handoffs
+- `codex/` — repository-native execution guidance: `AGENTS.md`, planning, verification, review, and delegation
 - `perplexity/` — Research-phase workflow and collections strategy
 - `cowork/` — Cowork plugin (`gxp.plugin`): four skills — workflow / brief / rate / failure-capture. Built from `core/` (option (a): references generated at build time, not checked in). Run `bash adapters/cowork/build.sh` to produce `dist/gxp.plugin`, then install in Cowork via Settings → Capabilities.
 
@@ -31,7 +32,7 @@ The core methodology lives in `../core/`. Adapters exist to make that methodolog
 2. Reference or copy from `core/` as your starting point.
 3. Add whatever optimizations make sense for the target AI.
 4. Add appropriate sync/check tooling so the adapter can stay aligned with core over time.
-5. Update `scripts/verify.sh` step 5 to cover the new adapter.
+5. Add the new adapter’s required files under step 2 of `scripts/verify.sh`, and ensure any `sync/check-core.sh` is picked up by the existing glob (step 3).
 
 ## Verify adapter parity
 

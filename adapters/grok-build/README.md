@@ -23,7 +23,7 @@ Shipped under `personas/` (install to `~/.grok/personas/` or project `.grok/pers
 | Persona | Role |
 |---------|------|
 | `gxp-researcher` | Aggressive tool-using exploration; surfaces uncertainty + candidate criteria. Never implements. |
-| `gxp-architect` | Shapes GXP plans with 4–8 binary Ideal State Criteria, out-of-scope, verification plan. Never codes product. |
+| `gxp-architect` | Shapes GXP plans with 4ΓÇô8 binary Ideal State Criteria, out-of-scope, verification plan. Never codes product. |
 | `grok-native-planner` | Single-agent planning alternative for lighter ambiguity. |
 | `composer-coder` | Coherent multi-file implementation (smallest viable change). Prefer worktree isolation. |
 | `gxp-verifier` | Strict Layer-2 critic: walks every Ideal State Criterion with tools. Never edits product code. |
@@ -37,8 +37,8 @@ For high-ambiguity / multi-constraint / underspecified work:
 1. Spawn **gxp-researcher** + **gxp-architect** in parallel (scoped context only).
 2. Parent synthesizes into one coherent plan (binary criteria, out-of-scope, verification plan).
 3. Present via `/plan` for operator approval.
-4. After approval → implementer (preferably in a worktree).
-5. After implement → independent **gxp-verifier** for Layer-2 criterion-by-criterion check.
+4. After approval ΓåÆ implementer (preferably in a worktree).
+5. After implement ΓåÆ independent **gxp-verifier** for Layer-2 criterion-by-criterion check.
 6. Honest rating + failure capture by the parent.
 
 This recreates SuperGrok Heavy-style specialized collaboration while remaining strictly bounded by GXP.
@@ -55,30 +55,41 @@ The adapter ships examples that can be copied and specialized further.
 
 ## Installation
 
+From this adapter directory:
+
 ```powershell
-# From this adapter directory (Windows)
-.\install-grok-build.ps1   # (to be added)
+# Windows ΓÇö personas only (default)
+.\install-grok-build.ps1 -Force
+
+# Optional Build skill at ~/.grok/skills/gxp-build (does not touch chat skill)
+.\install-grok-build.ps1 -Force -InstallSkill
 ```
 
-Or manually:
+```bash
+bash install-grok-build.sh --force
+bash install-grok-build.sh --force --install-skill
+```
 
-- Copy `personas/*.toml` → `~/.grok/personas/` (or project `.grok/personas/`)
-- Optionally place agent definitions under `~/.grok/agents/` or project `.grok/agents/`
-- For the skill itself: install or symlink this directory if a Build-specific skill entry is desired (name it distinctly, e.g. `gxp-build`)
+Manual:
 
-See also the general Grok adapter install scripts for patterns.
+- Copy `personas/*.toml` ΓåÆ `~/.grok/personas/` (or project `.grok/personas/`)
+- Optional skill: junction/symlink this directory to `~/.grok/skills/gxp-build` (see `INSTALL.md`)
+
+**Chat skill isolation:** installers never write `gxp-ai-workflow` or `tinker-tools-ai-workflow`.
+
+See `INSTALL.md` for flags and verification.
 
 ## Relationship to Core and Other Adapters
 
 - Derives from `core/`.
 - Does **not** touch `adapters/grok/` (chat skill remains intact for grok.com).
-- Follows the same philosophy as other adapters: make the methodology excellent for this surface’s strengths.
+- Follows the same philosophy as other adapters: make the methodology excellent for this surfaceΓÇÖs strengths.
 
 ## Status
 
-Initial structure (v0). Personas and orchestration docs are production-usable. Full install scripts, Workflow templates, and ACP examples are next.
+v0.1 ΓÇö Personas, Heavy orchestration docs, install scripts (`install-grok-build.ps1` / `.sh`), and minimal `SKILL.md` (`gxp-build`) are production-usable. Workflow templates and ACP examples are next.
 
 ---
 
-GXP — Guided eXecution Protocol  
+GXP ΓÇö Guided eXecution Protocol  
 Verification-first. Binary criteria. Bounded agents.
