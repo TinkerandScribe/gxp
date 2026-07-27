@@ -184,10 +184,25 @@ Order of checks:
 1. **Deterministic checks first** — type checking, linting, unit tests,
    build, schema validation, anything that returns a clear pass/fail.
    These are cheap and unambiguous. Run them before anything subjective.
-2. **Behavioral checks** — run the actual feature, follow the golden
+2. **Ontology validation (optional)** — if the project declares an ontology
+   (see `PROGRAM.md` or the task brief) or the brief contains
+   ontology-referenced `[guardrail]` criteria:
+   - Load the ontology and any instance data produced or modified by the change.
+   - Run the project’s ontology validator / reasoner (SHACL, SPARQL constraints,
+     or custom).
+   - Treat any violation as a deterministic failure — the same way a failing
+     test or lint error is treated.
+   - Do not proceed to behavioral or subjective checks until ontology validation
+     passes or the brief is amended.
+
+   This step is **opt-in**. Projects without an ontology skip it entirely.
+   The ontology is the external ledger; the LLM never gets to redefine what
+   "Paid" or "hasRefund" means mid-task. See `core/docs/ontology-guardrails.md`.
+3. **Behavioral checks** — run the actual feature, follow the golden
    path, hit the edge cases named in the brief.
-3. **Subjective checks** — code quality, UX, anything that requires
-   judgment. Only after the deterministic and behavioral checks pass.
+4. **Subjective checks** — code quality, UX, anything that requires
+   judgment. Only after the deterministic, ontology (if any), and behavioral
+   checks pass.
 
 ### Verification ladder (do not skip)
 
@@ -292,13 +307,14 @@ Paste this into a new Cursor chat at the start of a task:
 > justify full on small scope in one line).
 > For full: run phase 0 (audit `.ai/PROGRAM.md`, `rules/`, `failures/`),
 > then phase 1 (write a task brief with 4–8 binary Ideal State Criteria,
-> each tagged [outcome]/ [guardrail], or [hypothesis]),
+> each tagged [outcome],[guardrail], or [hypothesis]),
 > then phase 2 self-eval (completeness, ambiguity, scope, verification,
 > approval gates, criteria quality, anti-gaming). Code in phase 3, honoring
 > the phase 4 anti-loop rule (after two failed attempts on the same approach,
 > reframe: restate the problem and name a discarded assumption before any
 > further attempt). Phase 5
-> verification runs deterministic checks first. Phase 6: append one
+> verification runs deterministic checks first, then optional ontology
+> validation, then behavioral and subjective checks. Phase 6: append one
 > JSONL object to `.ai/ratings.jsonl` with `rating` as an integer 1–10
 > — no arrays. Phase 7: capture repeatable failures with
 > expected/actual/root cause/detection/resolution/prevention/follow-up.
