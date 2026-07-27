@@ -18,7 +18,8 @@ The core methodology lives in `../core/`. Adapters exist to make that methodolog
 ## Current Adapters
 
 - `cursor/` — Cursor rule, Phase -1 capability gate, `install-cursor-rule.ps1`, `security.mdc.template`
-- `grok/` — Installable skill (`gxp`); sync via `check-core.ps1` / `check-core.sh`
+- `grok/` — Installable skill (`gxp`) for grok.com / chat; also ships example Grok Build personas
+- `grok-build/` — **Dedicated Grok Build adapter** (personas, Heavy multi-agent patterns, Plan Mode / Workflows integration). Independent of the chat skill; does not overwrite `adapters/grok/`.
 - `claude/` — Instructions and context-loading patterns (targets the claude.ai web app)
 - `chatgpt/` — Custom GPT instructions, model routing, and context-loading (targets chat.openai.com)
 - `perplexity/` — Research-phase workflow and collections strategy
