@@ -15,6 +15,7 @@ One sentence describing what success looks like.
 - Relevant `.ai/rules/` entries:
 - Relevant `.ai/failures/` entries:
 - Background needed to understand the task:
+- Ontology (if used): path or name of the domain model that supplies semantic constraints
 
 **Strategy/Model:** [chosen engine] — [one-line reason tied to the criteria]
 
@@ -49,6 +50,14 @@ operator required that mechanism. Style-only qualities ("clean," "idiomatic,"
 "elegant") are not valid as binding criteria — put them in non-binding notes if
 needed.
 
+**Ontology-referenced guardrails (optional):** When a project ontology exists, you may write binding criteria that cite its invariants, for example:
+
+- `[guardrail] Order.status ∈ {Paid, Shipped, Refunded} (ontology:OrderStatus)`
+- `[guardrail] hasRefund is functional — at most one refund per Order`
+- `[guardrail] Customer and SupportRep are disjoint classes`
+
+These become part of the deterministic verification ladder (see `core/docs/ontology-guardrails.md`).
+
 - [outcome]
 - [outcome]
 - [outcome]
@@ -60,6 +69,17 @@ needed.
 the operator's stated objective, not merely the literal checklist? Surface any
 conflict before implementation.
 
+## Ontology / Domain Model (optional)
+
+If this task or project uses an external formal ontology (Coyle-style ledger):
+
+- **Path:** `.ai/ontology/` or `ontology/` (or the path declared in PROGRAM.md)
+- **Format:** turtle | shacl | json-schema+shacl
+- **Relevant classes / constraints for this task:**
+- **How validation will be run:** (command or helper)
+
+Leave this section empty when no ontology is in use. Ontology checks are always opt-in.
+
 ## Out of scope
 
 What you are deliberately *not* doing in this task. Anything that surfaces
@@ -69,7 +89,7 @@ here gets parked, not expanded into.
 
 How you will check each criterion. Reference commands from `PROGRAM.md`
 where possible. Deterministic checks (type/lint/test/build) go first;
-behavioral and subjective checks after.
+**ontology validation (if declared)** next; behavioral and subjective checks after.
 
 ## Self-evaluation gate
 
@@ -87,6 +107,7 @@ Before coding, confirm:
   are rejected.
 - [ ] **Anti-gaming** — answered the standing question above (objective vs
   literal checklist); any conflict is written down before implementation.
+- [ ] **Ontology (if used)** — any ontology-referenced guardrails are loadable and the validation method is named.
 
 ## Approval gates
 
