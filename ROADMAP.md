@@ -134,6 +134,21 @@ Brief: [`core/tasks/criteria-hardening-and-anti-fixation.md`](core/tasks/criteri
 
 ---
 
+## Part D — Adapter surfaces & optional ontology (2026-07)
+
+Shipped on `main` after v1.3.1 (see CHANGELOG **Unreleased**).
+
+| Item | Status |
+|---|---|
+| Dedicated `adapters/grok-build/` (personas, install, optional `gxp-build` skill, check-core, heavy example) | **done** |
+| `adapters/codex/` + ChatGPT Project/handoff modernization | **done** |
+| Optional ontology guardrails (workflow Phase 5 + brief + example TTL + docs) | **done** (opt-in; no required project ontology) |
+| Regenerated chat adapter workflows to include ontology step | **done** |
+| Workflow templates / ACP orchestration for Grok Build | **next** (adapter README status) |
+| Full SHACL/reasoner install tooling in-repo | **out** unless operator opens a brief |
+
+---
+
 ## How to use this roadmap
 
 1. Operator picks a milestone (default: **M4** if unsure).  

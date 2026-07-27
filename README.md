@@ -14,7 +14,8 @@ core idea: before any non-trivial task, write **4–8 binary, checkable criteria
 "done" means; pass a self-evaluation gate; make the smallest viable change; **stop after
 two failed attempts** on the same approach; verify deterministically before trusting
 anything subjective; and **rate the outcome honestly**. It's tool-agnostic — the same
-discipline drives Claude, ChatGPT, Cursor, Grok, Perplexity, or a local model.
+discipline drives Claude, ChatGPT, Codex, Cursor, Grok (chat + Build), Perplexity, or a
+local model.
 
 It is deliberately **bounded** (an L3/L4 discipline, not "full autonomy"): the agent works
 within a written brief, doesn't expand scope on its own, and pauses at approval gates.
@@ -29,7 +30,7 @@ within a written brief, doesn't expand scope on its own, and pauses at approval 
 | 2 | **Self-eval gate** | Completeness, ambiguity, scope traps, verification, approval gates. |
 | 3 | **Implementation** | Smallest viable change, scoped to the brief. |
 | 4 | **Anti-loop** | Same approach fails twice → stop, document the dead end, change strategy. |
-| 5 | **Verify** | Deterministic (test/lint/build) → behavioral → subjective. |
+| 5 | **Verify** | Deterministic (test/lint/build) → optional ontology validation → behavioral → subjective. |
 | 6 | **Rate** | One honest JSON line in `ratings.jsonl` (a real low rating beats a generous one). |
 | 7 | **Failure capture** | Repeatable failure → write it down so it doesn't recur. |
 | 8 | **Handoff** | What changed, what was verified, what's parked. |
@@ -65,9 +66,10 @@ Then fill in `.ai/PROGRAM.md` with your project's verification commands.
 GXP is a discipline you put your AI agent through — there's no binary to run. Two ways to drive it:
 
 **With an adapter (automatic).** Install the adapter for your tool (see below) and it loads
-the workflow for you: in Cursor the rule applies automatically; in Grok, invoke the `gxp`
-skill; in ChatGPT, use a Project for planning and hand repository work to Codex; in Claude
-or the Cowork plugin, just say *"use gxp on …"*.
+the workflow for you: in Cursor the rule applies automatically; in Grok chat, invoke the
+`gxp` skill; in **Grok Build**, install the dedicated `gxp-build` skill / personas; in
+ChatGPT, use a Project for planning and hand repository work to Codex; in Claude or the
+Cowork plugin, just say *"use gxp on …"*.
 
 **With any agent (manual).** Point the agent at `.ai/workflow.md` and tell it to follow GXP.
 A prompt that works in any chat-based coding agent:
@@ -109,19 +111,30 @@ Each adapter re-expresses GXP for a specific tool's interface and strengths. All
 from `core/`; see [`adapters/README.md`](adapters/README.md).
 
 - **`cursor/`** — Cursor rule + capability gate + installer.
-- **`grok/`** — installable Grok skill (`gxp`) with sync checks.
+- **`grok/`** — installable Grok **chat** skill (`gxp`) with sync checks.
+- **`grok-build/`** — dedicated **Grok Build** adapter: Heavy multi-persona front-half,
+  install scripts, optional `gxp-build` skill (never overwrites the chat skill), lightweight
+  `sync/check-core`.
 - **`claude/`** — custom instructions and context-loading patterns for Claude.
 - **`chatgpt/`** — ChatGPT Project and Custom GPT planning, context-loading, and Codex handoffs.
 - **`codex/`** — repo-native execution guidance for Codex: `AGENTS.md`, planning, verification, review, and delegation.
-- **`perplexity/`** — research-phase workflow and collections strategy.
+- **`perplexity/`** — research-phase workflow and collections strategy (trust-boundary handoffs).
 - **`cowork/`** — a Cowork plugin (`gxp`) packaging four skills, built from `core/`.
+
+### Optional ontology guardrails
+
+Projects may declare a formal domain model and bind Ideal State Criteria to it. Phase 5 then
+runs optional ontology validation (after deterministic checks, before behavioral/subjective).
+See [`core/docs/ontology-guardrails.md`](core/docs/ontology-guardrails.md) and
+[`core/templates/ontology/`](core/templates/ontology/). Opt-in only — projects without an
+ontology skip the step.
 
 ## Repository layout
 
 ```
-core/        the methodology — workflow, routing, rules, failures, templates
-adapters/    per-tool integrations (cursor, grok, claude, chatgpt, codex, perplexity, cowork)
-scripts/     installer (.ps1 + .sh) and an adapter-parity check (verify.sh)
+core/        the methodology — workflow, routing, rules, failures, templates, docs
+adapters/    per-tool integrations (cursor, grok, grok-build, claude, chatgpt, codex, perplexity, cowork)
+scripts/     installer (.ps1 + .sh), workflow generator, and adapter-parity check (verify.sh)
 ```
 
 ## Bounded self-refinement (`gxp-refine`)
@@ -142,10 +155,12 @@ bash scripts/verify.sh   # required files present + adapter sync checks pass (dr
 
 ## Releases
 
-See [`CHANGELOG.md`](CHANGELOG.md). Latest: **v1.3.1** (gxp-refine v0 + selftest-in-verify, Verification ladder, Grok/Claude surfaces, path hygiene).
+See [`CHANGELOG.md`](CHANGELOG.md). Tagged release: **v1.3.1**. Main also carries post-tag
+work (criteria taxonomy / anti-fixation, Grok Build adapter, Codex adapter, ChatGPT↔Codex
+handoffs, optional ontology guardrails) — see **Unreleased** in the changelog.
 
-Planned work lives in [`ROADMAP.md`](ROADMAP.md) (Part A: completed verification hardening;
-Part B: next polish → eval depth → blind multi-model evidence → dogfood).
+Planned work lives in [`ROADMAP.md`](ROADMAP.md) (Parts A–C mostly complete; Part B M6
+evidence still open; Part D tracks recent adapter/methodology ships).
 
 ## License
 

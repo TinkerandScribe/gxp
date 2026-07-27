@@ -4,6 +4,43 @@ All notable changes to the public [GXP](https://github.com/TinkerandScribe/gxp) 
 documented here. Versioning follows [SemVer](https://semver.org/) for the methodology
 package as a whole (core + adapters + install/verify scripts).
 
+## [Unreleased]
+
+### Added
+
+- **Criteria taxonomy + anti-fixation defaults** — brief template tags
+  (`[outcome]` / `[guardrail]` / `[hypothesis]`), Phase 2 criteria-quality and anti-gaming
+  gates, lightweight default for small single-file scope, anti-loop reframe after second
+  failure (`core/tasks/criteria-hardening-and-anti-fixation.md`).
+- **Optional ontology guardrails (Coyle-style)** — Phase 5 optional ontology validation step
+  in `core/workflow.md`; brief section in `core/templates/task-brief.md`; docs under
+  `core/docs/ontology-*.md`; example Turtle under `core/templates/ontology/`.
+- **`adapters/grok-build/`** — dedicated Grok Build adapter (independent of chat `gxp` skill):
+  five Heavy personas, install scripts (personas default; opt-in `gxp-build` skill junction),
+  lightweight `sync/check-core.{sh,ps1}`, `drift-allowlist.txt`,
+  `examples/heavy-front-half.md`. Never writes `gxp-ai-workflow` / `tinker-tools-ai-workflow`.
+- **`adapters/codex/`** — repo-native Codex execution guidance (`AGENTS.addendum.md`,
+  handoff template, presence + marker `sync/check-core.sh`).
+- **ChatGPT ↔ Codex planning/execution split** — ChatGPT adapter modernized for Projects,
+  durable model-routing language, and Codex handoff shape; root/adapters indexes updated.
+- **Perplexity trust-boundary hardening** — research handoff provenance
+  (verified / inferences / open questions; repo vs external); no false local-verify claims.
+- **Heavy personas on Grok chat adapter** — `gxp-researcher` + `gxp-architect` parallel
+  front-half path in strategy-selection / install personas (alongside verifier, planner,
+  composer-coder).
+
+### Changed
+
+- **Generated adapter workflows** — regenerate after core ontology merge so claude / chatgpt /
+  grok / perplexity `instructions/workflow.md` bodies include optional ontology Phase 5
+  (not only sync-marker refresh).
+- **`scripts/verify.sh`** — requires Codex and Grok Build artifacts; runs
+  `adapters/grok-build/sync/check-core.sh` via existing `adapters/*/sync/check-core.sh` glob.
+
+### Fixed
+
+- Adapter workflow bodies that had advanced sync markers without regenerated ontology content.
+
 ## [1.3.1] - 2026-07-24
 
 ### Added

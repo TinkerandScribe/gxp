@@ -18,13 +18,16 @@ The core methodology lives in `../core/`. Adapters exist to make that methodolog
 ## Current Adapters
 
 - `cursor/` — Cursor rule, Phase -1 capability gate, `install-cursor-rule.ps1`, `security.mdc.template`
-- `grok/` — Installable skill (`gxp`) for grok.com / chat; also ships example Grok Build personas
-- `grok-build/` — **Dedicated Grok Build adapter** (personas, Heavy multi-agent patterns, Plan Mode / Workflows integration). Independent of the chat skill; does not overwrite `adapters/grok/`.
+- `grok/` — Installable skill (`gxp`) for grok.com / chat; also ships example Grok Build personas under `examples/grok-build-strategy/`
+- `grok-build/` — **Dedicated Grok Build adapter** (personas, Heavy multi-agent patterns, install scripts, optional `gxp-build` skill, lightweight `sync/check-core`, `examples/heavy-front-half.md`). Independent of the chat skill; installers never write `gxp-ai-workflow`
 - `claude/` — Instructions and context-loading patterns (targets the claude.ai web app)
 - `chatgpt/` — ChatGPT Project and Custom GPT planning guidance, context loading, and Codex handoffs
-- `codex/` — repository-native execution guidance: `AGENTS.md`, planning, verification, review, and delegation
-- `perplexity/` — Research-phase workflow and collections strategy
+- `codex/` — repository-native execution guidance: `AGENTS.md`, planning, verification, review, and delegation (`sync/check-core.sh` presence + markers)
+- `perplexity/` — Research-phase workflow and collections strategy (trust-boundary handoffs)
 - `cowork/` — Cowork plugin (`gxp.plugin`): four skills — workflow / brief / rate / failure-capture. Built from `core/` (option (a): references generated at build time, not checked in). Run `bash adapters/cowork/build.sh` to produce `dist/gxp.plugin`, then install in Cowork via Settings → Capabilities.
+
+**Core methodology note:** optional ontology validation lives in `core/`, not in a separate
+adapter. Regenerated chat workflows pick it up via `scripts/generate-adapter-workflows.py`.
 
 ## Adding a New Adapter
 
