@@ -1,6 +1,8 @@
 # GXP — Guided eXecution Protocol
 
-**A verification-first, binary-criteria workflow for bounded AI agents.**
+**A verification-first agent harness with binary Ideal State Criteria, anti-scope-creep rules, and scaffolding tiers.**
+
+Designed so a strong model + this process reliably finishes multi-step work instead of exploring.
 
 > **Naming note:** "GXP" here stands for **Guided eXecution Protocol**, an AI-coding
 > workflow discipline. It is unrelated to — and makes no claim of compliance with —
@@ -9,16 +11,20 @@
 > validation. Do not use this project as a substitute for validated GxP compliance
 > tooling.
 
-GXP is a lightweight methodology for getting reliable work out of AI coding agents. The
-core idea: before any non-trivial task, write **4–8 binary, checkable criteria** for what
-"done" means; pass a self-evaluation gate; make the smallest viable change; **stop after
-two failed attempts** on the same approach; verify deterministically before trusting
-anything subjective; and **rate the outcome honestly**. It's tool-agnostic — the same
-discipline drives Claude, ChatGPT, Codex, Cursor, Grok (chat + Build), Perplexity, or a
-local model.
+## Why this exists
 
-It is deliberately **bounded** (an L3/L4 discipline, not "full autonomy"): the agent works
-within a written brief, doesn't expand scope on its own, and pauses at approval gates.
+Models keep getting better. The bottleneck is no longer raw capability — it is reliable *process* around the model. Without structure, even frontier agents drift, expand scope, declare victory on weak smoke tests, and repeat the same failure modes.
+
+GXP is a lightweight, tool-agnostic harness that forces the opposite behavior:
+
+- Write **4–8 binary, checkable criteria** for what "done" means *before* any non-trivial work
+- Pass a self-evaluation gate
+- Make the smallest viable change
+- **Stop after two failed attempts** on the same approach
+- Verify deterministically before trusting anything subjective
+- Rate the outcome honestly and capture repeatable failures so they do not recur
+
+It is deliberately **bounded** (L3/L4, not full autonomy): the agent works inside a written brief, does not expand scope on its own, and pauses at approval gates. The same discipline works with Claude, ChatGPT, Codex, Cursor, Grok (chat + Build), Perplexity, or a local model.
 
 ## The loop (Phases 0–8)
 
@@ -35,17 +41,15 @@ within a written brief, doesn't expand scope on its own, and pauses at approval 
 | 7 | **Failure capture** | Repeatable failure → write it down so it doesn't recur. |
 | 8 | **Handoff** | What changed, what was verified, what's parked. |
 
-The full process lives in **[`core/workflow.md`](core/workflow.md)**. If you can't write 4
-strong binary criteria for a task, it isn't understood yet — clarify before coding.
+The full process lives in **[`core/workflow.md`](core/workflow.md)**. If you can't write 4 strong binary criteria for a task, it isn't understood yet — clarify before coding.
 
-**Full vs lightweight:** run all phases for anything that changes behavior, touches
-multiple files, or could regress. Use the lightweight variant (phases 1, 2, 3, 5) only for
-trivial, single-file, easily reversible edits.
+**Full vs lightweight:** run all phases for anything that changes behavior, touches multiple files, or could regress. Use the lightweight variant (phases 1, 2, 3, 5) only for trivial, single-file, easily reversible edits.
+
+Scaffolding intensity is adjustable via tiers (`frontier` / `standard` / `constrained`) so capable models are not over-prompted and weaker models get denser guardrails — without ever relaxing the core invariants. See [`core/docs/capability-scaffolding.md`](core/docs/capability-scaffolding.md).
 
 ## Install into your repo
 
-Copies `core/` into your project as a portable `.ai/` layout (preserves an existing
-`.ai/PROGRAM.md` and `.ai/ratings.jsonl`):
+Copies `core/` into your project as a portable `.ai/` layout (preserves an existing `.ai/PROGRAM.md` and `.ai/ratings.jsonl`):
 
 ```bash
 # Mac / Linux / Git-Bash — preview first, then install (add --force only to refresh templates)
@@ -63,11 +67,9 @@ Then fill in `.ai/PROGRAM.md` with your project's verification commands.
 
 ### Refresh GXP across many host repos
 
-Scan a folder of projects (default roots: `C:\Users\Reepicheep\Claude` on this machine /
-`$HOME/Claude` when present), optionally pull, re-apply the scaffold, commit, and push.
+Scan a folder of projects (default roots: `C:\Users\Reepicheep\Claude` on this machine / `$HOME/Claude` when present), optionally pull, re-apply the scaffold, commit, and push.
 
-**Safe defaults:** report-only dry-run; only repos that already have `.ai/workflow.md`;
-ff-only pull; never force-push. Writing and publishing require explicit flags.
+**Safe defaults:** report-only dry-run; only repos that already have `.ai/workflow.md`; ff-only pull; never force-push. Writing and publishing require explicit flags.
 
 ```powershell
 # Report only (default)
@@ -88,26 +90,17 @@ bash scripts/sync-gxp-hosts.sh --apply --commit --push
 bash scripts/sync-gxp-hosts.sh --roots "$HOME/projects" --apply
 ```
 
-Use `--bootstrap` / `-Bootstrap` only if you want GXP installed into git repos that do
-not yet have `.ai/workflow.md`. The GXP monorepo itself is always skipped.
+Use `--bootstrap` / `-Bootstrap` only if you want GXP installed into git repos that do not yet have `.ai/workflow.md`. The GXP monorepo itself is always skipped.
 
 ## Using it
 
 GXP is a discipline you put your AI agent through — there's no binary to run. Two ways to drive it:
 
-**With an adapter (automatic).** Install the adapter for your tool (see below) and it loads
-the workflow for you: in Cursor the rule applies automatically; in Grok chat, invoke the
-`gxp` skill; in **Grok Build**, install the dedicated `gxp-build` skill / personas; in
-ChatGPT, use a Project for planning and hand repository work to Codex; in Claude or the
-Cowork plugin, just say *"use gxp on …"*.
+**With an adapter (automatic).** Install the adapter for your tool (see below) and it loads the workflow for you: in Cursor the rule applies automatically; in Grok chat, invoke the `gxp` skill; in **Grok Build**, install the dedicated `gxp-build` skill / personas; in ChatGPT, use a Project for planning and hand repository work to Codex; in Claude or the Cowork plugin, just say *"use gxp on …"*.
 
-**With any agent (manual).** Point the agent at `.ai/workflow.md` and tell it to follow GXP.
-A prompt that works in any chat-based coding agent:
+**With any agent (manual).** Point the agent at `.ai/workflow.md` and tell it to follow GXP. A prompt that works in any chat-based coding agent:
 
-> Follow the GXP workflow in `.ai/workflow.md`. Before coding, write a task brief with 4–8
-> binary Ideal State Criteria and pass the self-evaluation gate. Make the smallest change,
-> stop after two failed attempts on the same approach, verify deterministically first, then
-> append one honest line to `.ai/ratings.jsonl`.
+> Follow the GXP workflow in `.ai/workflow.md`. Before coding, write a task brief with 4–8 binary Ideal State Criteria and pass the self-evaluation gate. Make the smallest change, stop after two failed attempts on the same approach, verify deterministically first, then append one honest line to `.ai/ratings.jsonl`.
 
 As you work, GXP reads and writes a few well-known locations in your repo:
 
@@ -137,14 +130,11 @@ Want a one-click install instead of copying files? Download the packaged skill a
 
 ## Adapters
 
-Each adapter re-expresses GXP for a specific tool's interface and strengths. All derive
-from `core/`; see [`adapters/README.md`](adapters/README.md).
+Each adapter re-expresses GXP for a specific tool's interface and strengths. All derive from `core/`; see [`adapters/README.md`](adapters/README.md).
 
 - **`cursor/`** — Cursor rule + capability gate + installer.
 - **`grok/`** — installable Grok **chat** skill (`gxp`) with sync checks.
-- **`grok-build/`** — dedicated **Grok Build** adapter: Heavy multi-persona front-half,
-  install scripts, optional `gxp-build` skill (never overwrites the chat skill), lightweight
-  `sync/check-core`.
+- **`grok-build/`** — dedicated **Grok Build** adapter: Heavy multi-persona front-half, install scripts, optional `gxp-build` skill (never overwrites the chat skill), lightweight `sync/check-core`.
 - **`claude/`** — custom instructions and context-loading patterns for Claude.
 - **`chatgpt/`** — ChatGPT Project and Custom GPT planning, context-loading, and Codex handoffs.
 - **`codex/`** — repo-native execution guidance for Codex: `AGENTS.md`, planning, verification, review, and delegation.
@@ -153,11 +143,7 @@ from `core/`; see [`adapters/README.md`](adapters/README.md).
 
 ### Optional ontology guardrails
 
-Projects may declare a formal domain model and bind Ideal State Criteria to it. Phase 5 then
-runs optional ontology validation (after deterministic checks, before behavioral/subjective).
-See [`core/docs/ontology-guardrails.md`](core/docs/ontology-guardrails.md) and
-[`core/templates/ontology/`](core/templates/ontology/). Opt-in only — projects without an
-ontology skip the step.
+Projects may declare a formal domain model and bind Ideal State Criteria to it. Phase 5 then runs optional ontology validation (after deterministic checks, before behavioral/subjective). See [`core/docs/ontology-guardrails.md`](core/docs/ontology-guardrails.md) and [`core/templates/ontology/`](core/templates/ontology/). Opt-in only — projects without an ontology skip the step.
 
 ## Repository layout
 
@@ -185,12 +171,9 @@ bash scripts/verify.sh   # required files present + adapter sync checks pass (dr
 
 ## Releases
 
-See [`CHANGELOG.md`](CHANGELOG.md). Tagged release: **v1.3.1**. Main also carries post-tag
-work (criteria taxonomy / anti-fixation, Grok Build adapter, Codex adapter, ChatGPT↔Codex
-handoffs, optional ontology guardrails) — see **Unreleased** in the changelog.
+See [`CHANGELOG.md`](CHANGELOG.md). Tagged release: **v1.3.1**. Main also carries post-tag work (criteria taxonomy / anti-fixation, Grok Build adapter, Codex adapter, ChatGPT↔Codex handoffs, optional ontology guardrails) — see **Unreleased** in the changelog.
 
-Planned work lives in [`ROADMAP.md`](ROADMAP.md) (Parts A–C mostly complete; Part B M6
-evidence still open; Part D tracks recent adapter/methodology ships).
+Planned work lives in [`ROADMAP.md`](ROADMAP.md) (Parts A–C mostly complete; Part B M6 evidence still open; Part D tracks recent adapter/methodology ships).
 
 ## License
 
