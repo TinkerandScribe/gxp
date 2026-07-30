@@ -27,6 +27,16 @@ Stay aligned with core. Prefer tool evidence over guessing.
 
 Verification-first. Binary Ideal State Criteria. Bounded scope. Honest rating.
 
+## Scaffolding tier (Phase 0.5)
+
+Record **Scaffolding tier:** `frontier` | `standard` | `constrained` with the
+engine/model choice (default **standard**). See repo
+`core/docs/capability-scaffolding.md` when available.
+
+- Tier modulates prompt/skill load and brief style only.
+- Never drop binary criteria or two-layer verify on `frontier`.
+- Do not silently delete host system prompts/skills.
+
 ## Grok Build strengths to maximize
 
 - **Subagents + personas** with locked roles (research / architect / implement / verify)

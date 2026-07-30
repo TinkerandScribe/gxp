@@ -74,6 +74,22 @@ Key reminders:
 - Strong enforcement of the anti-loop rule (Phase 4).
 - Honest rating (Phase 6) and meaningful failure capture (Phase 7).
 
+### Scaffolding tier (Phase 0.5)
+
+After choosing the engine/model, also set **Scaffolding tier:**
+`frontier` | `standard` | `constrained` (default **standard** if unknown).
+
+- **frontier** — minimal host scaffolding; high-level goal + binary criteria
+- **standard** — default GXP intensity
+- **constrained** — denser steps/gates (older, local, or unproven models)
+
+Detection: explicit brief / operator / `GXP_SCAFFOLDING_TIER` → model map → **standard**.
+Never auto-pick `frontier` without a known model id or explicit override.
+Tier does **not** relax verification, binary criteria, anti-loop, or privacy/stakes rails.
+Ablation of host system prompts/skills is operator-approved only.
+
+Canonical: `core/docs/capability-scaffolding.md` (bundled under `docs/` in this skill when present).
+
 ## Evidence-backed non-negotiables (Grok Build)
 
 These encode eval findings (weak public green, thin prompts). They do not replace core:

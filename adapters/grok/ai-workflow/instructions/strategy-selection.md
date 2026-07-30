@@ -15,6 +15,10 @@ It must feed GXP critic scoring (gxp_alignment_score, criteria_evaluation) and
 respect the coordination brief's constraints. The decision skeleton (classify,
 choose least-capable engine with margin, record, re-evaluate) lives in core.
 
+Also record **Scaffolding tier** (`frontier` | `standard` | `constrained`, default
+**standard**) per `core/docs/capability-scaffolding.md` / skill `docs/capability-scaffolding.md`.
+Tier is orthogonal to persona/model choice: it only changes prompt/skill load intensity.
+
 ## When to Invoke Strategy Selection
 
 Run this **early** (end of Phase 0 or start of Phase 1/3) for any non-trivial goal. Use GXP language for the classification.
