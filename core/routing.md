@@ -6,6 +6,11 @@ file is portable, tool-agnostic methodology. A dispatcher *applies* it; you *own
 adapt it. The engine names below are **examples** — replace them with the tools you
 actually use.
 
+**Note:** Scaffolding capability tier (`frontier` | `standard` | `constrained`) is
+orthogonal to this routing table. It modulates prompt/skill intensity for a chosen
+engine; it does not replace privacy/stakes rails or `exec_mode`. See
+`core/docs/capability-scaffolding.md`.
+
 ## Two kinds of route (important)
 
 Not every engine is something a dispatcher can invoke autonomously:

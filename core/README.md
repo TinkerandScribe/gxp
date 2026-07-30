@@ -24,8 +24,9 @@ This directory is the **single source of truth** for GXP — the Guided eXecutio
 - `ratings.jsonl` — schema + illustrative example entries for the ratings log.
 - `rules/` and `failures/` — durable rules and captured failure patterns.
 - `evals/` — structure for golden examples, regressions, and canaries.
-- `docs/` — how-tos and design notes (`gxp-refine.md`, `ontology-guardrails.md`,
-  `ontology-integration.md`, root addenda for `AGENTS.md` / `CLAUDE.md`).
+- `docs/` — how-tos and design notes (`capability-scaffolding.md`, `gxp-refine.md`,
+  `ontology-guardrails.md`, `ontology-integration.md`, root addenda for
+  `AGENTS.md` / `CLAUDE.md`).
 
 ## Installing into another repo
 
