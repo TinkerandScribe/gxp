@@ -21,6 +21,12 @@ Canonical methodology: `core/workflow.md`.
 - Single-file, reversible typo/comment/one-line fix
 - Strong named verify already exists and covers the change
 
+### Scaffolding tiers
+Phase 0.5 selects both **engine/model** and **scaffolding tier**
+(`frontier` | `standard` | `constrained`). Canonical policy:
+`core/docs/capability-scaffolding.md`. Default unknown models to **standard**.
+Tier does not weaken verification or binary criteria.
+
 ### Non-negotiables
 1. **Phase 0 before code** when the ask is thin: open `core/workflow.md`, `core/rules/`,
    `core/failures/` when present (or state they are absent).

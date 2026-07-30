@@ -122,3 +122,54 @@ Routing lives only in adapters — it is a way to apply the *same* methodology m
 efficiently across the models you have. If a routing rule starts changing the
 *process* (not just which model runs it), that change belongs in `../../../core/`
 first. See `../../../core/README.md` and `../../README.md`.
+
+
+## Scaffolding tier (capability intensity)
+
+Model selection (above) answers *which* Claude/engine runs. **Scaffolding
+tier** answers *how much* structure to inject. Canonical definitions:
+`core/docs/capability-scaffolding.md`.
+
+### Detection order
+
+1. Explicit brief field / operator instruction / `GXP_SCAFFOLDING_TIER`
+2. Default map from active model id (table below)
+3. **`standard`** if unknown
+
+Never auto-select `frontier` without a known model id or explicit override.
+
+### Default model → tier map (Claude family, dated 2026-07-30)
+
+| Model / class (examples) | Default scaffolding tier | Notes |
+| --- | --- | --- |
+| Current frontier flagship (e.g. Opus 5-class / `claude-opus-4-8` when treated as frontier after local eval; Fable 5 when org evals agree) | **frontier** | Minimal host CLAUDE.md/skills load for the run; high-level brief + binary criteria |
+| Strong mid-tier (e.g. Sonnet 4.6 / `claude-sonnet-4-6`) | **standard** | Full GXP defaults |
+| Fast/small (e.g. Haiku 4.5 / `claude-haiku-4-5`) | **constrained** | Keep scaffolding; denser steps; earlier gates |
+| Local / offline coder models | **constrained** | Never high-stakes correctness with frontier-style minimal prompts |
+
+**Revisit this table** after each major model generation. Prefer empirical
+failure data over permanent “always frontier for Opus” dogma.
+
+### Context-load policy (Claude)
+
+| Tier | Load | Skip / minimize (this run only) |
+| --- | --- | --- |
+| **frontier** | `PROGRAM.md`, rules, failures, verification commands, short custom instructions | Long host `CLAUDE.md` / skills / hooks **unless** a criterion fails twice without them |
+| **standard** | Full adapter custom instructions + project `.ai` defaults | — |
+| **constrained** | Full scaffolding + more explicit step hints in the brief when criteria under-specify | Do not ablate host prompts |
+
+### Ablation
+
+Deleting or permanently stripping host `CLAUDE.md` / skills requires
+**operator approval** (or `gxp-refine`). Per-run *minimize load* on
+`frontier` is allowed; silent file deletion is not.
+
+### Record in the brief
+
+```
+Model: <engine + id>  — <reason>
+Scaffolding tier: frontier | standard | constrained  — <reason>
+```
+
+Re-evaluate both at Phase 4. Escalating model often pairs with relaxing
+tier only when verification remains strong.

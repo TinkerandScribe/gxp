@@ -83,6 +83,14 @@ affects what happens next.
   (you invent most criteria). When scope is ambiguous after that
   filter, prefer full.
 
+**Scaffolding tier (Phase 0.5):** After choosing the engine/model, set
+`Scaffolding tier: frontier | standard | constrained` in the brief (default
+**standard** if unknown). See `core/docs/capability-scaffolding.md` (or
+`.ai/docs/capability-scaffolding.md` when installed). Tier modulates
+prompt/skill load only — never skip binary Ideal State Criteria, the
+verification ladder, anti-loop, or privacy/stakes rails. Do not silently
+delete host system prompts/skills.
+
 **Full workflow phases:**
 
 0. Audit `.ai/PROGRAM.md`, `.ai/rules/`, `.ai/failures/`, recent ratings.

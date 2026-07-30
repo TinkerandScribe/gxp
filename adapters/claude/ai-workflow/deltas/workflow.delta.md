@@ -17,13 +17,20 @@ Take time for careful synthesis. Build a rich internal model before proposing ch
 
 ## Notes — Phase 0.5
 
-Pick the least Claude tier that clears the criteria with margin:
+Pick the least Claude model that clears the criteria with margin:
 
 - **Opus** (or current flagship): default for Full workflow and reasoning-heavy work
 - **Sonnet**: well-scoped implementation
 - **Haiku**: mechanical/bulk work
 
-Hand off to siblings when clearly better (Perplexity for research, Grok for long autonomous loops, local models for private/offline). Record `Model:` in the brief; re-evaluate at Phase 4. See `model-routing.md` when present.
+Hand off to siblings when clearly better (Perplexity for research, Grok for long autonomous loops, local models for private/offline).
+
+Also set **Scaffolding tier** (`frontier` | `standard` | `constrained`) per
+`core/docs/capability-scaffolding.md` and the dated model→tier map in
+`model-routing.md`. Apply the tier's context-load policy after selection.
+Record `Model:` and `Scaffolding tier:` in the brief; re-evaluate both at
+Phase 4. Default unknown models to **standard**. Never auto-frontier
+without a known model id or explicit override.
 
 ## Notes — Phase 3
 

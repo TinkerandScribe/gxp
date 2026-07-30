@@ -6,7 +6,7 @@
 -->
 # Grok-Optimized Workflow (v1.1)
 
-> **Last synced from core:** 0c9ce678bc933afa0ce3a4bfaa50f35f5fa2e14c (2026-07-27)
+> **Last synced from core:** 7fca1ed1671b96caa93df8b8efba495e18f9b72e (2026-07-27)
 > This file is generated from `core/workflow.md` plus the grok delta. Tool-specific notes are in the delta; shared methodology is core. Run `../sync/check-core.sh` regularly.
 
 This is a **Grok-optimized** adaptation of the core AI Workflow methodology.
@@ -105,6 +105,8 @@ the task along dimensions such as complexity and scope, risk and
 reversibility, domain knowledge required, tolerance for iteration, and the
 margin by which the chosen engine must clear the criteria.
 
+### Engine / model
+
 Choose the least-capable engine (model, tool, persona, handoff target, or
 environment) that can still satisfy the Ideal State Criteria with
 comfortable margin. This conserves context budget, reduces unnecessary cost
@@ -114,19 +116,46 @@ band.
 Record the decision explicitly in the brief (see the **Strategy/Model:**
 line in the template) together with a one-line rationale.
 
-Re-evaluate the choice at the Phase 4 anti-loop gate if the current engine
-is failing to make progress.
+### Scaffolding tier
+
+Separately select a **scaffolding capability tier** — how much prompt /
+skill / step structure to inject for this run. Tiers are exactly three:
+
+- **`frontier`** — minimal host scaffolding; high-level goal + binary
+  criteria; longer loops OK when verification is strong
+- **`standard`** — default GXP scaffolding intensity (safe default)
+- **`constrained`** — denser scaffolding, more explicit steps, earlier
+  human gates; use for older, local, or unproven models
+
+Detection order: (1) explicit brief / operator / `GXP_SCAFFOLDING_TIER`
+env → (2) adapter model-id map → (3) default **`standard`**. Never
+auto-pick `frontier` without a known model id or explicit override.
+
+Record **Scaffolding tier:** in the brief with a one-line reason.
+Canonical definitions and invariants live in
+`core/docs/capability-scaffolding.md` (or `.ai/docs/` when installed).
+
+Scaffolding tier does **not** relax binary Ideal State Criteria, the
+Phase 5 verification ladder, anti-loop, ratings, or privacy/stakes rails.
+Ablation of host system prompts/skills is operator-approved only (never
+silent file deletion).
+
+### Re-evaluation and routing
+
+Re-evaluate engine **and** scaffolding tier at the Phase 4 anti-loop gate
+if the current combination is failing to make progress (escalate model
+and/or move constrained → standard → frontier only with evidence).
 
 The classification and selection process is defined here in core and is
 tool-agnostic. Individual adapters and environments may specialize the
-set of available "engines" (model tiers, composer targets, handoff
-formats, etc.) but the decision skeleton, margin rule, and re-evaluation
-discipline are canonical.
+set of available "engines" (model IDs, composer targets, handoff
+formats, model→tier maps, etc.) but the decision skeleton, margin rule,
+tier definitions, and re-evaluation discipline are canonical.
 
 When a job may leave the current tool (privacy class, stakes, cost, or
 location), also read `routing.md` (same directory as this file in source;
 `.ai/routing.md` when installed) and fill the **Routing** block in the
-task brief.
+task brief. Scaffolding tier is orthogonal to privacy/stakes routing.
 
 **Grok note:**
 
@@ -143,6 +172,9 @@ A brief contains:
 - **Goal** — one sentence on what success looks like.
 - **Context** — links to relevant files, prior PRs, tickets, plus
   anything surfaced in phase 0.
+- **Strategy/Model** and **Scaffolding tier** — engine choice and
+  scaffolding intensity from Phase 0.5 (see
+  `docs/capability-scaffolding.md`).
 - **Ideal State Criteria** — **4–8 binary, checkable statements**
   that will be true when the task is done. "Tests pass" is too vague;
   "running `pytest tests/test_foo.py` exits 0 with no warnings" is

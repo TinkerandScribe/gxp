@@ -19,6 +19,12 @@ One sentence describing what success looks like.
 
 **Strategy/Model:** [chosen engine] — [one-line reason tied to the criteria]
 
+**Scaffolding tier:** frontier | standard | constrained — [one-line reason; default standard if unknown]
+
+> Scaffolding tier modulates prompt/skill load and brief style only. It does **not**
+> weaken binary Ideal State Criteria, verification, anti-loop, or privacy/stakes rails.
+> See `core/docs/capability-scaffolding.md` (or `.ai/docs/capability-scaffolding.md`).
+
 ## Routing
 
 For dispatch via the routing policy (`core/routing.md`). Fill when the job may be

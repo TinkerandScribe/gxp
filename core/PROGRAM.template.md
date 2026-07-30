@@ -26,6 +26,13 @@ Full vs lightweight workflow is defined in `.ai/workflow.md`. Default to
 **full** for anything that changes behaviour or touches multiple files; use
 **lightweight** only for trivial, single-file, easily reversible edits.
 
+### Default scaffolding tier (optional)
+
+When a task brief omits **Scaffolding tier**, default to: **standard**
+(or set `frontier` / `constrained` after local eval). Per-task brief field
+wins. See `docs/capability-scaffolding.md` / gxp `core/docs/capability-scaffolding.md`.
+Never auto-select `frontier` without a known model id or operator intent.
+
 ## Domain context (optional — domain-specific; replace or delete)
 
 If this project has real-world assets, environments, or constraints the agent should
