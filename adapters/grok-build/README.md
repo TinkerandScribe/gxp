@@ -27,7 +27,7 @@ Shipped under `personas/` (install to `~/.grok/personas/` or project `.grok/pers
 | `grok-native-planner` | Single-agent planning alternative for lighter ambiguity. |
 | `composer-coder` | Coherent multi-file implementation (smallest viable change). Prefer worktree isolation. |
 | `gxp-verifier` | Strict Layer-2 critic: walks every Ideal State Criterion with tools. Never edits product code. |
-| `gxp-criteria-checker` | **Experimental.** Isolated maker-checker for Ideal State Criteria (Clarification Protocol v0). Independent context only; evaluates binarity, completeness, ambiguity, scope, verifiability. Never implements. |
+| `gxp-criteria-checker` | **Experimental** isolated maker-checker for Ideal State Criteria (Clarification Protocol v0). Receives only brief artifacts; outputs PASS/FAIL + rewrite suggestions. Never implements. |
 
 Each persona contains strong role-locking instructions.
 
