@@ -131,6 +131,7 @@ Brief: [`core/tasks/criteria-hardening-and-anti-fixation.md`](core/tasks/criteri
 | 6 | Verify-script behavior-over-markers bar (anti-gaming tooling) | **parked** |
 | 7 | Perplexity adapter greenfield Space package | **n/a** — live adapter exists |
 | 8 | Perplexity trust-boundary hardening (handoff provenance, no false local-verify) | **done** — `core/tasks/perplexity-trust-boundary-hardening.md` |
+| 9 | Experimental Clarification Protocol v0 (opt-in maker-checker + optional Clarifier node) | **done** — `core/docs/experimental/clarification-protocol-v0.md` + `gxp-criteria-checker` persona; first measured dogfood 2026-08-05 |
 
 ---
 

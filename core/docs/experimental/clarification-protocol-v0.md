@@ -25,6 +25,8 @@ Any capable agent/persona drafts:
 A dedicated checker (persona `gxp-criteria-checker` or equivalent) runs in **independent context**.  
 It receives **only** the brief artifacts (no proposer’s chain-of-thought or intermediate reasoning).
 
+> **Persona location:** `adapters/grok-build/personas/gxp-criteria-checker.toml` (Grok Build). Other adapters may provide an equivalent isolated checker.
+
 The checker evaluates against:
 - Strict binarity (each binding criterion is pass/fail without interpretation)
 - Completeness relative to the stated Goal
