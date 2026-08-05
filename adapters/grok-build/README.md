@@ -27,10 +27,11 @@ Shipped under `personas/` (install to `~/.grok/personas/` or project `.grok/pers
 | `grok-native-planner` | Single-agent planning alternative for lighter ambiguity. |
 | `composer-coder` | Coherent multi-file implementation (smallest viable change). Prefer worktree isolation. |
 | `gxp-verifier` | Strict Layer-2 critic: walks every Ideal State Criterion with tools. Never edits product code. |
+| `gxp-criteria-checker` | **Experimental.** Isolated maker-checker for Ideal State Criteria (Clarification Protocol v0). Independent context only; evaluates binarity, completeness, ambiguity, scope, verifiability. Never implements. |
 
 Each persona contains strong role-locking instructions.
 
-**Model convention:** all five personas use `model = "grok-build"` (Grok Build harness default). That string is a surface/runtime label, not a pin to a chat product tier. Operators may override at spawn time; `sync/check-core.sh` enforces the shipped default.
+**Model convention:** all personas use `model = "grok-build"` (Grok Build harness default). That string is a surface/runtime label, not a pin to a chat product tier. Operators may override at spawn time; `sync/check-core.sh` enforces the shipped default.
 
 ## Heavy-style Orchestration Pattern
 
