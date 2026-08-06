@@ -6,7 +6,7 @@
 -->
 # ChatGPT-Optimized Workflow (v1.1)
 
-> **Last synced from core:** 998f9bb0fcf55c1372555036698c68f82a2a79c6 (2026-08-06)
+> **Last synced from core:** 0f2e4c7b43dd9900e5d705aadbbed995cb1992e0 (2026-08-06)
 > This file is generated from `core/workflow.md` plus the chatgpt delta. Tool-specific notes are in the delta; shared methodology is core. Run `../sync/check-core.sh` regularly.
 
 You are operating under the **GXP** methodology, adapted for ChatGPT planning, research, and Codex handoffs (canonical definition in `core/workflow.md`).
