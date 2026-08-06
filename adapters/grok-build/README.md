@@ -46,6 +46,11 @@ For high-ambiguity / multi-constraint / underspecified work:
 
 Concrete command-level sequence: [`examples/heavy-front-half.md`](examples/heavy-front-half.md).
 
+Named workflow recipes (v1):
+- [`workflows/heavy-gxp.md`](workflows/heavy-gxp.md) — researcher ∥ architect → /plan → composer-coder (worktree) → gxp-verifier.
+- [`workflows/clarifier-then-heavy.md`](workflows/clarifier-then-heavy.md) — opt-in `clarification_protocol: experimental-v0` gate (gxp-criteria-checker isolated, max 2 FAIL) then the heavy path.
+- [`examples/acp-gxp-session.md`](examples/acp-gxp-session.md) — thin ACP session packet (inputs, personas, phase contract, handoff shape).
+
 This recreates SuperGrok Heavy-style specialized collaboration while remaining strictly bounded by GXP.
 
 ## Mapping SuperGrok Heavy Custom Agents
@@ -107,7 +112,7 @@ bash scripts/verify.sh
 
 ## Status
 
-v0.2 -- Personas, Heavy orchestration docs, install scripts, `SKILL.md` (`gxp-build`), lightweight `sync/check-core`, and `examples/heavy-front-half.md` are production-usable. Workflow templates and ACP examples are next.
+v0.3 -- Personas, Heavy orchestration docs, install scripts, `SKILL.md` (`gxp-build`), lightweight `sync/check-core`, `examples/heavy-front-half.md`, named workflow templates (`workflows/heavy-gxp.md`, `workflows/clarifier-then-heavy.md`), and ACP example (`examples/acp-gxp-session.md`) are shipped.
 
 ---
 
