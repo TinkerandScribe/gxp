@@ -113,10 +113,10 @@ Operator picks:
 - **Edit list** (drop ACP packet / merge recipes) → amend this design, then implement  
 - **Park** → leave ROADMAP Part D as next without files  
 
-**Operator decision:** `_pending_`
+**Operator decision:** **Approve v1 list as-is** (2026-08-06)
 
 ## Handoff notes
 
-- Design complete when criteria above hold and operator records Approve/Edit/Park.  
-- Implementation is **out of scope** for this ticket.  
+- Design complete: operator approved v1 artifact list 2026-08-06.  
+- Implementation is **out of scope** for this ticket → follow-up implement brief / Grok Build prompt.  
 - Related examples already in tree: `examples/heavy-front-half.md`, `examples/experimental-clarifier-topology.md`.

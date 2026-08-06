@@ -3,7 +3,7 @@
 **Date:** 2026-08-06  
 **Task slug:** m6-campaign-rescope  
 **Workflow:** full (decision + freeze only; no campaign runs in this brief)  
-**Status:** BLOCKED on operator choices below  
+**Status:** PARKED (2026-08-06) — operator decision; no campaign freeze  
 **Parent brief:** [`blind-multi-model-code-quality-campaign.md`](blind-multi-model-code-quality-campaign.md)  
 **Scaffolding tier:** standard  
 
@@ -61,7 +61,9 @@ M5 grew the task set (`04`–`05` done; hard pack `06`–`10` exists). Scope is 
 | **A3** Single matched model, multi-seed hard pack | 1 model, control vs GXP, ≥3 seeds × ≥3 hard tasks | Cheaper; weaker external validity |
 | **A4** Park M6 | Leave scientific claim closed; invest in dogfood/ACP | Valid if proof is not the north-star |
 
-**Operator choice:** `_pending_`
+**Operator choice:** **A4 — Park M6** (2026-08-06)
+
+**Park reason:** Claim gate already failed on ceiling effects. Another campaign without named matched models and real operator energy is low-ROI and risks another unsatisfying result. Parking preserves scientific honesty. When un-parking, start from **A1 + C1** and name two matched surfaces first.
 
 ### B. Models / tools (list exact pairs)
 
@@ -69,10 +71,10 @@ Must be **matched** per cell (same model string / product surface for control an
 
 | Slot | Control surface | GXP surface | Notes |
 |---|---|---|---|
-| Model 1 | | | e.g. same Grok Build model id |
-| Model 2 | | | e.g. same Claude Code / Composer / local Qwen |
+| Model 1 | — | — | n/a while parked |
+| Model 2 | — | — | n/a while parked |
 
-**Operator choice:** `_pending_`
+**Operator choice:** **n/a (parked)**
 
 ### C. Success rule (pick one; freeze before runs)
 
@@ -82,33 +84,33 @@ Must be **matched** per cell (same model string / product surface for control an
 | **C2** Majority win | GXP wins task-level mean on **majority** of tasks; no GXP scope/tamper DQ | Good if variance is high |
 | **C3** Custom | Write exact numeric rule here | Only if operator needs different bar |
 
-**Operator choice:** `_pending_` (default proposal: **C1** on hard pack)
+**Operator choice:** **n/a (parked)** — preferred on un-park: **C1** on hard pack
 
 ### D. Budget / stop rules
 
-- Max wall-clock or $ / session: `_pending_`  
-- Max retries per trial: `_pending_` (suggest 0 for blind purity, or 1 documented)  
+- Max wall-clock or $ / session: **n/a (parked)**  
+- Max retries per trial: **n/a (parked)** (suggest 0 for blind purity when un-parked)  
 - Peeking at `hidden_tests/` or `reference/`: **forbidden** (unchanged)
 
 ### E. Contamination owner
 
 Who may see hidden tests / score mid-campaign?  
-**Operator names:** `_pending_` (everyone else is score-only)
+**Operator names:** **n/a (parked)**
 
 ---
 
 ## Frozen campaign card (fill after A–E; then this brief is done)
 
 ```text
-Campaign id:     trials/<YYYY-MM-DD>-m6-<slug>/
-Shape:           A?
-Models:          B?
-Tasks:           …
-Success rule:    C?
-Budget/stops:    D?
-Contamination:   E?
-Protocol path:   …/PROTOCOL_FROZEN.md
-Status:          FROZEN | not yet
+Campaign id:     (none — M6 parked 2026-08-06)
+Shape:           A4 park
+Models:          n/a
+Tasks:           n/a
+Success rule:    n/a (on un-park prefer C1 + A1 hard pack)
+Budget/stops:    n/a
+Contamination:   n/a
+Protocol path:   n/a
+Status:          PARKED
 ```
 
 ## Default proposal (if operator wants a ready-made card)
@@ -121,4 +123,4 @@ Status:          FROZEN | not yet
 
 ## Handoff
 
-When A–E are filled and the frozen card exists, update parent brief status and open a **run** session. Until then, M6 stays **blocked-on-operator**.
+**2026-08-06:** Operator chose **A4 park**. Decision criteria satisfied (park with reason). No frozen campaign card; no runs. Parent M6 brief remains BLOCKED until un-park + A–E freeze. To resume: reply with `A1, models X+Y, C1` (or full A–E) and re-open this brief.
