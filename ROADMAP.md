@@ -145,7 +145,7 @@ Shipped on `main` after v1.3.1 (see CHANGELOG **Unreleased**).
 | `adapters/codex/` + ChatGPT Project/handoff modernization | **done** |
 | Optional ontology guardrails (workflow Phase 5 + brief + example TTL + docs) | **done** (opt-in; no required project ontology) |
 | Regenerated chat adapter workflows to include ontology step | **done** |
-| Workflow templates / ACP orchestration for Grok Build | **next** (adapter README status) |
+| Workflow templates / ACP orchestration for Grok Build | **done** — `adapters/grok-build/workflows/` + `examples/acp-gxp-session.md` (2026-08-06) |
 | Full SHACL/reasoner install tooling in-repo | **out** unless operator opens a brief |
 
 ---
