@@ -4,6 +4,10 @@
 
 Activate by setting `clarification_protocol: experimental-v0` in the task brief (or equivalent operator/env/adapter flag). Default is off.
 
+**Runnable orchestration:** [`gxp-heavy-front-half.rhai`](gxp-heavy-front-half.rhai)
+with `args.clarification_protocol = "experimental-v0"` runs the isolated clarifier
+gate (max 2 FAIL → `await_user`) then the Heavy front-half. Never auto-enable.
+
 When active for high-ambiguity, multi-constraint, or underspecified work, this inserts an isolated criteria-check gate **before** the standard Heavy path.
 
 This is the reusable form of the pattern documented in `examples/experimental-clarifier-topology.md`.

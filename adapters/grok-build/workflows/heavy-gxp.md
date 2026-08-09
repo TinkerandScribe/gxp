@@ -5,6 +5,11 @@ when the operator has not supplied ~4+ binary Ideal State Criteria up front.
 
 This is the reusable form of the pattern documented in `examples/heavy-front-half.md`.
 
+**Runnable orchestration:** [`gxp-heavy-front-half.rhai`](gxp-heavy-front-half.rhai)
+covers steps 1–2 (research \|\| architect + synthesize) and hands off; parent still
+runs `/plan` → implement → verify → rate. Prefer the Rhai run when fan-out should be
+budgeted and journaled; use this doc for manual persona spawns.
+
 Prerequisites:
 
 - Personas installed (`./install-grok-build.ps1 -Force` or project `.grok/personas/`)

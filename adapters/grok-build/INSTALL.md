@@ -26,9 +26,10 @@ bash install-grok-build.sh --force --install-skill
 
 | Flag | Effect |
 |------|--------|
-| `-Force` / `--force` | Overwrite existing personas / `gxp-build` skill without prompts |
+| `-Force` / `--force` | Overwrite existing personas / workflows / `gxp-build` skill without prompts |
 | `-SkipPersonas` / `--skip-personas` | Do not touch `~/.grok/personas` |
-| `-InstallSkill` / `--install-skill` | Install **only** `~/.grok/skills/gxp-build` (opt-in; default off) |
+| `-SkipWorkflows` / `--skip-workflows` | Do not touch `~/.grok/workflows` |
+| `-InstallSkill` / `--install-skill` | Install `~/.grok/skills/gxp-build` (opt-in; default off) |
 
 ## Manual personas
 
@@ -51,9 +52,28 @@ cp personas/*.toml .grok/personas/
 
 In Grok Build use `/personas` to discover them, then spawn by name.
 
+## Named workflows (`*.rhai`)
+
+Default install copies runnable orchestrations into:
+
+```text
+~/.grok/workflows/gxp-heavy-front-half.rhai
+~/.grok/workflows/gxp-layer2-verify.rhai
+```
+
+Run with `/workflow gxp-heavy-front-half` or `/workflow gxp-layer2-verify`.
+Args and routing: [`workflows/README.md`](workflows/README.md).
+
+Skip with `-SkipWorkflows` / `--skip-workflows`. Project-local copy:
+
+```bash
+mkdir -p .grok/workflows
+cp workflows/*.rhai .grok/workflows/
+```
+
 ## Optional skill (`gxp-build`)
 
-Default install is **personas-only** and does not write under `~/.grok/skills/`.
+Default install is **personas + workflows** and does not write under `~/.grok/skills/`.
 
 With `-InstallSkill` / `--install-skill`, the installer creates a junction/symlink
 (or copy fallback) at:

@@ -1,10 +1,12 @@
 <#
 .SYNOPSIS
-    Installs Grok Build GXP personas and optionally the gxp-build skill.
+    Installs Grok Build GXP personas, named workflows, and optionally the gxp-build skill.
 
 .DESCRIPTION
     Default: copies personas from this adapter into:
       $HOME\.grok\personas\*.toml
+    and copies runnable workflows (*.rhai) into:
+      $HOME\.grok\workflows\
 
     Optional (-InstallSkill): junctions/copies this adapter to:
       $HOME\.grok\skills\gxp-build
@@ -14,26 +16,30 @@
       $HOME\.grok\skills\tinker-tools-ai-workflow
 
 .PARAMETER Force
-    Overwrite existing personas and (if installing) the gxp-build skill without prompting.
+    Overwrite existing personas, workflows, and (if installing) the gxp-build skill without prompting.
 
 .PARAMETER SkipPersonas
     Do not install/update ~/.grok/personas/*.toml
 
+.PARAMETER SkipWorkflows
+    Do not install/update ~/.grok/workflows/*.rhai
+
 .PARAMETER InstallSkill
     Install the Build skill as ~/.grok/skills/gxp-build (junction preferred, copy fallback).
-    Default is OFF — personas only.
+    Default is OFF — personas + workflows only.
 
 .EXAMPLE
     .\install-grok-build.ps1
     .\install-grok-build.ps1 -Force
     .\install-grok-build.ps1 -Force -InstallSkill
-    .\install-grok-build.ps1 -Force -SkipPersonas -InstallSkill
+    .\install-grok-build.ps1 -Force -SkipPersonas -SkipWorkflows -InstallSkill
 #>
 
 [CmdletBinding()]
 param(
     [switch]$Force,
     [switch]$SkipPersonas,
+    [switch]$SkipWorkflows,
     [switch]$InstallSkill
 )
 
@@ -44,6 +50,8 @@ $SkillsRoot = Join-Path $HOME ".grok\skills"
 $SkillTarget = Join-Path $SkillsRoot "gxp-build"
 $PersonasDir = Join-Path $HOME ".grok\personas"
 $PersonasSrc = Join-Path $AdapterRoot "personas"
+$WorkflowsDir = Join-Path $HOME ".grok\workflows"
+$WorkflowsSrc = Join-Path $AdapterRoot "workflows"
 
 # Hard-deny list: never create, remove, or rewrite these paths.
 $ProtectedSkillNames = @("gxp-ai-workflow", "tinker-tools-ai-workflow")
@@ -132,13 +140,42 @@ function Install-GxpBuildPersonas {
     Write-Host "Installed $copied persona file(s) into $PersonasDir" -ForegroundColor Cyan
 }
 
+function Install-GxpBuildWorkflows {
+    if (-not (Test-Path $WorkflowsSrc)) {
+        Write-Host "No workflows source at $WorkflowsSrc - skipping workflows." -ForegroundColor Yellow
+        return
+    }
+
+    if (-not (Test-Path $WorkflowsDir)) {
+        New-Item -ItemType Directory -Force -Path $WorkflowsDir | Out-Null
+    }
+
+    $copied = 0
+    Get-ChildItem -Path $WorkflowsSrc -Filter "*.rhai" | ForEach-Object {
+        $dest = Join-Path $WorkflowsDir $_.Name
+        if ((Test-Path $dest) -and -not $Force) {
+            $response = Read-Host "Workflow $($_.Name) exists. Overwrite? (y/N)"
+            if ($response -ne 'y' -and $response -ne 'Y') {
+                Write-Host "  skipped $($_.Name)" -ForegroundColor Yellow
+                return
+            }
+        }
+        Copy-Item $_.FullName $dest -Force
+        $copied++
+        Write-Host "  workflow: $($_.Name)" -ForegroundColor Green
+    }
+    Write-Host "Installed $copied workflow file(s) into $WorkflowsDir" -ForegroundColor Cyan
+    Write-Host "  names: gxp-heavy-front-half, gxp-layer2-verify (see workflows/README.md)" -ForegroundColor DarkGray
+}
+
 Write-Host "Installing Grok Build GXP adapter..." -ForegroundColor Cyan
 Write-Host "Source: $AdapterRoot"
 Write-Host "Personas target: $PersonasDir"
+Write-Host "Workflows target: $WorkflowsDir"
 if ($InstallSkill) {
     Write-Host "Skill target: $SkillTarget (opt-in)"
 } else {
-    Write-Host "Skill: skipped (default personas-only; pass -InstallSkill to add gxp-build)"
+    Write-Host "Skill: skipped (default personas+workflows; pass -InstallSkill to add gxp-build)"
 }
 
 if (-not $SkipPersonas) {
@@ -146,6 +183,13 @@ if (-not $SkipPersonas) {
     Install-GxpBuildPersonas
 } else {
     Write-Host "`nSkipping personas (-SkipPersonas)." -ForegroundColor Yellow
+}
+
+if (-not $SkipWorkflows) {
+    Write-Host "`nInstalling GXP named workflows (*.rhai)..." -ForegroundColor Cyan
+    Install-GxpBuildWorkflows
+} else {
+    Write-Host "`nSkipping workflows (-SkipWorkflows)." -ForegroundColor Yellow
 }
 
 if ($InstallSkill) {
@@ -160,6 +204,7 @@ if ($InstallSkill) {
 Write-Host "`nDone." -ForegroundColor Green
 Write-Host "Protected (never touched): gxp-ai-workflow, tinker-tools-ai-workflow"
 Write-Host "Personas (if installed): /personas in Grok Build - gxp-researcher, gxp-architect, gxp-verifier, grok-native-planner, composer-coder."
+Write-Host "Workflows (if installed): /workflow gxp-heavy-front-half | gxp-layer2-verify"
 if ($InstallSkill) {
     Write-Host "Skill short name: gxp-build (folder ~/.grok/skills/gxp-build)"
 }

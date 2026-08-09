@@ -41,8 +41,30 @@ engine/model choice (default **standard**). See repo
 
 - **Subagents + personas** with locked roles (research / architect / implement / verify)
 - **Plan Mode** for the heavy GXP front-half before multi-file work
+- **Named workflows** (Rhai) for repeatable Heavy / Layer-2 fan-out — opt-in, not default
 - **Worktree isolation** for implementers when available
 - **Aggressive tool use** in Phase 0 and Phase 5
+
+## Named workflows (opt-in orchestration)
+
+Runnable scripts ship under `workflows/*.rhai` and install to `~/.grok/workflows/`.
+See `workflows/README.md`.
+
+| Workflow | When |
+|----------|------|
+| `gxp-heavy-front-half` | Underspecified / multi-constraint front-half; returns plan artifact |
+| `gxp-layer2-verify` | After implement; fail-closed per-criterion checks |
+
+**Routing**
+
+- Lightweight / sequential → **parent GXP only** (no workflow).
+- Heavy front-half → optional `/workflow gxp-heavy-front-half` with `args.goal`.
+- Experimental clarifier → same workflow with `clarification_protocol: experimental-v0` (**never auto-enable**).
+- Layer-2 → optional `/workflow gxp-layer2-verify` with `args.criteria` from the approved plan.
+
+**Ownership:** workflow returns artifacts (plan / verify matrix). **Parent** still owns
+brief synthesis, `/plan` approval, implement, Phase 5 acceptance, ratings, failures.
+Do not put implement+rate inside a mega-script.
 
 ## Personas (file-based)
 
@@ -95,7 +117,7 @@ bash install-grok-build.sh
 bash install-grok-build.sh --force --install-skill
 ```
 
-Default install does **not** write any skill. Optional skill installs only
-`~/.grok/skills/gxp-build`. Chat skill paths are never touched.
+Default install writes **personas + workflows**; it does **not** write any skill.
+Optional skill installs only `~/.grok/skills/gxp-build`. Chat skill paths are never touched.
 
-See `INSTALL.md` and `README.md`.
+See `INSTALL.md`, `README.md`, and `workflows/README.md`.

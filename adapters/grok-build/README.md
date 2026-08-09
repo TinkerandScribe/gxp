@@ -46,10 +46,17 @@ For high-ambiguity / multi-constraint / underspecified work:
 
 Concrete command-level sequence: [`examples/heavy-front-half.md`](examples/heavy-front-half.md).
 
-Named workflow recipes (v1):
+Named workflow recipes (docs, v1):
 - [`workflows/heavy-gxp.md`](workflows/heavy-gxp.md) — researcher ∥ architect → /plan → composer-coder (worktree) → gxp-verifier.
 - [`workflows/clarifier-then-heavy.md`](workflows/clarifier-then-heavy.md) — opt-in `clarification_protocol: experimental-v0` gate (gxp-criteria-checker isolated, max 2 FAIL) then the heavy path.
 - [`examples/acp-gxp-session.md`](examples/acp-gxp-session.md) — thin ACP session packet (inputs, personas, phase contract, handoff shape).
+
+**Runnable orchestrations (Rhai, v1)** — install to `~/.grok/workflows/` with the installer:
+- [`workflows/gxp-heavy-front-half.rhai`](workflows/gxp-heavy-front-half.rhai) — optional experimental clarifier → researcher \|\| architect → plan handoff (**no implement**).
+- [`workflows/gxp-layer2-verify.rhai`](workflows/gxp-layer2-verify.rhai) — fail-closed one-agent-per-criterion Layer-2.
+- Index + routing: [`workflows/README.md`](workflows/README.md).
+
+Parent GXP still owns `/plan`, implement, ratings, and failure capture. Experimental-v0 never auto-enables.
 
 This recreates SuperGrok Heavy-style specialized collaboration while remaining strictly bounded by GXP.
 
@@ -112,7 +119,7 @@ bash scripts/verify.sh
 
 ## Status
 
-v0.3 -- Personas, Heavy orchestration docs, install scripts, `SKILL.md` (`gxp-build`), lightweight `sync/check-core`, `examples/heavy-front-half.md`, named workflow templates (`workflows/heavy-gxp.md`, `workflows/clarifier-then-heavy.md`), and ACP example (`examples/acp-gxp-session.md`) are shipped.
+v0.4 -- Personas, Heavy orchestration docs, install scripts, `SKILL.md` (`gxp-build`), lightweight `sync/check-core`, markdown recipes (`heavy-gxp`, `clarifier-then-heavy`), ACP example, plus **runnable Rhai workflows** (`gxp-heavy-front-half`, `gxp-layer2-verify`) installed to `~/.grok/workflows/` by default.
 
 ---
 

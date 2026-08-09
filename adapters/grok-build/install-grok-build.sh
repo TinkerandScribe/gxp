@@ -3,6 +3,7 @@
 # install-grok-build.sh
 #
 # Default: install personas into ~/.grok/personas/*.toml
+#          and workflows (*.rhai) into ~/.grok/workflows/
 # Optional: --install-skill junctions/copies this adapter to ~/.grok/skills/gxp-build
 #
 # NEVER touches chat skill paths:
@@ -13,28 +14,30 @@
 #   bash install-grok-build.sh
 #   bash install-grok-build.sh --force
 #   bash install-grok-build.sh --force --install-skill
-#   bash install-grok-build.sh --force --skip-personas --install-skill
+#   bash install-grok-build.sh --force --skip-personas --skip-workflows --install-skill
 #
 
 set -euo pipefail
 
 FORCE=0
 SKIP_PERSONAS=0
+SKIP_WORKFLOWS=0
 INSTALL_SKILL=0
 for arg in "$@"; do
   case "$arg" in
     --force|-f) FORCE=1 ;;
     --skip-personas) SKIP_PERSONAS=1 ;;
+    --skip-workflows) SKIP_WORKFLOWS=1 ;;
     --install-skill) INSTALL_SKILL=1 ;;
     -h|--help)
-      echo "Usage: bash install-grok-build.sh [--force] [--skip-personas] [--install-skill]"
-      echo "  Default: personas only. --install-skill adds ~/.grok/skills/gxp-build only."
+      echo "Usage: bash install-grok-build.sh [--force] [--skip-personas] [--skip-workflows] [--install-skill]"
+      echo "  Default: personas + workflows. --install-skill adds ~/.grok/skills/gxp-build."
       echo "  Never writes gxp-ai-workflow or tinker-tools-ai-workflow."
       exit 0
       ;;
     *)
       echo "Unknown argument: $arg" >&2
-      echo "Usage: bash install-grok-build.sh [--force] [--skip-personas] [--install-skill]" >&2
+      echo "Usage: bash install-grok-build.sh [--force] [--skip-personas] [--skip-workflows] [--install-skill]" >&2
       exit 2
       ;;
   esac
@@ -45,6 +48,8 @@ SKILLS_ROOT="$HOME/.grok/skills"
 SKILL_TARGET="$SKILLS_ROOT/gxp-build"
 PERSONAS_DIR="$HOME/.grok/personas"
 PERSONAS_SRC="$ADAPTER_ROOT/personas"
+WORKFLOWS_DIR="$HOME/.grok/workflows"
+WORKFLOWS_SRC="$ADAPTER_ROOT/workflows"
 
 assert_not_protected() {
   local path="$1"
@@ -120,13 +125,43 @@ install_personas() {
   echo "Installed $n persona file(s) into $PERSONAS_DIR"
 }
 
+install_workflows() {
+  if [ ! -d "$WORKFLOWS_SRC" ]; then
+    echo "No workflows source at $WORKFLOWS_SRC - skipping workflows."
+    return 0
+  fi
+
+  mkdir -p "$WORKFLOWS_DIR"
+
+  local n=0
+  local f base dest
+  for f in "$WORKFLOWS_SRC"/*.rhai; do
+    [ -f "$f" ] || continue
+    base="$(basename "$f")"
+    dest="$WORKFLOWS_DIR/$base"
+    if [ -e "$dest" ] && [ "$FORCE" -ne 1 ]; then
+      read -r -p "Workflow $base exists. Overwrite? (y/N) " response
+      if [[ ! "$response" =~ ^[Yy]$ ]]; then
+        echo "  skipped $base"
+        continue
+      fi
+    fi
+    cp "$f" "$dest"
+    echo "  workflow: $base"
+    n=$((n + 1))
+  done
+  echo "Installed $n workflow file(s) into $WORKFLOWS_DIR"
+  echo "  names: gxp-heavy-front-half, gxp-layer2-verify (see workflows/README.md)"
+}
+
 echo "Installing Grok Build GXP adapter..."
 echo "Source: $ADAPTER_ROOT"
 echo "Personas target: $PERSONAS_DIR"
+echo "Workflows target: $WORKFLOWS_DIR"
 if [ "$INSTALL_SKILL" -eq 1 ]; then
   echo "Skill target: $SKILL_TARGET (opt-in)"
 else
-  echo "Skill: skipped (default personas-only; pass --install-skill to add gxp-build)"
+  echo "Skill: skipped (default personas+workflows; pass --install-skill to add gxp-build)"
 fi
 
 if [ "$SKIP_PERSONAS" -ne 1 ]; then
@@ -136,6 +171,15 @@ if [ "$SKIP_PERSONAS" -ne 1 ]; then
 else
   echo
   echo "Skipping personas (--skip-personas)."
+fi
+
+if [ "$SKIP_WORKFLOWS" -ne 1 ]; then
+  echo
+  echo "Installing GXP named workflows (*.rhai)..."
+  install_workflows
+else
+  echo
+  echo "Skipping workflows (--skip-workflows)."
 fi
 
 if [ "$INSTALL_SKILL" -eq 1 ]; then
@@ -149,6 +193,7 @@ echo
 echo "Done."
 echo "Protected (never touched): gxp-ai-workflow, tinker-tools-ai-workflow"
 echo "Personas (if installed): /personas in Grok Build - gxp-researcher, gxp-architect, gxp-verifier, grok-native-planner, composer-coder."
+echo "Workflows (if installed): /workflow gxp-heavy-front-half | gxp-layer2-verify"
 if [ "$INSTALL_SKILL" -eq 1 ]; then
   echo "Skill short name: gxp-build (folder ~/.grok/skills/gxp-build)"
 fi

@@ -66,6 +66,9 @@ $required = @(
     "personas\gxp-verifier.toml",
     "personas\composer-coder.toml",
     "personas\grok-native-planner.toml",
+    "workflows\gxp-heavy-front-half.rhai",
+    "workflows\gxp-layer2-verify.rhai",
+    "workflows\README.md",
     "sync\drift-allowlist.txt"
 )
 foreach ($rel in $required) {
