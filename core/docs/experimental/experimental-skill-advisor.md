@@ -28,6 +28,10 @@ Late Phase 0 / early Phase 1 (after basic repo audit, before the self-evaluation
 - [ ] Prior failure notes about maintainability, interface drift, or “slop”
 - [ ] Task language indicates architecture / design / hierarchy work
 - [ ] Other experimental skills match current risk profile
+- [ ] Task language indicates codebase grading, design debt, spaghetti, God objects, architecture health, or fix-vs-rebuild decision
+- [ ] Large files, cycles, or maintainability failure notes present
+- [ ] AI-slop / over-abstraction / weak-boundary language in the request or prior ratings
+- [ ] Multi-module structural cleanup or quality-gate work
 
 ## Behaviour
 
