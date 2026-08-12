@@ -3,7 +3,7 @@
     Scan host repos, optionally pull, refresh GXP .ai scaffold, commit, push.
 
 .DESCRIPTION
-    Discovers git repos under one or more roots (default: C:\Users\Reepicheep\Claude).
+    Discovers git repos under one or more roots (default: $env:USERPROFILE\Claude when present).
     By default only reports (dry-run). With -Apply, re-runs install-ai-from-core.ps1
     -Force for repos that already have .ai/workflow.md.
 
@@ -16,7 +16,7 @@
       - Never force-push; never drop local work
 
 .PARAMETER Roots
-    One or more directories to scan for git repos. Default: C:\Users\Reepicheep\Claude
+    One or more directories to scan for git repos. Default: $env:USERPROFILE\Claude when that directory exists; otherwise required.
 
 .PARAMETER Apply
     Write updates (run install-ai-from-core -Force). Without this, only report.
@@ -50,11 +50,15 @@
 .EXAMPLE
     # Update, commit, push
     .\scripts\sync-gxp-hosts.ps1 -Apply -Commit -Push
+
+.EXAMPLE
+    # Explicit roots (portable)
+    .\scripts\sync-gxp-hosts.ps1 -Roots "$env:USERPROFILE\Claude" -Apply
 #>
 
 [CmdletBinding()]
 param(
-    [string[]]$Roots = @("C:\Users\Reepicheep\Claude"),
+    [string[]]$Roots = @(),
     [switch]$Apply,
     [switch]$Commit,
     [switch]$Push,
@@ -73,6 +77,16 @@ if ($Push -and -not $Commit) {
 if ($Commit -and -not $Apply) {
     Write-Error "-Commit requires -Apply"
     exit 2
+}
+
+if ($Roots.Count -eq 0) {
+    $defaultClaude = Join-Path $env:USERPROFILE "Claude"
+    if (Test-Path -LiteralPath $defaultClaude) {
+        $Roots = @($defaultClaude)
+    } else {
+        Write-Error "No -Roots given and default '$defaultClaude' not found. Pass -Roots DIR."
+        exit 2
+    }
 }
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
