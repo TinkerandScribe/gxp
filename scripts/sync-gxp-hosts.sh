@@ -28,14 +28,10 @@ MAX_DEPTH=3
 ROOTS=()
 EXCLUDE_REGEX='/(gxp-public|node_modules|\.git|dist|target|\.venv|venv)(/|$)'
 
-# Default root (Windows-friendly path when present; else $HOME/Claude)
+# Default root: $HOME/Claude when present; otherwise require --roots
 DEFAULT_ROOT=""
-if [ -d "/c/Users/Reepicheep/Claude" ]; then
-  DEFAULT_ROOT="/c/Users/Reepicheep/Claude"
-elif [ -d "$HOME/Claude" ]; then
+if [ -d "$HOME/Claude" ]; then
   DEFAULT_ROOT="$HOME/Claude"
-elif [ -d "C:/Users/Reepicheep/Claude" ]; then
-  DEFAULT_ROOT="C:/Users/Reepicheep/Claude"
 fi
 
 usage() {

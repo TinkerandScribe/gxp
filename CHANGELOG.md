@@ -40,13 +40,21 @@ package as a whole (core + adapters + install/verify scripts).
 ### Fixed
 
 - Adapter workflow bodies that had advanced sync markers without regenerated ontology content.
+- **Installer completeness** — `install-ai-from-core.{sh,ps1}` copy `core/docs/` → `.ai/docs/`
+  and recurse nested `core/templates/` (`ontology/`, `knowledge/`, `rule-packs/`).
+- **Installer `--dry-run` / `-DryRun`** — no longer creates missing target or scaffold
+  directories / `.gitkeep` files while previewing.
+- **`scripts/verify.sh`** — runs `generate-adapter-workflows.py --check` (same as CI).
+- **Host sync path defaults** — `sync-gxp-hosts.{sh,ps1}` and docs use portable
+  `$HOME/Claude` / `$env:USERPROFILE\Claude` (or require explicit roots); no personal
+  username baked into defaults.
 
 ### Added (tooling)
 
 - **`scripts/sync-gxp-hosts.ps1` / `.sh`** — scan host repos under configurable roots
-  (default `C:\Users\Reepicheep\Claude`), dry-run report by default; `--apply` /
-  `-Apply` refreshes existing `.ai` via `install-ai-from-core --force`; optional
-  `--commit` / `--push` (never force-push).
+  (default `$HOME/Claude` / `$env:USERPROFILE\Claude` when present), dry-run report by
+  default; `--apply` / `-Apply` refreshes existing `.ai` via `install-ai-from-core
+  --force`; optional `--commit` / `--push` (never force-push).
 
 ## [1.3.1] - 2026-07-24
 

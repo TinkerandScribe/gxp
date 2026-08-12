@@ -70,8 +70,18 @@ if [ -f scripts/eval-gxp-refine-selftest.sh ]; then
 fi
 
 echo ""
+echo "5. Generated adapter workflows in sync"
+# shellcheck source=scripts/lib/find-python.sh
+source scripts/lib/find-python.sh
+echo "   - scripts/generate-adapter-workflows.py --check (python: $PY)"
+if ! "$PY" scripts/generate-adapter-workflows.py --check; then
+  echo "     FAIL: generate-adapter-workflows.py --check reported drift"
+  fail=1
+fi
+
+echo ""
 if [ "$fail" -ne 0 ]; then
-  echo "=== FAIL: missing required files, adapter drift, or gxp-refine selftest (see above) ==="
+  echo "=== FAIL: missing required files, adapter drift, gen-check drift, or gxp-refine selftest (see above) ==="
   exit 1
 fi
-echo "=== PASS: required files present, adapter sync checks clean, gxp-refine selftest clean ==="
+echo "=== PASS: required files present, adapter sync checks clean, gen-check clean, gxp-refine selftest clean ==="

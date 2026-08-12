@@ -45,7 +45,17 @@ if (-not (Test-Path $coreDir)) {
     exit 1
 }
 
-$targetAbs = (Resolve-Path $TargetRepo).Path
+if (-not (Test-Path -LiteralPath $TargetRepo)) {
+    if ($DryRun) {
+        # Preview only — do not create the missing target.
+        $targetAbs = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($TargetRepo)
+    } else {
+        Write-Error "Target directory does not exist: $TargetRepo"
+        exit 1
+    }
+} else {
+    $targetAbs = (Resolve-Path -LiteralPath $TargetRepo).Path
+}
 $aiDir     = Join-Path $targetAbs ".ai"
 
 $created = 0
@@ -53,6 +63,7 @@ $updated = 0
 $skipped = 0
 
 function Ensure-Dir([string]$path) {
+    if ($DryRun) { return }
     if (-not (Test-Path $path)) { New-Item -ItemType Directory -Path $path | Out-Null }
 }
 
@@ -100,13 +111,16 @@ function Copy-Scaffold {
 }
 
 function Ensure-EmptyDir([string]$path) {
-    Ensure-Dir $path
-    $rel = $path.Replace($targetAbs + "\", "")
+    $rel = $path.Replace($targetAbs + "\", "").Replace($targetAbs + "/", "")
     $keep = Join-Path $path ".gitkeep"
-    if (-not (Test-Path $path)) {
-        Write-Host "  + $rel/"
-        $script:created++
+    if ($DryRun) {
+        if (-not (Test-Path $keep)) {
+            Write-Host "  + $rel/.gitkeep (would create)"
+            $script:created++
+        }
+        return
     }
+    Ensure-Dir $path
     if (-not (Test-Path $keep)) {
         New-Item -ItemType File -Path $keep -Force | Out-Null
         Write-Host "  + $rel/.gitkeep"
@@ -114,9 +128,19 @@ function Ensure-EmptyDir([string]$path) {
     }
 }
 
+function Copy-TreeScaffold([string]$SrcDir, [string]$DestDir) {
+    if (-not (Test-Path $SrcDir)) { return }
+    Ensure-Dir $DestDir
+    Get-ChildItem -LiteralPath $SrcDir -Recurse -File | ForEach-Object {
+        $rel = $_.FullName.Substring($SrcDir.Length).TrimStart('\', '/')
+        Copy-Scaffold $_.FullName (Join-Path $DestDir $rel)
+    }
+}
+
 Write-Host "Installing .ai scaffold from core/"
 Write-Host "  target: $targetAbs"
 if ($Force) { Write-Host "  mode:   force (overwrite changed templates)" }
+if ($DryRun) { Write-Host "  mode:   dry-run (no writes)" }
 Write-Host ""
 
 Ensure-Dir $aiDir
@@ -140,27 +164,33 @@ Ensure-EmptyDir (Join-Path $aiDir "evals\golden")
 Ensure-EmptyDir (Join-Path $aiDir "evals\regressions")
 Ensure-EmptyDir (Join-Path $aiDir "evals\canaries")
 
-$tplDir = Join-Path $coreDir "templates"
-if (Test-Path $tplDir) {
-    $aiTpl = Join-Path $aiDir "templates"
-    Ensure-Dir $aiTpl
-    Get-ChildItem $tplDir -File | ForEach-Object {
-        Copy-Scaffold $_.FullName (Join-Path $aiTpl $_.Name)
-    }
-}
+Copy-TreeScaffold (Join-Path $coreDir "templates") (Join-Path $aiDir "templates")
+Copy-TreeScaffold (Join-Path $coreDir "docs") (Join-Path $aiDir "docs")
 
 if ($IncludeCursorRule) {
+    $ruleSrc = Join-Path $repoRoot "adapters\cursor\ai-workflow\rule.mdc"
     $cursorInstaller = Join-Path $repoRoot "adapters\cursor\ai-workflow\sync\install-cursor-rule.ps1"
-    if (Test-Path $cursorInstaller) {
+    if ($DryRun) {
+        # install-cursor-rule.ps1 has no -DryRun; preview via Copy-Scaffold only.
+        if (Test-Path $ruleSrc) {
+            Write-Host ""
+            Write-Host "Installing Cursor rule..."
+            Copy-Scaffold $ruleSrc (Join-Path $targetAbs ".cursor\rules\ai-workflow.mdc")
+        }
+    } elseif (Test-Path $cursorInstaller) {
         Write-Host ""
         Write-Host "Installing Cursor rule..."
         & $cursorInstaller -TargetRepo $targetAbs -Force:$Force
+    } elseif (Test-Path $ruleSrc) {
+        Write-Host ""
+        Write-Host "Installing Cursor rule..."
+        Copy-Scaffold $ruleSrc (Join-Path $targetAbs ".cursor\rules\ai-workflow.mdc")
     }
 }
 
 # Suggest .ai/tmp/ in gitignore
 $gitignore = Join-Path $targetAbs ".gitignore"
-if (Test-Path $gitignore) {
+if ((-not $DryRun) -and (Test-Path $gitignore)) {
     $gi = Get-Content $gitignore -Raw
     if ($gi -notmatch '\.ai/tmp') {
         Write-Host ""

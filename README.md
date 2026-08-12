@@ -49,7 +49,9 @@ Scaffolding intensity is adjustable via tiers (`frontier` / `standard` / `constr
 
 ## Install into your repo
 
-Copies `core/` into your project as a portable `.ai/` layout (preserves an existing `.ai/PROGRAM.md` and `.ai/ratings.jsonl`):
+Copies `core/` into your project as a portable `.ai/` layout (preserves an existing `.ai/PROGRAM.md` and `.ai/ratings.jsonl`).
+
+**What lands under `.ai/`:** `PROGRAM.md`, `workflow.md`, `routing.md`, `ratings.jsonl`; top-level files from `rules/`, `failures/`, `wiki/`, `evals/`; empty `evals/{golden,regressions,canaries}/`; recursive `templates/` (including nested `ontology/`, `knowledge/`, `rule-packs/`); recursive `docs/` from `core/docs/`. `--dry-run` / `-DryRun` previews without creating directories or files.
 
 ```bash
 # Mac / Linux / Git-Bash — preview first, then install (add --force only to refresh templates)
@@ -67,13 +69,16 @@ Then fill in `.ai/PROGRAM.md` with your project's verification commands.
 
 ### Refresh GXP across many host repos
 
-Scan a folder of projects (default roots: `C:\Users\Reepicheep\Claude` on this machine / `$HOME/Claude` when present), optionally pull, re-apply the scaffold, commit, and push.
+Scan a folder of projects (default root: `$HOME/Claude` or `$env:USERPROFILE\Claude` when that directory exists; otherwise pass `--roots` / `-Roots`), optionally pull, re-apply the scaffold, commit, and push.
 
 **Safe defaults:** report-only dry-run; only repos that already have `.ai/workflow.md`; ff-only pull; never force-push. Writing and publishing require explicit flags.
 
 ```powershell
-# Report only (default)
+# Report only (default; uses $env:USERPROFILE\Claude when present)
 powershell -ExecutionPolicy Bypass -File scripts/sync-gxp-hosts.ps1
+
+# Explicit roots
+powershell -ExecutionPolicy Bypass -File scripts/sync-gxp-hosts.ps1 -Roots "$env:USERPROFILE\Claude"
 
 # Apply updates to existing .ai trees
 powershell -ExecutionPolicy Bypass -File scripts/sync-gxp-hosts.ps1 -Apply
@@ -87,7 +92,7 @@ bash scripts/sync-gxp-hosts.sh
 bash scripts/sync-gxp-hosts.sh --apply
 bash scripts/sync-gxp-hosts.sh --apply --commit --push
 # Custom roots:
-bash scripts/sync-gxp-hosts.sh --roots "$HOME/projects" --apply
+bash scripts/sync-gxp-hosts.sh --roots "$HOME/Claude" --apply
 ```
 
 Use `--bootstrap` / `-Bootstrap` only if you want GXP installed into git repos that do not yet have `.ai/workflow.md`. The GXP monorepo itself is always skipped.
@@ -166,7 +171,7 @@ Invoke paste surfaces (operator-only):
 ## Verify the repo
 
 ```bash
-bash scripts/verify.sh   # required files present + adapter sync checks pass (drift fails)
+bash scripts/verify.sh   # required files + adapter sync checks + generate-adapter-workflows.py --check
 ```
 
 ## Releases
