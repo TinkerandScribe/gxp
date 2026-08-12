@@ -189,6 +189,8 @@ A brief contains:
 If you cannot write 4 strong binary criteria, the task is not understood yet.
 Stop and clarify.
 
+> **Experimental strengthening:** See `docs/experimental/clarification-protocol-v0.md` (opt-in) for an isolated maker-checker on Ideal State Criteria and optional Clarifier node.
+
 **Grok note:**
 
 
