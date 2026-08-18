@@ -127,6 +127,28 @@ Phase 5 verification ladder, anti-loop, ratings, or privacy/stakes rails.
 Ablation of host system prompts/skills is operator-approved only (never
 silent file deletion).
 
+### Alignment decision (optional enhancer)
+
+**Grilling** here means stress-testing the operator ask until Ideal State Criteria are binary and checkable. Grilling / domain-modeling (or equivalent deep alignment) is **never mandatory**.
+It is an optional, high-leverage tool used only when it is likely to improve the quality of Ideal State Criteria or reduce later misalignment risk.
+
+**Invoke a targeted alignment step when any of the following are true:**
+
+- The operator ask is underspecified and you cannot write ~4 strong binary Ideal State Criteria without inventing most of them.
+- The operator explicitly requests deep alignment ("grill this", "stress-test requirements", etc.).
+- The work is high-stakes, security-sensitive, or introduces new domain concepts.
+
+**Do not invoke by default when:**
+
+- The task qualifies for the lightweight path.
+- Clear binary criteria are already present.
+- Scaffolding tier is `frontier` and the model is known to be strong on the domain.
+- The work is pure mechanical follow-through on an already-approved brief or tickets.
+
+If alignment is triggered, its primary output should be higher-quality Ideal State Criteria and a sharper Out-of-Scope list. Record the decision and rationale in the brief (one line is enough).
+
+The Phase 2 self-evaluation gate remains the final quality check. If criteria are still weak after alignment, stop and clarify rather than proceeding.
+
 ### Re-evaluation and routing
 
 Re-evaluate engine **and** scaffolding tier at the Phase 4 anti-loop gate
@@ -206,6 +228,7 @@ Before coding, evaluate the brief against these gates. Each must pass.
 - **Anti-gaming** — does the planned work satisfy the operator's stated
   objective, not merely the literal checklist? Surface any conflict before
   implementation.
+- **Alignment residual** — if an alignment step was run, are any major assumptions still unresolved? If yes, either resolve them or stop.
 
 If any gate fails, fix the brief before continuing.
 
@@ -240,6 +263,7 @@ build break), **stop**. Do not try the same shape of fix a third time.
   strategy: re-read the failing output carefully, change the hypothesis,
   or ask the operator if the brief itself is wrong.
 - Persistent dead ends should land in `failures/` once the task is done.
+- If the reframe reveals that the original brief itself contained a fundamental misalignment (wrong problem, missing constraint, or incorrect domain assumption), treat it as an alignment failure. Surface it to the operator and rewrite the brief with them before any further implementation attempts.
 
 This rule exists because the most expensive failure mode is grinding
 on a broken approach — or retrying a fixed idea under a new name.
@@ -294,6 +318,7 @@ Then:
    script, or criterion-by-criterion tool checks) for edges smoke tests miss.  
 3. **Anti-pattern:** claiming done solely because a thin public/smoke suite
    exited 0 while criteria remain unchecked.
+4. On multi-file or multi-constraint work, an optional Layer-2 check may walk both project standards (lint/tests/conventions) and fidelity to the brief/criteria. It is not required.
 
 If a criterion cannot be checked mechanically, state how you confirmed
 it and accept the lower confidence.
