@@ -8,6 +8,12 @@ package as a whole (core + adapters + install/verify scripts).
 
 ### Added
 
+- **`adapters/grok-bot/`** — dedicated Grok Bot adapter (independent of chat `gxp` and
+  Build `gxp-build`): thin chat (brief/criteria/status only), widget approval gates
+  (not `/plan`), Cursor cloud agent or local `cursor-agent` implementation, mechanical
+  git on local CLI, lightweight `sync/check-core.{sh,ps1}`. Never clones or edits
+  repos inside the Bot conversation; agent-owned verify (does not tell the operator
+  to run `check-core.sh`); no researcher/architect/verifier personas.
 - **Criteria taxonomy + anti-fixation defaults** — brief template tags
   (`[outcome]` / `[guardrail]` / `[hypothesis]`), Phase 2 criteria-quality and anti-gaming
   gates, lightweight default for small single-file scope, anti-loop reframe after second
@@ -34,8 +40,8 @@ package as a whole (core + adapters + install/verify scripts).
 - **Generated adapter workflows** — regenerate after core ontology merge so claude / chatgpt /
   grok / perplexity `instructions/workflow.md` bodies include optional ontology Phase 5
   (not only sync-marker refresh).
-- **`scripts/verify.sh`** — requires Codex and Grok Build artifacts; runs
-  `adapters/grok-build/sync/check-core.sh` via existing `adapters/*/sync/check-core.sh` glob.
+- **`scripts/verify.sh`** — requires Codex, Grok Build, and Grok Bot artifacts; runs
+  adapter `sync/check-core.sh` via existing `adapters/*/sync/check-core.sh` glob.
 
 ### Fixed
 

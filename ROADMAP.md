@@ -142,6 +142,7 @@ Shipped on `main` after v1.3.1 (see CHANGELOG **Unreleased**).
 | Item | Status |
 |---|---|
 | Dedicated `adapters/grok-build/` (personas, install, optional `gxp-build` skill, check-core, heavy example) | **done** |
+| Dedicated `adapters/grok-bot/` (thin chat, widget gates, Cursor handoff, check-core) | **done** |
 | `adapters/codex/` + ChatGPT Project/handoff modernization | **done** |
 | Optional ontology guardrails (workflow Phase 5 + brief + example TTL + docs) | **done** (opt-in; no required project ontology) |
 | Regenerated chat adapter workflows to include ontology step | **done** |

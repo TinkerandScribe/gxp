@@ -7,6 +7,7 @@ Canonical methodology: `core/workflow.md`.
 |---|---|
 | Grok **chat** skill | `adapters/grok/ai-workflow/` (install: `gxp` / `gxp-ai-workflow`) |
 | Grok **Build** adapter | `adapters/grok-build/` (install: personas + optional skill `gxp-build`) |
+| Grok **Bot** adapter | `adapters/grok-bot/` (skill: `gxp-bot`; thin chat; Cursor implements) |
 
 ## GXP (Guided eXecution Protocol) — defaults for this repo
 
@@ -62,6 +63,8 @@ python scripts/generate-adapter-workflows.py --check
 bash adapters/grok/ai-workflow/sync/check-core.sh
 # Grok Build adapter sync
 bash adapters/grok-build/sync/check-core.sh
+# Grok Bot adapter sync
+bash adapters/grok-bot/sync/check-core.sh
 ```
 
 Optional code-quality selftest (local; does not require committing trial outputs):

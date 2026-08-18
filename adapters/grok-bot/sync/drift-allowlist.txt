@@ -1,0 +1,14 @@
+# Grok Bot adapter — intentional divergences from core packaging
+#
+# This adapter does NOT ship a generated instructions/workflow.md (unlike
+# claude / chatgpt / grok chat / perplexity). That is intentional: Grok Bot
+# is a thin orchestrator (brief / criteria / status + widget gates) and
+# hands implementation to Cursor. Core remains source of truth.
+#
+# Format (when declaring a divergence):
+#   path/relative/to/adapter | reason
+#
+# Currently no path-level allowlist entries are required; presence checks in
+# check-core.sh enforce the Bot-specific shape instead of byte-diffing core.
+
+# (none yet)
