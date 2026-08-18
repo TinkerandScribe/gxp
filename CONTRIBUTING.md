@@ -6,7 +6,7 @@ templates, and small tooling** — clarity matters more than cleverness.
 ## The one rule that shapes everything
 
 **`core/` is the single source of truth.** The adapters (`adapters/cursor`, `grok`,
-`grok-build`, `claude`, `chatgpt`, `codex`, `perplexity`, `cowork`) re-express the same
+`grok-build`, `grok-bot`, `claude`, `chatgpt`, `codex`, `perplexity`, `cowork`) re-express the same
 methodology for a specific tool.
 
 - A change to the **process or principles** goes into `core/` first.
@@ -18,8 +18,9 @@ methodology for a specific tool.
   Do **not** hand-edit the generated workflow bodies (CI runs `--check`). After core
   methodology changes, always regenerate before claiming adapters are current.
 - **Cursor** (`rule.mdc`), **Cowork** (build-time core copy), **Codex** (repo-native
-  `AGENTS.md` / handoff guidance), and **Grok Build** (personas + optional skill; no
-  generated workflow body) stay on their existing models.
+  `AGENTS.md` / handoff guidance), **Grok Build** (personas + optional skill; no
+  generated workflow body), and **Grok Bot** (thin chat + Cursor handoff; no generated
+  workflow body) stay on their existing models.
 - Each adapter has a `sync/check-core.*` script — run it after changes. Structural floor
   and live sync markers must keep working.
 
