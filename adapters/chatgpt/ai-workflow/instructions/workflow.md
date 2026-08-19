@@ -70,6 +70,10 @@ Before writing or proposing anything, scan the repo for context:
   conventions).
 - Read `.ai/rules/` (durable rules for this repo).
 - Read `.ai/failures/` (known repeatable failure modes).
+- If present in the repo or `~/.gxp/`, also read the four optional artifacts
+  `system-prompt`, `rule-bank`, `safety-memory`, and `tool-policy` (templates
+  under `core/templates/` or `.ai/templates/`) together with PROGRAM / rules /
+  failures.
 - Skim recent `ratings.jsonl` entries for patterns relevant to this task.
 - Note any tests, linters, or build commands the project standardizes on.
 
@@ -222,6 +226,11 @@ Make the change. Principles:
   brief calls for them.
 - If you have to make a non-obvious decision, write a one-line note
   somewhere durable (commit message, brief, comment) — not just chat.
+- If you load an adapter, plugin, MCP, skill, or Phase 3 handoff, name its
+  inverse (how to unload it). Unload = apply the named inverse (left-inverse;
+  LIFO if several). If you cannot name an inverse, treat the action as
+  irreversible and use the existing human gate. Inverse correctness is the
+  author's obligation; GXP does not verify it.
 
 ## Phase 4 — Anti-loop rule
 
@@ -250,6 +259,12 @@ Cheap to notice, cheap to recover.
 
 Run the verification commands from `PROGRAM.md`. Walk through each
 Ideal State Criterion and confirm it is met.
+
+### Verified against the brief (binary)
+
+Before Phase 6, every binding Ideal State Criterion has a recorded
+pass/fail. Smoke / verify exit 0 is necessary, not sufficient. If any
+binding ISC is unmet, Phase 5 fails.
 
 Order of checks:
 
