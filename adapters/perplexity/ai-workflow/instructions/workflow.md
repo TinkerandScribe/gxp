@@ -43,7 +43,9 @@ Pick the variant before starting:
   this** when the change is single-file (or equivalent small scope), easily
   reversible, has no new external dependency, and a strong deterministic
   verify path is already defined (typo, comment, one-line fix, small doc
-  edit). If you start lightweight and find the task is bigger than expected,
+  edit). Lightweight does not load the four optional artifacts unless the
+  brief is a live product tree, a Phase 3 handoff, or child/security data.
+  If you start lightweight and find the task is bigger than expected,
   upgrade to full.
 - **Full workflow** — phases 0 through 8 below. Use for any task that
   changes behavior, touches more than one file in a non-trivial way, could
@@ -74,7 +76,10 @@ Before writing or proposing anything, scan the repo for context:
 - If present in the repo or `~/.gxp/`, also read the four optional artifacts
   `system-prompt`, `rule-bank`, `safety-memory`, and `tool-policy` (templates
   under `core/templates/` or `.ai/templates/`) together with PROGRAM / rules /
-  failures.
+  failures. "If present" means a filled copy in the repo (e.g.
+  `.ai/system-prompt.md`, `.ai/tool-policy.md`) or `~/.gxp/`. Unfilled files
+  under `core/templates/` do not count. Lightweight / one-file lookups skip
+  the pack.
 - Skim recent `ratings.jsonl` entries for patterns relevant to this task.
 - Note any tests, linters, or build commands the project standardizes on.
 

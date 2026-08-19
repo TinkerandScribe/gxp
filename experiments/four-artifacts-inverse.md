@@ -66,3 +66,9 @@ Harness-protocol experiment (gxp-refine shape). **BASE** = `feat/grok-bot-adapte
 - Clearer/stricter: optional Phase 0 artifacts, quoteable unload rule, binary brief gate before Phase 6.
 
 **Branch inverse (if later discard):** delete branch / revert the experiment commit(s); that restores BASE text.
+
+## Thinning (A/B follow-up)
+
+A/B showed empty System Prompt / Rule Bank / Safety Memory never helped; Tool Policy, named inverse, and Phase 5 binary walk did. Cheap lookups got worse when Phase 0 read unfilled templates.
+
+**Change:** Phase 0 now defines "if present" as filled `.ai/` or `~/.gxp/` copies only — unfilled `core/templates/` do not count. Lightweight skips the four-artifact pack except live product tree, Phase 3 handoff, or child/security briefs. Tool Policy template keeps the read-only / no-exploit-retry / human-for-vuln stub; the other three templates stay empty operator-owned stubs. Grok Bot `cursor-handoff.md` Constraints lists the three implementer rules (filled artifacts only, named inverse, Phase 5 binary ISC walk).
