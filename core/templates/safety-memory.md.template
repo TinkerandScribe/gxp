@@ -1,0 +1,12 @@
+# Safety memory (optional GXP artifact)
+
+Operator-owned safety notes and remembered constraints for a shop or host.
+Place a filled copy in the repo (e.g. `.ai/safety-memory.md`) or under
+`~/.gxp/` when you want Phase 0 to read it with PROGRAM / rules / failures.
+Not auto-evolved.
+
+```markdown
+# Safety memory
+
+- _(Operator-owned; not auto-evolved.)_
+```

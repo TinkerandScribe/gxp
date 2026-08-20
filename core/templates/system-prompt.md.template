@@ -1,0 +1,11 @@
+# System prompt (optional GXP artifact)
+
+Operator-owned system prompt for a run or host. Place a filled copy in the
+repo (e.g. `.ai/system-prompt.md`) or under `~/.gxp/` when you want Phase 0
+to read it with PROGRAM / rules / failures. Not auto-evolved.
+
+```markdown
+# System prompt
+
+- _(Operator-owned; not auto-evolved.)_
+```
