@@ -18,7 +18,8 @@ Weight order (highest first):
 
 ## 2. Maintainability & Complexity
 
-- Files approaching or past ~1000 lines without strong justification?
+- Agent load / blast radius: how many files or tokens must an agent load to change one Ideal State Criterion?
+- Optional/legacy human signal (not the default maintainability gate): files approaching or past ~1000 lines.
 - God objects / classes with too many responsibilities?
 - Spaghetti growth: new ad-hoc conditionals or feature checks in shared paths?
 - Cognitive load of the main flows — can a reader hold the model?

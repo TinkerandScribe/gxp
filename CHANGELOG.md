@@ -37,6 +37,14 @@ package as a whole (core + adapters + install/verify scripts).
 
 ### Changed
 
+- **Agent-session standing checks (code)** — default GXP loop (Phase 2) and Grok Bot
+  briefs now require locatable ISC text (change site greppable from the criterion),
+  one criterion → one node/module, and a named verify command. Split only when an
+  agent would have to load unrelated nodes to prove one criterion, not for aesthetic
+  line count. Performance is an Ideal State Criterion only when a numeric target
+  already exists (latency / cost / memory). Experimental `gxp-code-healthcheck`
+  retargets inventory to agent load / blast radius; 500/1000-line flags remain
+  optional/legacy human signals, not the default gate. No protocol rename.
 - **Generated adapter workflows** — regenerate after core ontology merge so claude / chatgpt /
   grok / perplexity `instructions/workflow.md` bodies include optional ontology Phase 5
   (not only sync-marker refresh).

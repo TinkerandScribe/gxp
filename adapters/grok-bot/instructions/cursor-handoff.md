@@ -20,6 +20,7 @@ Grok Bot must not clone the repo, edit files, or run git. The Cursor agent imple
 
 - Follow GXP in `core/workflow.md` (or `.ai/workflow.md` in a target repo).
 - Smallest viable change. Do not expand scope.
+- For code: standing checks — change site greppable from each ISC; one ISC maps to one node/module; named verify command in this packet.
 - Do not edit `adapters/grok/` or `adapters/grok-build/` unless this brief names them.
 - Approval gates already passed in Grok Bot widgets; pause again only for new destructive/public steps.
 - Load filled `.ai/` or `~/.gxp/` artifacts only; skip unfilled `core/templates/`.

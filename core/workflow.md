@@ -181,6 +181,27 @@ Before coding, evaluate the brief against these gates. Each must pass.
   objective, not merely the literal checklist? Surface any conflict before
   implementation.
 
+### Standing checks (code tasks)
+
+When the task is **code**, also confirm these three standing checks. They
+optimize the next agent session (locatable contracts, small blast radius,
+named verify), not human page-count.
+
+1. **Locatable** — the change site is greppable from the Ideal State
+   Criterion text.
+2. **One node** — one criterion maps to one node/module, not a shotgun of
+   unrelated files.
+3. **Named verify** — the verify command is named in the brief.
+
+**Split / decompose** only when an agent would have to load unrelated
+nodes to prove one criterion. Do not split for aesthetic line count.
+There is no required human line-count gate in the default loop
+(500/1000-line thresholds are not a GXP default).
+
+**Performance** is an Ideal State Criterion only when a numeric target
+already exists (latency, cost, or memory). Do not add performance as an
+always-on vibe.
+
 If any gate fails, fix the brief before continuing.
 
 ## Phase 3 — Implementation
@@ -363,7 +384,10 @@ Paste this into a new Cursor chat at the start of a task:
 > then phase 1 (write a task brief with 4–8 binary Ideal State Criteria,
 > each tagged [outcome],[guardrail], or [hypothesis]),
 > then phase 2 self-eval (completeness, ambiguity, scope, verification,
-> approval gates, criteria quality, anti-gaming). Code in phase 3, honoring
+> approval gates, criteria quality, anti-gaming). For code tasks, also the
+> standing checks: change site greppable from the criterion text; one
+> criterion maps to one node/module; verify command named in the brief.
+> Code in phase 3, honoring
 > the phase 4 anti-loop rule (after two failed attempts on the same approach,
 > reframe: restate the problem and name a discarded assumption before any
 > further attempt). Phase 5

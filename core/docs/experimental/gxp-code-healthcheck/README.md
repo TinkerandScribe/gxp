@@ -12,7 +12,9 @@ GXP-native code health sensor. Grades a codebase or change for design quality, m
 - Full codebase grading before a rework decision
 - Deciding between incremental fix, targeted rewrite, or clean rebuild
 - Feeding GXP Phase 0 / researcher with high-signal structural findings
-- Reviewing a branch or module for spaghetti, God objects, boundary leaks, or AI-generated structural debt
+- Reviewing a branch or module for spaghetti, God objects, boundary leaks, high agent-load / blast radius, or AI-generated structural debt
+
+Inventory is **agent load / blast radius** (files and tokens an agent must load to change one Ideal State Criterion), not human page-count. Optional 500/1000-line flags are legacy human signals, not the default maintainability gate.
 
 ## Hard constraints
 
