@@ -1,0 +1,11 @@
+# Rule bank (optional GXP artifact)
+
+Operator-owned durable rule list for a project or host. Place a filled copy
+in the repo (e.g. `.ai/rule-bank.md`) or under `~/.gxp/` when you want Phase 0
+to read it with PROGRAM / rules / failures. Not auto-evolved.
+
+```markdown
+# Rule bank
+
+- _(Operator-owned; not auto-evolved.)_
+```

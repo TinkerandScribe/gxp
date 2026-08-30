@@ -21,6 +21,11 @@ Not every engine is something a dispatcher can invoke autonomously:
     **destructive** actions unless a human has pre-approved them. Reversible (undoable)
     work can run unattended; anything you cannot cleanly undo gates on a human. Make this
     explicit in the engine's invocation (e.g. an `--approve-reversible` flag), not implicit.
+  - **Named inverse:** if you load an adapter, plugin, MCP, skill, or Phase 3 handoff,
+    name its inverse (how to unload it). Unload = apply that named inverse (left-inverse;
+    LIFO if several). If you cannot name an inverse, treat the action as irreversible and
+    use the existing human gate. Inverse correctness is the author's obligation; GXP does
+    not verify it.
 - **Recommend-to-human routes** — the policy *selects* them but a human executes:
   e.g. a browser-driven research tool, an in-IDE assistant, a Custom GPT / web assistant
   for brief/planning, a human-in-the-loop composer. The dispatcher surfaces a

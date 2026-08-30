@@ -1,0 +1,15 @@
+# Tool policy (optional GXP artifact)
+
+Operator-owned tool and write-scope policy for a run or host. Place a filled
+copy in the repo (e.g. `.ai/tool-policy.md`) or under `~/.gxp/` when you want
+Phase 0 to read it with PROGRAM / rules / failures. Not auto-evolved.
+
+```markdown
+# Tool policy
+
+- A coding agent pointed at a live product tree (Kickoff, WorkshopOS, lumen,
+  fab-shop, or any unnamed “find issues” brief) is **read-only** unless the
+  brief names writes.
+- No exploit-chain retry. Vuln-shaped findings escalate to a human.
+- _(Operator-owned; not auto-evolved.)_
+```

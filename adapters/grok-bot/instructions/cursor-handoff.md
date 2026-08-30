@@ -22,6 +22,9 @@ Grok Bot must not clone the repo, edit files, or run git. The Cursor agent imple
 - Smallest viable change. Do not expand scope.
 - Do not edit `adapters/grok/` or `adapters/grok-build/` unless this brief names them.
 - Approval gates already passed in Grok Bot widgets; pause again only for new destructive/public steps.
+- Load filled `.ai/` or `~/.gxp/` artifacts only; skip unfilled `core/templates/`.
+- Name an inverse for any plugin/MCP/skill/handoff or treat as irreversible.
+- Phase 5 records pass/fail per binding ISC before continuing.
 
 ## Ideal State Criteria
 
