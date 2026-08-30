@@ -24,7 +24,7 @@ GXP is a lightweight, tool-agnostic harness that forces the opposite behavior:
 - Verify deterministically before trusting anything subjective
 - Rate the outcome honestly and capture repeatable failures so they do not recur
 
-It is deliberately **bounded** (L3/L4, not full autonomy): the agent works inside a written brief, does not expand scope on its own, and pauses at approval gates. The same discipline works with Claude, ChatGPT, Codex, Cursor, Grok (chat + Build), Perplexity, or a local model.
+It is deliberately **bounded** (L3/L4, not full autonomy): the agent works inside a written brief, does not expand scope on its own, and pauses at approval gates. The same discipline works with Claude, ChatGPT, Codex, Cursor, Grok (chat + Build + Bot), Perplexity, or a local model.
 
 ## The loop (Phases 0–8)
 
@@ -101,7 +101,7 @@ Use `--bootstrap` / `-Bootstrap` only if you want GXP installed into git repos t
 
 GXP is a discipline you put your AI agent through — there's no binary to run. Two ways to drive it:
 
-**With an adapter (automatic).** Install the adapter for your tool (see below) and it loads the workflow for you: in Cursor the rule applies automatically; in Grok chat, invoke the `gxp` skill; in **Grok Build**, install the dedicated `gxp-build` skill / personas; in ChatGPT, use a Project for planning and hand repository work to Codex; in Claude or the Cowork plugin, just say *"use gxp on …"*.
+**With an adapter (automatic).** Install the adapter for your tool (see below) and it loads the workflow for you: in Cursor the rule applies automatically; in Grok chat, invoke the `gxp` skill; in **Grok Build**, install the dedicated `gxp-build` skill / personas; in **Grok Bot**, invoke `gxp-bot` (brief/criteria/status only — Cursor implements); in ChatGPT, use a Project for planning and hand repository work to Codex; in Claude or the Cowork plugin, just say *"use gxp on …"*.
 
 **With any agent (manual).** Point the agent at `.ai/workflow.md` and tell it to follow GXP. A prompt that works in any chat-based coding agent:
 
@@ -140,6 +140,7 @@ Each adapter re-expresses GXP for a specific tool's interface and strengths. All
 - **`cursor/`** — Cursor rule + capability gate + installer.
 - **`grok/`** — installable Grok **chat** skill (`gxp`) with sync checks.
 - **`grok-build/`** — dedicated **Grok Build** adapter: Heavy multi-persona front-half, install scripts, optional `gxp-build` skill (never overwrites the chat skill), lightweight `sync/check-core`.
+- **`grok-bot/`** — dedicated **Grok Bot** adapter: thin chat (brief/criteria/status), widget gates, Cursor cloud agent or `cursor-agent` implementation, local-CLI git. Does not stretch `grok/` or `grok-build/`.
 - **`claude/`** — custom instructions and context-loading patterns for Claude.
 - **`chatgpt/`** — ChatGPT Project and Custom GPT planning, context-loading, and Codex handoffs.
 - **`codex/`** — repo-native execution guidance for Codex: `AGENTS.md`, planning, verification, review, and delegation.
@@ -154,7 +155,7 @@ Projects may declare a formal domain model and bind Ideal State Criteria to it. 
 
 ```
 core/        the methodology — workflow, routing, rules, failures, templates, docs
-adapters/    per-tool integrations (cursor, grok, grok-build, claude, chatgpt, codex, perplexity, cowork)
+adapters/    per-tool integrations (cursor, grok, grok-build, grok-bot, claude, chatgpt, codex, perplexity, cowork)
 scripts/     installer (.ps1 + .sh), workflow generator, and adapter-parity check (verify.sh)
 ```
 

@@ -45,6 +45,9 @@ require adapters/grok-build/personas/gxp-architect.toml
 require adapters/grok-build/personas/gxp-verifier.toml
 require adapters/grok-build/personas/composer-coder.toml
 require adapters/grok-build/personas/grok-native-planner.toml
+require adapters/grok-bot/SKILL.md
+require adapters/grok-bot/README.md
+require adapters/grok-bot/GETTING_STARTED.md
 require adapters/perplexity/ai-workflow/SKILL.md
 require adapters/cowork/plugin-src/.claude-plugin/plugin.json
 
