@@ -22,8 +22,14 @@ LABEL_COLUMNS: tuple[str, ...] = (
     "source_tag",
 )
 
-# Planned size; templates ship a handful of stub rows, not live labels.
+# Filled Gate G1 sheet is N=120. Templates under data/labels.template.*
+# remain a schema reference (stub rows only).
 PLANNED_ROW_COUNT = 120
+EXPECTED_CALIBRATE = 80
+EXPECTED_HOLDOUT = 40
+SOURCE_TAGS: tuple[str, ...] = ("gxp", "shop", "idea_gate", "adversarial")
+FILLED_JSONL_NAME = "labels.jsonl"
+FILLED_CSV_NAME = "labels.csv"
 
 
 @dataclass(frozen=True)

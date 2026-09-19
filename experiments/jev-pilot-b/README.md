@@ -73,22 +73,35 @@ One artifact, one Ideal State Criterion string (the yes/no `question`). Pass a
 single provider or wrap `cascade` in a tiny adapter that implements
 `DecisionProvider`.
 
-## Label sheet (N=120 plan)
+## Labelled batch (N=120, Gate G1)
 
-Templates: `data/labels.template.jsonl` and `data/labels.template.csv`.
+Filled sheet (source of truth): **`data/labels.jsonl`** (CSV twin:
+`data/labels.csv`). Schema templates remain at `data/labels.template.jsonl`
+and `data/labels.template.csv`. Regenerator (optional):
+`scripts/build_g1_labels.py`.
 
 | Column | Values |
 |---|---|
 | `id` | row id (`001`…`120`) |
-| `artifact` | text or serialized state |
-| `criterion` | Ideal State Criterion (yes/no question) |
+| `artifact` | short synthetic handoff / config / packet (prefer < 2k chars) |
+| `criterion` | one binary Ideal State Criterion |
 | `gold` | `pass` \| `fail` \| `needs_review` |
 | `split` | `calibrate` \| `holdout` |
-| `source_tag` | provenance (`synthetic-stub` today) |
+| `source_tag` | `gxp` \| `shop` \| `idea_gate` \| `adversarial` |
 
-Shipped rows: 5 synthetic examples (3 calibrate / 2 holdout). Planned sheet:
-**120** labelled rows, suggested **60 calibrate / 60 holdout**. Do not pull
-real labelled data in this scaffold.
+**N=120.** Split: **80 calibrate / 40 holdout**. Gold classes are balanced
+**40 / 40 / 40** (`pass` / `fail` / `needs_review`). Holdout is mixed across
+all three golds and all four `source_tag`s (not a single class or tag).
+
+| `source_tag` | N | Mix target | Shape |
+|---|---|---|---|
+| `gxp` | 48 | ~40% | GXP/ISCP-style verify handoffs (exit codes, isolation, no secrets) |
+| `shop` | 36 | ~30% | shop-local / tinker-tools routing (model default, `keep_alive`, fail-closed writes) |
+| `idea_gate` | 24 | ~20% | evidence → criterion; thin packets gold `fail` / `needs_review` |
+| `adversarial` | 12 | ~10% | weasel / untestable criteria; gold `fail` or `needs_review` |
+
+Rows are synthetic. No live keys, PATs, passwords, child names, or customer
+PII. Inverse of this fill: revert the labels commit / close the PR.
 
 ## Metrics (report these on a later A/B)
 
@@ -101,18 +114,24 @@ real labelled data in this scaffold.
 | **abstention** | rate of `abstained=True` (and of `needs_review` when that is the stop) |
 | **disagreement** | pairwise provider mismatch on the same `(artifact, criterion)` |
 
-## How to run A/B later
+## How to score later (A/B)
 
-1. Fill `data/labels.template.jsonl` (or CSV) to 120 gold rows; keep splits
-   disjoint.
-2. Calibrate check thresholds (`yes_at_or_above` / `no_at_or_below`) and any
-   rules hooks on **calibrate** only.
-3. Freeze the cascade variants to compare, for example:
+The sheet is filled. Keep **calibrate** and **holdout** disjoint.
+
+1. Fit check thresholds (`yes_at_or_above` / `no_at_or_below`) and any rules
+   hooks on **calibrate** only.
+2. Freeze the cascade variants to compare, for example:
    - A: `rules → human`
    - B: `rules → jev → human`
    - optional C: `rules → jev → llm → human` once an LLM judge exists
-4. Score **holdout** for the six metrics above. Do not retune on holdout.
-5. Keep the run local (`core/evals/**/trials/` style). Do not wire winners
+3. Score **holdout** only. Do not retune on holdout. Report:
+   - **accuracy** — `decision == gold` (optionally treat `needs_review` as neither)
+   - **calibration** — reliability of `p` vs empirical pass rate (fit on calibrate, confirm holdout)
+   - **latency** — `latency_ms` per call and per cascade
+   - **cost** — `cost` when the backend reports it
+   - **abstention** — rate of `abstained=True` (and of `needs_review` when that is the stop)
+   - **disagreement** — pairwise provider mismatch on the same `(artifact, criterion)`
+4. Keep the run local (`core/evals/**/trials/` style). Do not wire winners
    into product bots from this folder.
 
 Live HTTP (optional, not required for verify):
@@ -150,7 +169,8 @@ Binding criteria from the Pilot B brief:
    from this tree (named inverse only: delete the folder / close the PR)
 5. `[outcome]` This README lists cascade order and metrics: accuracy,
    calibration, latency, cost, abstention, disagreement
-6. `[outcome]` Label template has columns for the 120-row plan
+6. `[outcome]` Label template has columns for the 120-row plan; filled
+   `data/labels.jsonl` has N=120, 80/40 split, all three golds, four source tags
 7. `[outcome]` Named verify (`bash experiments/jev-pilot-b/verify.sh`) passes
 
 ## Out of scope
@@ -159,7 +179,7 @@ Binding criteria from the Pilot B brief:
 - Prose generation
 - Fleet MCP install
 - Implementing live LLM calls
-- Pulling real labelled data (stub rows only)
+- Pulling real labelled data or private chat logs (synthetic rows only)
 
 ## Layout
 
@@ -168,8 +188,11 @@ experiments/jev-pilot-b/
   README.md
   verify.sh
   .env.example
+  data/labels.jsonl
+  data/labels.csv
   data/labels.template.jsonl
   data/labels.template.csv
+  scripts/build_g1_labels.py
   jev_pilot_b/types.py
   jev_pilot_b/cascade.py
   jev_pilot_b/gate_g1.py
