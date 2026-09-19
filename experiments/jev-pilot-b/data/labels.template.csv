@@ -1,0 +1,6 @@
+id,artifact,criterion,gold,split,source_tag
+001,"PR adds experiments/jev-pilot-b/ only; core/workflow.md untouched.","Public decision types have no vendor-specific type names.",pass,calibrate,synthetic-stub
+002,"Provider decide() returns decision=pass for a failing criterion.","Gold label is fail when the artifact violates the criterion.",fail,calibrate,synthetic-stub
+003,"Check verdict is uncertain (p(yes) between thresholds).","Uncertain check results map to needs_review.",needs_review,calibrate,synthetic-stub
+004,"Rules hooks all return None; cascade continues to the next provider.","An abstaining rules backend does not emit a final pass or fail.",needs_review,holdout,synthetic-stub
+005,"Human stub is the last cascade slot and does not abstain.","Cascade terminates at human with needs_review when earlier slots abstain.",needs_review,holdout,synthetic-stub
