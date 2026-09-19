@@ -1,0 +1,79 @@
+{
+  "description": "Frozen positive set: each row must fire the named high-precision hook. Do not rewrite in place; add new ids if the hook contract grows.",
+  "positive": [
+    {
+      "id": "fx-empty-str",
+      "artifact": "",
+      "question": "Does the criterion hold?",
+      "expect_hook": "empty_artifact",
+      "expect_decision": "fail"
+    },
+    {
+      "id": "fx-empty-dict",
+      "artifact": {},
+      "question": "Does the criterion hold?",
+      "expect_hook": "empty_artifact",
+      "expect_decision": "fail"
+    },
+    {
+      "id": "fx-empty-list",
+      "artifact": [],
+      "question": "Does the criterion hold?",
+      "expect_hook": "empty_artifact",
+      "expect_decision": "fail"
+    },
+    {
+      "id": "fx-incomplete-flag",
+      "artifact": {"evidence_complete": false, "body": "Layer 2 spot-checked a few rows"},
+      "question": "Two-layer verify ran: project suite then criterion-edge checks.",
+      "expect_hook": "incomplete_evidence",
+      "expect_decision": "needs_review"
+    },
+    {
+      "id": "fx-empty-pack",
+      "artifact": {"evidence_pack": {}, "evidence_complete": true},
+      "question": "The packet includes a countable proof-of-product with N and a dated window.",
+      "expect_hook": "incomplete_evidence",
+      "expect_decision": "needs_review"
+    },
+    {
+      "id": "fx-missing-required",
+      "artifact": {
+        "checklist": {
+          "required": ["n", "window"],
+          "present": {"window": "2026-09-10..2026-09-16", "n": ""}
+        }
+      },
+      "question": "The packet includes a countable proof-of-product with N and a dated window.",
+      "expect_hook": "incomplete_evidence",
+      "expect_decision": "needs_review"
+    },
+    {
+      "id": "fx-pass-and-fail",
+      "artifact": {"markers": {"pass": true, "fail": true}},
+      "question": "Criterion holds?",
+      "expect_hook": "contradictory_markers",
+      "expect_decision": "needs_review"
+    }
+  ],
+  "negative_abstain": [
+    {
+      "id": "fx-plain-string",
+      "artifact": "Handoff: bash scripts/verify.sh; exit 0.",
+      "question": "bash scripts/verify.sh exits 0."
+    },
+    {
+      "id": "fx-unrelated-dict",
+      "artifact": {"k": 1},
+      "question": "ready for review?"
+    },
+    {
+      "id": "fx-complete-pack",
+      "artifact": {
+        "evidence_complete": true,
+        "evidence_pack": {"n": 12, "window": "2026-09-01..2026-09-07", "ids": ["waitlist-001"]}
+      },
+      "question": "The packet includes a countable proof-of-product with N and a dated window."
+    }
+  ]
+}
