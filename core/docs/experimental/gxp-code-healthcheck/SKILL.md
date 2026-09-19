@@ -37,12 +37,12 @@ Ask for mode and scope if not specified. Default for large unknown repos: recent
 
 - Confirm mode and boundaries.
 - For **full-codebase** mode, follow this efficient order:
-  1. Structure map + large-file inventory (>500 lines soft flag, >1000 lines strong)
+  1. Structure map + **agent-load / blast-radius inventory** (how many files and tokens an agent must load to change one Ideal State Criterion). Optional/legacy human signals: >500 lines soft, >1000 lines strong — not the default maintainability gate.
   2. Dependency / cycle signals (if tools or simple import analysis available)
   3. God-object and layer-boundary heuristics
   4. Targeted deep reads on the highest-severity candidates
 - Gather structural signals:
-  - Large files / God candidates
+  - High blast-radius nodes (one ISC requires loading unrelated files) / God candidates
   - Import / dependency cycles if detectable
   - Obvious layer boundary leaks
   - Test presence and quality signals around changed or critical paths
@@ -58,7 +58,7 @@ Evaluate in this priority order:
    - God objects / excessive responsibility
    - Circular or tangled dependencies
    - Spaghetti growth (ad-hoc conditionals, feature checks scattered across shared code)
-   - File size and decomposition
+   - Agent load / blast radius (files and tokens to change one ISC), not page-count. Optional 500/1000-line flags are legacy human signals, not the default gate.
    - Abstraction quality — do abstractions earn their complexity?
    - Code-judo opportunities: places where a restructuring would *delete* complexity while preserving behavior
 
@@ -147,7 +147,7 @@ Rationale: [2–4 sentences tied to highest-severity findings]
 - Prioritize structural and maintainability findings over nits.
 - Prefer a smaller number of high-conviction findings with evidence.
 - Never approve a change or declare a codebase “healthy enough” solely because behavior appears correct.
-- Quantify when possible (file sizes, cycle counts, number of touch points for a change).
+- Quantify when possible (files/tokens an agent must load to change one ISC, cycle counts, number of touch points for a change). Optional human line-count signals (500/1000) may be noted as legacy, not as the default gate.
 - Keep the main report scannable; move deep catalogs and examples to references.
 - **After emitting the GXP Handoff Package, stop.** Do not append free-form cleanup lists or expand scope.
 

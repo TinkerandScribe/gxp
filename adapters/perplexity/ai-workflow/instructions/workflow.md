@@ -218,6 +218,27 @@ Before coding, evaluate the brief against these gates. Each must pass.
   objective, not merely the literal checklist? Surface any conflict before
   implementation.
 
+### Standing checks (code tasks)
+
+When the task is **code**, also confirm these three standing checks. They
+optimize the next agent session (locatable contracts, small blast radius,
+named verify), not human page-count.
+
+1. **Locatable** — the change site is greppable from the Ideal State
+   Criterion text.
+2. **One node** — one criterion maps to one node/module, not a shotgun of
+   unrelated files.
+3. **Named verify** — the verify command is named in the brief.
+
+**Split / decompose** only when an agent would have to load unrelated
+nodes to prove one criterion. Do not split for aesthetic line count.
+There is no required human line-count gate in the default loop
+(500/1000-line thresholds are not a GXP default).
+
+**Performance** is an Ideal State Criterion only when a numeric target
+already exists (latency, cost, or memory). Do not add performance as an
+always-on vibe.
+
 If any gate fails, fix the brief before continuing.
 
 ## Phase 3 — Implementation

@@ -22,8 +22,9 @@ Use these as first-class detection targets. Always attach concrete evidence (fil
 ## Coupling & Cohesion
 
 - **God Object / God Class**  
-  One type or file owns too many responsibilities or grows past ~500–1000 lines.  
-  Evidence: method count, responsibility list, size.
+  One type or file owns too many responsibilities.  
+  Evidence: method count, responsibility list, blast radius (unrelated nodes an agent must load to change one ISC).  
+  Optional/legacy human signal (not the default gate): grows past ~500–1000 lines.
 
 - **Circular Dependencies**  
   A → B → A (or longer cycles). Detect via import graph or build errors.
@@ -40,8 +41,9 @@ Use these as first-class detection targets. Always attach concrete evidence (fil
   Ad-hoc conditionals, feature flags, or special cases bolted onto shared flows.  
   New branches that make an existing path harder to reason about = design smell.
 
-- **Files Crossing ~1000 Lines**  
-  Strong default smell. Prefer decomposition before further growth.
+- **High Agent Load / Blast Radius**  
+  Changing one Ideal State Criterion requires loading many unrelated files or a large token span. Split only when an agent would have to load unrelated nodes to prove one criterion; do not split for aesthetic line count.  
+  Optional/legacy human signal (not the default gate): files crossing ~500 (soft) or ~1000 (strong) lines.
 
 - **Leaky or Thin Abstractions**  
   Wrappers that add indirection without real value; identity abstractions; excessive casts/optionality that obscure the real design.

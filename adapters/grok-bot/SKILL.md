@@ -85,6 +85,16 @@ Maintainers still have `adapters/grok-bot/sync/check-core.sh` for CI; that is no
 
 Grok Bot still only writes the brief and criteria. Cursor still does Phase 0 reads and Phase 5 evidence. If you cannot write 4 binary criteria, ask one clarifying question — do not guess and do not start implementing.
 
+## Standing checks (code briefs)
+
+When the task is **code**, include these three standing checks in the brief so the Cursor agent can use them. Grok Bot still does not pull repo files to edit them.
+
+1. **Locatable** — the change site is greppable from the Ideal State Criterion text.
+2. **One node** — one criterion maps to one node/module, not a shotgun of unrelated files.
+3. **Named verify** — the verify command is named in the brief.
+
+Split only when an agent would have to load unrelated nodes to prove one criterion; do not split for aesthetic line count. Performance is an Ideal State Criterion only when a numeric target already exists (latency, cost, or memory).
+
 ## Scaffolding tier (Phase 0.5)
 
 Record **Scaffolding tier:** `frontier` | `standard` | `constrained` with the engine choice (default **standard**). See `core/docs/capability-scaffolding.md` when the implementer can read the repo.
