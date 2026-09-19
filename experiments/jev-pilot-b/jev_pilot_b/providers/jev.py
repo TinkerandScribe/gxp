@@ -23,6 +23,10 @@ import urllib.request
 from dataclasses import dataclass
 from typing import Any, Literal, Protocol
 
+from jev_pilot_b.predisposition import (
+    DEFAULT_FAIL_BORDER_MID,
+    apply_fail_border_handoff,
+)
 from jev_pilot_b.types import Artifact, DecideInput, DecideResult, Decision
 
 CheckVerdict = Literal["yes", "no", "uncertain"]
@@ -241,9 +245,13 @@ class JevProvider:
         client: JevCheckClient | None = None,
         *,
         abstain_on_uncertain: bool = False,
+        fail_border_handoff: bool = True,
+        fail_border_mid: float = DEFAULT_FAIL_BORDER_MID,
     ) -> None:
         self.client = client if client is not None else HttpJevCheckClient()
         self.abstain_on_uncertain = abstain_on_uncertain
+        self.fail_border_handoff = fail_border_handoff
+        self.fail_border_mid = fail_border_mid
 
     async def decide(self, input: DecideInput) -> DecideResult:
         started = time.perf_counter()
@@ -259,7 +267,7 @@ class JevProvider:
         decision, abstained = map_check_verdict(
             response, abstain_on_uncertain=self.abstain_on_uncertain
         )
-        return DecideResult(
+        result = DecideResult(
             decision=decision,
             provider="jev",
             latency_ms=(time.perf_counter() - started) * 1000.0,
@@ -275,6 +283,18 @@ class JevProvider:
                 "mcp_arguments": request.to_mcp_arguments(),
             },
         )
+        if self.fail_border_handoff:
+            no_at = (
+                input.no_at_or_below
+                if input.no_at_or_below is not None
+                else DEFAULT_NO_AT_OR_BELOW
+            )
+            result = apply_fail_border_handoff(
+                result,
+                no_at_or_below=no_at,
+                fail_border_mid=self.fail_border_mid,
+            )
+        return result
 
 
 def _cost_from_usage(usage: dict[str, Any] | None) -> float | None:
