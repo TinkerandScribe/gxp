@@ -52,7 +52,8 @@ vendor-specific type names.
 
 Caller-owned helper `cascade(providers, input)` walks this default order:
 
-1. **rules** — deterministic hooks; abstain when no hook fires
+1. **rules** — high-precision hooks (`empty_artifact`, `contradictory_markers`,
+   `incomplete_evidence`); abstain when no hook fires
 2. **jev** — MCP-shaped check (`yes→pass`, `no→fail`, `uncertain→needs_review`)
 3. **llm** — judge interface only; live calls not implemented (abstains)
 4. **human** — terminal stub; `needs_review`, does not abstain
@@ -62,6 +63,62 @@ list (omit or swap backends). Nothing here is installed into a bot.
 
 Optional: construct the Jev backend with `abstain_on_uncertain=True` so an
 uncertain check continues the cascade instead of stopping at `needs_review`.
+
+### Decision-shape: `incomplete_evidence` path
+
+Named path: **`incomplete_evidence`**. This is a structured-artifact gate, not
+a cue list. If the artifact is a dict and any of these hold, **rules (or
+`apply_incomplete_evidence_path`) return `needs_review` before Jev
+disposition**:
+
+- `evidence_complete` is `false`
+- `evidence_pack` is present and empty
+- `checklist` / `evidence_checklist` lists `required` fields that are missing
+  or blank in `present`
+
+Call `apply_incomplete_evidence_path(input)` explicitly, or use the default
+`RulesProvider()` (same hook). Free-text label-sheet rows do not fire this
+path — that would be a cue list, which stays unshipped.
+
+### High-precision rules hooks
+
+Default `RulesProvider()` registers three hooks (pass `hooks=()` to restore
+the old always-abstain stub):
+
+| Hook | Fires when | Decision |
+|---|---|---|
+| `empty_artifact` | artifact is `""` / `{}` / `[]` / `None` | `fail` |
+| `contradictory_markers` | structured `markers` set both pass and fail | `needs_review` |
+| `incomplete_evidence` | named path above | `needs_review` |
+
+Frozen positive fixtures: `tests/fixtures/high_precision_hooks.json`.
+
+### Optional: `fail_border_handoff`
+
+If Jev returns `fail` with `p(yes)` in the open band
+`(no_at_or_below, fail_border_mid)` — defaults **`(0.3, 0.5)`** — the result
+is rewritten to `needs_review` (human). Confident fails (`p ≤ 0.3`) stay
+`fail`. Disable with `JevProvider(..., fail_border_handoff=False)`.
+
+### Cue-list `policy_v1` (UNSHIPPED)
+
+`policy_v1` cue matching is **UNSHIPPED**. It is not imported by `cascade.py`,
+not registered on default `RulesProvider`, and not part of this spike.
+Do not add cue lists to the default cascade.
+
+### Holdout re-score
+
+Live Jev / MCP holdout re-score is the **parent run’s job after merge**.
+This tree does not call Jev. Offline structured-path + recorded fail-border
+only:
+
+```bash
+python experiments/jev-pilot-b/scripts/apply_rules_policy.py
+python experiments/jev-pilot-b/scripts/apply_rules_policy.py \
+  --artifact-json '{"evidence_complete": false}' --question 'POP present?'
+```
+
+Spike B label audit (keep 8 / flip 0): `docs/spike_b_label_audit.md`.
 
 ## Gate G1
 
@@ -159,7 +216,7 @@ is unchanged (adapter parity); this experiment is opt-in.
 
 ## Ideal State Criteria (this scaffold)
 
-Binding criteria from the Pilot B brief:
+Binding criteria from the Pilot B brief, plus Spike B:
 
 1. `[outcome]` Public types have no Jev-specific names
 2. `[guardrail]` `core/workflow.md` and `adapters/grok-bot` core path unchanged
@@ -172,6 +229,14 @@ Binding criteria from the Pilot B brief:
 6. `[outcome]` Label template has columns for the 120-row plan; filled
    `data/labels.jsonl` has N=120, 80/40 split, all three golds, four source tags
 7. `[outcome]` Named verify (`bash experiments/jev-pilot-b/verify.sh`) passes
+8. `[guardrail]` Cue-list `policy_v1` stays **UNSHIPPED** (no cues in the
+   default cascade)
+9. `[outcome]` ≥1 high-precision rules hook (`empty_artifact`) fires on the
+   frozen positive fixture set
+10. `[outcome]` Named path `incomplete_evidence` appears in this README and
+    in `verify.sh`
+11. `[outcome]` `docs/spike_b_label_audit.md` reviews holdout ids 042, 048,
+    083, 104, 105, 106, 107, 108
 
 ## Out of scope
 
@@ -188,15 +253,20 @@ experiments/jev-pilot-b/
   README.md
   verify.sh
   .env.example
+  docs/spike_b_label_audit.md
   data/labels.jsonl
   data/labels.csv
   data/labels.template.jsonl
   data/labels.template.csv
   scripts/build_g1_labels.py
+  scripts/apply_rules_policy.py
   jev_pilot_b/types.py
   jev_pilot_b/cascade.py
   jev_pilot_b/gate_g1.py
   jev_pilot_b/labels.py
+  jev_pilot_b/hooks.py
+  jev_pilot_b/predisposition.py
   jev_pilot_b/providers/{rules,jev,llm,human}.py
   tests/
+  tests/fixtures/high_precision_hooks.json
 ```

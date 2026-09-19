@@ -119,6 +119,30 @@ class TestReadmeAndGuardrails(unittest.TestCase):
         self.assertIn("N=120", text)
         self.assertIn("80 calibrate", text)
         self.assertIn("40 holdout", text)
+        self.assertIn("incomplete_evidence", text)
+        self.assertIn("UNSHIPPED", text)
+        self.assertIn("policy_v1", text)
+        self.assertIn("empty_artifact", text)
+        self.assertIn("fail_border_handoff", text)
+
+    def test_spike_b_audit_covers_eight_holdout_ids(self) -> None:
+        audit = EXPERIMENT_ROOT / "docs" / "spike_b_label_audit.md"
+        self.assertTrue(audit.is_file(), f"missing {audit}")
+        text = audit.read_text(encoding="utf-8")
+        for row_id in ("042", "048", "083", "104", "105", "106", "107", "108"):
+            self.assertIn(row_id, text)
+        self.assertIn("keep gold", text.lower())
+        rows = {r.id: r for r in load_jsonl(FILLED_JSONL)}
+        for row_id in ("042", "048", "083", "104", "105", "106", "107", "108"):
+            self.assertEqual(rows[row_id].gold, "needs_review", row_id)
+            self.assertEqual(rows[row_id].split, "holdout", row_id)
+
+    def test_default_cascade_has_no_policy_v1_cues(self) -> None:
+        cascade_src = (EXPERIMENT_ROOT / "jev_pilot_b" / "cascade.py").read_text(
+            encoding="utf-8"
+        )
+        self.assertNotIn("policy_v1", cascade_src)
+        self.assertNotIn("cue_list", cascade_src)
 
     def test_banned_revert_phrase_absent(self) -> None:
         skip_suffixes = {".pyc"}
