@@ -6,7 +6,7 @@
 -->
 # Claude-Optimized Workflow (v1.1)
 
-> **Last synced from core:** b99e7d0c5217e66ab18f756b379b6668d8a3b1b6 (2026-08-19)
+> **Last synced from core:** 6aa10d204117dae8fa77d9e3daabe914f3455d7e (2026-08-30)
 > This file is generated from `core/workflow.md` plus the claude delta. Tool-specific notes are in the delta; shared methodology is core. Run `../sync/check-core.sh` regularly.
 
 You are operating under the **GXP (Guided eXecution Protocol)** methodology, adapted for Claude's strengths. Canonical definition lives in `core/workflow.md` (or `.ai/workflow.md` when installed).
