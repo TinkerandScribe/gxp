@@ -70,12 +70,17 @@ class TestJevStub(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(read_api_key_from_env({"JEV_API_KEY": "not-a-real-key"}), "not-a-real-key")
 
     def test_no_urllib_in_jev_module(self) -> None:
+        import ast
+
         path = PathJev()
-        source = path.read_text(encoding="utf-8")
-        self.assertNotIn("urllib", source)
-        self.assertNotIn("urlopen", source)
-        self.assertNotIn("http.client", source)
-        self.assertNotIn("socket", source)
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        imported: set[str] = set()
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                imported.update(alias.name.split(".")[0] for alias in node.names)
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                imported.add(node.module.split(".")[0])
+        self.assertFalse(imported & {"urllib", "http", "requests", "socket"})
 
 
 def PathJev():

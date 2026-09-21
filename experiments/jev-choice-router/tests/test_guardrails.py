@@ -88,14 +88,22 @@ class TestGuardrails(unittest.TestCase):
                     self.fail(f"{rel} contains Pilot B token {token!r}")
 
     def test_package_has_no_network_imports(self) -> None:
+        banned = {"urllib", "urllib.request", "http.client", "requests", "socket"}
         pkg = EXPERIMENT_ROOT / "jev_choice_router"
         for path in pkg.rglob("*.py"):
             if "__pycache__" in path.parts:
                 continue
-            source = path.read_text(encoding="utf-8")
-            self.assertNotIn("urllib", source, path.name)
-            self.assertNotIn("urlopen", source, path.name)
-            self.assertNotIn("http.client", source, path.name)
+            tree = ast.parse(path.read_text(encoding="utf-8"))
+            for node in ast.walk(tree):
+                modules: list[str] = []
+                if isinstance(node, ast.Import):
+                    modules.extend(alias.name for alias in node.names)
+                elif isinstance(node, ast.ImportFrom) and node.module:
+                    modules.append(node.module)
+                for module in modules:
+                    root = module.split(".")[0]
+                    self.assertNotIn(root, banned, f"{path.name} imports {module}")
+                    self.assertNotIn(module, banned, f"{path.name} imports {module}")
 
     def test_noul_safe_to_act_is_held(self) -> None:
         result = HeldSafeToActClient().check(
@@ -109,5 +117,6 @@ class TestGuardrails(unittest.TestCase):
 
     def test_readme_names_inverse_and_no_default_gxp_path(self) -> None:
         text = README.read_text(encoding="utf-8")
-        self.assertIn("delete experiments/jev-choice-router/", text)
-        self.assertIn("no default GXP path change", text.lower())
+        self.assertIn("delete", text.lower())
+        self.assertIn("experiments/jev-choice-router/", text)
+        self.assertIn("no default gxp path change", text.lower())

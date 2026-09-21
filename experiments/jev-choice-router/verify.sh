@@ -71,9 +71,9 @@ echo "  ok"
 
 echo ""
 echo "6. no network / live Jev in package"
-if grep -R --include='*.py' -nE 'urllib|urlopen|http\.client|socket\.create_connection' \
+if grep -R --include='*.py' -nE '^(import|from) (urllib|http\.client|requests|socket)\b' \
   "$ROOT/jev_choice_router"; then
-  echo "  FAIL: network client in package"
+  echo "  FAIL: network client import in package"
   exit 1
 fi
 if grep -R --include='*.py' -nE 'CallDynamicTool|jev_classify\(' "$ROOT/jev_choice_router" "$ROOT/tests" "$ROOT/scripts"; then

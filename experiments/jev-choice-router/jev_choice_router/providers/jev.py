@@ -3,9 +3,9 @@
 Public types stay in ``jev_choice_router.types`` and never mention this
 module. This file is the only place that knows classify-request vocabulary.
 
-Hard-usage hold: this tree does **not** open sockets, import urllib, or
-invoke MCP. Default transport is ``HeldJevClassifyClient``. Tests inject a
-fake ``JevClassifyClient``.
+Hard-usage hold: this tree does **not** open sockets, import an HTTP
+client, or invoke MCP. Default transport is ``HeldJevClassifyClient``.
+Tests inject a fake ``JevClassifyClient``.
 
 Key handling (never commit secrets; see ``core/rules/01-no-secrets-in-git.md``):
 
