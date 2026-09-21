@@ -1,0 +1,87 @@
+{
+  "description": "Frozen positive set: each row must fire the named rules hook. Do not rewrite in place; add new ids if the hook contract grows.",
+  "positive": [
+    {
+      "id": "fx-empty-str",
+      "state": "",
+      "expect_hook": "empty_state",
+      "expect_label": "human"
+    },
+    {
+      "id": "fx-empty-dict",
+      "state": {},
+      "expect_hook": "empty_state",
+      "expect_label": "human"
+    },
+    {
+      "id": "fx-empty-list",
+      "state": [],
+      "expect_hook": "empty_state",
+      "expect_label": "human"
+    },
+    {
+      "id": "fx-all-criteria-yes",
+      "state": {"criteria": {"isc1": "yes", "isc2": "yes", "isc3": "yes"}},
+      "expect_hook": "all_criteria_yes",
+      "expect_label": "halt"
+    },
+    {
+      "id": "fx-hard-stop",
+      "state": "Kill gate fired: live Jev call attempted. Hard stop.",
+      "expect_hook": "hard_stop",
+      "expect_label": "halt"
+    },
+    {
+      "id": "fx-verify-sh",
+      "state": "Next: run bash scripts/verify.sh and record the exit code.",
+      "expect_hook": "named_verify",
+      "expect_label": "deterministic"
+    },
+    {
+      "id": "fx-unittest",
+      "state": "Run python -m unittest discover -s tests -v",
+      "expect_hook": "named_verify",
+      "expect_label": "deterministic"
+    },
+    {
+      "id": "fx-open-url",
+      "state": "Open https://example.com/docs and read the install section.",
+      "expect_hook": "open_url_or_search",
+      "expect_label": "tool"
+    },
+    {
+      "id": "fx-search",
+      "state": "Search the repo for named verify scripts under scripts/.",
+      "expect_hook": "open_url_or_search",
+      "expect_label": "tool"
+    },
+    {
+      "id": "fx-draft-pr",
+      "state": "Draft the PR body summarizing gold N and class counts.",
+      "expect_hook": "draft_prose",
+      "expect_label": "llm"
+    },
+    {
+      "id": "fx-merge-main",
+      "state": "Merge the experiment branch to main.",
+      "expect_hook": "destructive_action",
+      "expect_label": "human"
+    },
+    {
+      "id": "fx-force-push",
+      "state": "Force-push rewritten history to origin/main.",
+      "expect_hook": "destructive_action",
+      "expect_label": "human"
+    }
+  ],
+  "negative_abstain": [
+    {
+      "id": "fx-ambiguous",
+      "state": "Decide whether the next edit belongs in hooks.py or README."
+    },
+    {
+      "id": "fx-unrelated-dict",
+      "state": {"step": "continue", "note": "no obvious rule"}
+    }
+  ]
+}
