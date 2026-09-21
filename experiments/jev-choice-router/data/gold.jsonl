@@ -1,0 +1,50 @@
+{"id": "001", "state": "Phase 5: run bash scripts/verify.sh from repo root and record the exit code.", "gold": "deterministic", "split": "calibrate", "source_tag": "gxp"}
+{"id": "002", "state": "Named verify for this experiment: bash experiments/jev-choice-router/verify.sh", "gold": "deterministic", "split": "holdout", "source_tag": "gxp"}
+{"id": "003", "state": "Re-run python -m unittest discover -s experiments/jev-choice-router/tests -v after the hook change.", "gold": "deterministic", "split": "calibrate", "source_tag": "harness"}
+{"id": "004", "state": "Execute bash scripts/eval-agent-code-quality-selftest.sh; do not write a trials/ tree.", "gold": "deterministic", "split": "holdout", "source_tag": "harness"}
+{"id": "005", "state": "Count data/gold.jsonl rows and assert N>=40 with all five Choice labels present.", "gold": "deterministic", "split": "calibrate", "source_tag": "iscp"}
+{"id": "006", "state": "Diff core/workflow.md against main and expect an empty patch (guardrail already coded).", "gold": "deterministic", "split": "holdout", "source_tag": "iscp"}
+{"id": "007", "state": "Apply the one-line comment typo already specified in the approved brief.", "gold": "deterministic", "split": "calibrate", "source_tag": "gxp"}
+{"id": "008", "state": "Run adapters/grok-build/sync/check-core.sh and keep the process exit code.", "gold": "deterministic", "split": "calibrate", "source_tag": "harness"}
+{"id": "009", "state": "Compute calibrate versus holdout counts from data/gold.jsonl with a stdlib script.", "gold": "deterministic", "split": "calibrate", "source_tag": "synthetic"}
+{"id": "010", "state": "Check options.json keys equal the five frozen Choice labels and match types.CHOICES.", "gold": "deterministic", "split": "calibrate", "source_tag": "iscp"}
+{"id": "011", "state": "Search core/docs/ for capability-scaffolding.md and open that file.", "gold": "tool", "split": "calibrate", "source_tag": "gxp"}
+{"id": "012", "state": "Look up the jev_classify tool descriptor options schema; do not invoke classify.", "gold": "tool", "split": "holdout", "source_tag": "gxp"}
+{"id": "013", "state": "Search the eval harness for hidden_tests paths under core/evals.", "gold": "tool", "split": "calibrate", "source_tag": "harness"}
+{"id": "014", "state": "Open https://docs.github.com/en/rest and retrieve the pulls list endpoint shape.", "gold": "tool", "split": "holdout", "source_tag": "harness"}
+{"id": "015", "state": "Search the brief for Ideal State Criteria lines tagged [guardrail].", "gold": "tool", "split": "calibrate", "source_tag": "iscp"}
+{"id": "016", "state": "Web-search public Stripe Checkout Session required fields for an adapter footnote.", "gold": "tool", "split": "holdout", "source_tag": "iscp"}
+{"id": "017", "state": "Open https://httpbin.org/get as a dry-run fetch of a public URL.", "gold": "tool", "split": "calibrate", "source_tag": "synthetic"}
+{"id": "018", "state": "Search the repo for CHOICE_ROUTER mentions in .env.example files.", "gold": "tool", "split": "calibrate", "source_tag": "gxp"}
+{"id": "019", "state": "Fetch the GitHub Actions log for the last verify.sh job (read-only).", "gold": "tool", "split": "calibrate", "source_tag": "harness"}
+{"id": "020", "state": "Search the public Python unittest docs for discovery flags.", "gold": "tool", "split": "calibrate", "source_tag": "synthetic"}
+{"id": "021", "state": "Draft the PR body summarizing gold N, class counts, and rules hook names.", "gold": "llm", "split": "calibrate", "source_tag": "gxp"}
+{"id": "022", "state": "Write a one-paragraph rationale for scaffolding tier standard on this spike.", "gold": "llm", "split": "holdout", "source_tag": "gxp"}
+{"id": "023", "state": "Draft a short explanation of why the harness selftest is Layer 2 only.", "gold": "llm", "split": "calibrate", "source_tag": "harness"}
+{"id": "024", "state": "Rewrite the eval-harness failure note as readable prose for the handoff.", "gold": "llm", "split": "holdout", "source_tag": "harness"}
+{"id": "025", "state": "Explain why ISC 2 (rules path zero model calls) is a guardrail not an outcome.", "gold": "llm", "split": "calibrate", "source_tag": "iscp"}
+{"id": "026", "state": "Draft the binary walk paragraph for the six ISC lines in the README.", "gold": "llm", "split": "holdout", "source_tag": "iscp"}
+{"id": "027", "state": "Draft commit message prose for adding the gold sheet.", "gold": "llm", "split": "calibrate", "source_tag": "synthetic"}
+{"id": "028", "state": "Write a README kill-gate paragraph in clear operator language.", "gold": "llm", "split": "calibrate", "source_tag": "gxp"}
+{"id": "029", "state": "Explain disagreement metrics we would report on a later holdout score.", "gold": "llm", "split": "calibrate", "source_tag": "harness"}
+{"id": "030", "state": "Draft a two-sentence operator note on CHOICE_ROUTER=0 meaning unused.", "gold": "llm", "split": "calibrate", "source_tag": "synthetic"}
+{"id": "031", "state": "No step context was provided. State object is empty.", "gold": "human", "split": "calibrate", "source_tag": "gxp"}
+{"id": "032", "state": "Merge the experiment branch to main.", "gold": "human", "split": "holdout", "source_tag": "gxp"}
+{"id": "033", "state": "Force-push rewritten history onto origin/main.", "gold": "human", "split": "calibrate", "source_tag": "harness"}
+{"id": "034", "state": "Delete the production Railway service after the spike.", "gold": "human", "split": "holdout", "source_tag": "harness"}
+{"id": "035", "state": "ISC 4 is underspecified; inventing extra criteria needs operator approval.", "gold": "human", "split": "calibrate", "source_tag": "iscp"}
+{"id": "036", "state": "Operator must approve before any live jev_classify (hard-usage hold).", "gold": "human", "split": "holdout", "source_tag": "iscp"}
+{"id": "037", "state": "Drop the production Postgres table named sessions.", "gold": "human", "split": "calibrate", "source_tag": "synthetic"}
+{"id": "038", "state": "Ambiguous next step: README edit versus waiting for operator review.", "gold": "human", "split": "calibrate", "source_tag": "gxp"}
+{"id": "039", "state": "State is only whitespace and a blank briefing packet.", "gold": "human", "split": "calibrate", "source_tag": "synthetic"}
+{"id": "040", "state": "Human review required: destructive delete of a sibling experiment is out of scope.", "gold": "human", "split": "holdout", "source_tag": "synthetic"}
+{"id": "041", "state": "All six Ideal State Criteria already recorded yes; no remaining step.", "gold": "halt", "split": "calibrate", "source_tag": "gxp"}
+{"id": "042", "state": "Kill gate: verify attempted a live Jev call; hard stop, do not continue.", "gold": "halt", "split": "holdout", "source_tag": "gxp"}
+{"id": "043", "state": "Named inverse applied: experiments/jev-choice-router/ deleted locally; stop.", "gold": "halt", "split": "calibrate", "source_tag": "harness"}
+{"id": "044", "state": "Selftest finished; all hidden_tests green; campaign criteria met.", "gold": "halt", "split": "holdout", "source_tag": "harness"}
+{"id": "045", "state": "ISC walk complete: 1-6 all yes. Halt.", "gold": "halt", "split": "calibrate", "source_tag": "iscp"}
+{"id": "046", "state": "Hard-usage hold remains on; CHOICE_ROUTER=0; work is done.", "gold": "halt", "split": "holdout", "source_tag": "iscp"}
+{"id": "047", "state": "Criteria met: gold N=50, five labels, calibrate/holdout present.", "gold": "halt", "split": "calibrate", "source_tag": "synthetic"}
+{"id": "048", "state": "Phase 5 binary walk recorded pass for every binding criterion.", "gold": "halt", "split": "calibrate", "source_tag": "gxp"}
+{"id": "049", "state": "Eval seed run complete; no further scoring steps scheduled.", "gold": "halt", "split": "calibrate", "source_tag": "harness"}
+{"id": "050", "state": "Operator closed the task; all ISC boxes checked yes.", "gold": "halt", "split": "calibrate", "source_tag": "iscp"}

@@ -1,0 +1,11 @@
+{
+  "question": "Which next-step mode should handle this step?",
+  "add_none": false,
+  "options": {
+    "deterministic": "code/rules can finish this step",
+    "tool": "call a named tool / retrieval",
+    "llm": "generative model needed (draft / reason / explain)",
+    "human": "stop for review",
+    "halt": "criteria met or hard stop"
+  }
+}
