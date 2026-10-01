@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Cross-bot job contract",
+  "description": "Machine-readable handoff between Grok Bot agents and Cursor. Not the workshop record in job-record.schema.json. Task types work, validate, and gate are adapted from TaskType in Intelligent-Internet/zenith zenith_harness/models.py (Apache-2.0); this repository does not vendor that project. Cross-field rules (acyclic depends_on, one work owner and one owner_bot per criterion, COMMIT only when clock is τ4, sealed criteria not pending) are enforced by scripts/validate-job-contract.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "job_id",
+    "owner_bot",
+    "repo",
+    "lane",
+    "protocol",
+    "isc",
+    "tasks",
+    "verify_cmds",
+    "evidence_refs",
+    "clock",
+    "decision",
+    "digest_id",
+    "pr_url",
+    "rating"
+  ],
+  "properties": {
+    "job_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable id for this cross-bot job."
+    },
+    "owner_bot": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Single bot id accountable for the job."
+    },
+    "repo": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Repository the job targets, owner/name or URL."
+    },
+    "lane": {
+      "type": "string",
+      "enum": ["cursor", "bot"],
+      "description": "Who executes the next step: a Cursor agent, or a Grok Bot."
+    },
+    "protocol": {
+      "type": "string",
+      "enum": ["gxp-light", "gxp-full", "iscp-thin", "iscp-plus"],
+      "description": "Workflow the receiving agent must follow."
+    },
+    "isc": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "tag", "text", "owner_bot", "status", "sealed_by"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "tag": {
+            "type": "string",
+            "enum": ["outcome", "guardrail", "hypothesis"]
+          },
+          "text": { "type": "string", "minLength": 1 },
+          "owner_bot": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Exactly one bot id. Not a list."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "passed", "failed", "unverifiable"]
+          },
+          "sealed_by": {
+            "description": "Gate task id that sealed this criterion, or null when unsealed.",
+            "type": ["string", "null"],
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "tasks": {
+      "type": "array",
+      "description": "type values follow zenith_harness/models.py TaskType (Apache-2.0): work does the change, validate checks it, gate seals criteria.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type", "depends_on", "covers_isc"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "type": {
+            "type": "string",
+            "enum": ["work", "validate", "gate"]
+          },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "covers_isc": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 },
+            "description": "Criterion ids this task addresses. Exactly one work task may cover each criterion. validate and gate may list the same id."
+          }
+        }
+      }
+    },
+    "verify_cmds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "clock": {
+      "type": "string",
+      "enum": ["τ1", "τ2", "τ4"],
+      "description": "τ1 task work, τ2 review, τ4 criteria-text change. COMMIT is legal only on τ4."
+    },
+    "decision": {
+      "type": "string",
+      "enum": ["none", "COMMIT", "HOLD", "REFUSE"],
+      "description": "COMMIT only with clock τ4. HOLD and REFUSE are legal on every clock. Otherwise none."
+    },
+    "digest_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Revision id for this contract document."
+    },
+    "pr_url": {
+      "type": "string",
+      "pattern": "^$|^https://\\S+$",
+      "description": "Pull request URL, or empty when none exists yet."
+    },
+    "rating": {
+      "description": "Phase 6 outcome, integer 1-10, or null before rating.",
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "maximum": 10
+    }
+  }
+}

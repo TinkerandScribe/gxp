@@ -1,0 +1,32 @@
+{
+  "job_id": "sealed-by-work",
+  "owner_bot": "grok-bot",
+  "repo": "TinkerandScribe/gxp",
+  "lane": "cursor",
+  "protocol": "gxp-full",
+  "isc": [
+    {
+      "id": "isc-1",
+      "tag": "outcome",
+      "text": "sealed_by names a gate task, not a work task.",
+      "owner_bot": "cursor-agent",
+      "status": "passed",
+      "sealed_by": "work-1"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "work-1",
+      "type": "work",
+      "depends_on": [],
+      "covers_isc": ["isc-1"]
+    }
+  ],
+  "verify_cmds": ["bash scripts/verify.sh"],
+  "evidence_refs": [],
+  "clock": "τ4",
+  "decision": "none",
+  "digest_id": "sealed-by-work",
+  "pr_url": "",
+  "rating": null
+}

@@ -1,0 +1,38 @@
+{
+  "job_id": "sealed-pending",
+  "owner_bot": "grok-bot",
+  "repo": "TinkerandScribe/gxp",
+  "lane": "cursor",
+  "protocol": "gxp-full",
+  "isc": [
+    {
+      "id": "isc-1",
+      "tag": "outcome",
+      "text": "A sealed criterion is not pending.",
+      "owner_bot": "cursor-agent",
+      "status": "pending",
+      "sealed_by": "gate-1"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "work-1",
+      "type": "work",
+      "depends_on": [],
+      "covers_isc": ["isc-1"]
+    },
+    {
+      "id": "gate-1",
+      "type": "gate",
+      "depends_on": ["work-1"],
+      "covers_isc": ["isc-1"]
+    }
+  ],
+  "verify_cmds": ["bash scripts/verify.sh"],
+  "evidence_refs": [],
+  "clock": "τ4",
+  "decision": "none",
+  "digest_id": "sealed-pending",
+  "pr_url": "",
+  "rating": null
+}
