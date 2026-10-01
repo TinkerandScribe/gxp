@@ -461,6 +461,29 @@ Before declaring done:
 The handoff is the artifact the next person (or next session) reads
 to pick up the work. Optimize for the reader, not for completeness.
 
+### Cross-bot job contract
+
+A handoff that crosses bots (Grok Bot to Cursor, or bot to bot) includes a
+job contract checked against `templates/job-contract.schema.json`
+(example: `templates/job-contract.example.json`). Validate with
+`python scripts/validate-job-contract.py <contract.json>`.
+
+The file records `job_id`, `owner_bot`, `repo`, `lane` (`cursor` or `bot`),
+`protocol` (`gxp-light`, `gxp-full`, `iscp-thin`, or `iscp-plus`), `isc[]`,
+`tasks[]`, `verify_cmds`, `evidence_refs`, `clock` (`τ1`, `τ2`, or `τ4`),
+`decision` (`none`, `COMMIT`, `HOLD`, or `REFUSE`), `digest_id`, `pr_url`,
+and `rating`. The validator requires an acyclic `depends_on` graph; exactly
+one owning `work` task and exactly one `owner_bot` per criterion (`validate`
+and `gate` may also list that criterion in `covers_isc`); `decision`
+`COMMIT` only when `clock` is `τ4` (a criteria-text change); `HOLD` and
+`REFUSE` on every clock; `decision` `none` otherwise; and no `pending`
+criterion whose `sealed_by` is set.
+
+Task types `work`, `validate`, and `gate` follow `TaskType` in
+[Intelligent-Internet/zenith](https://github.com/Intelligent-Internet/zenith)
+`zenith_harness/models.py` (Apache-2.0). This repo does not vendor that
+harness.
+
 ## Weekly refine
 
 

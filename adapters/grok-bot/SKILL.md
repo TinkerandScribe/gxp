@@ -60,6 +60,8 @@ Grok Bot is a **thin orchestrator**. In this conversation you may only:
 
 Emit a copy-paste handoff using `instructions/cursor-handoff.md`. After widget approval, stop talking about implementation details; wait for Cursor status and relay it thinly.
 
+When the job crosses bots, name `core/templates/job-contract.schema.json` in that handoff (example: `core/templates/job-contract.example.json`). The Cursor agent fills the contract and runs `scripts/validate-job-contract.py`. This chat does not write the file.
+
 ## Approval gates = widgets
 
 When core would pause (destructive ops, public copy, expanding scope, executing the handoff):
