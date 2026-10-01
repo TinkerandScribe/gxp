@@ -28,11 +28,14 @@ fleet/
 
 The committed `jobs/`, `failures/`, and `regressions/` directories are empty
 (`.gitkeep` only). `ratings.jsonl` and `em-records.jsonl` are empty files.
-`check.py` loads `scripts/validate-ratings-chain.py` from the gxp checkout
-(walk parents of the script, or `$GXP_REPO` after the script is copied to the
-box). It does not vendor that module. Job contracts are checked against
-`core/templates/job-contract.schema.json` in the same checkout: top-level
-`required` fields, stdlib only.
+`check.py` resolves `scripts/validate-ratings-chain.py` and
+`core/templates/job-contract.schema.json` in this order: `$GXP_REPO`, a
+parent directory that is a gxp checkout, then `bin/validate_ratings_chain.py`
+and `schema/job-contract.schema.json` beside the installed checker. Inside
+this repo the parent walk hits the checkout, so those store copies are not
+committed under `fleet/`. `bash fleet/install-to-store.sh` places them on the
+box. Job contracts are checked for the schema's top-level `required` fields,
+stdlib only.
 
 ## Who writes what
 
@@ -106,12 +109,14 @@ python3 fleet/bin/check.py
 python3 fleet/bin/check.py /home/box/shared/gxp
 ```
 
-On the box, after install, point at the checkout that holds the ratings
-validator and the job-contract schema:
+On the box, after `bash fleet/install-to-store.sh /home/box/shared/gxp`, the
+store copies are enough (no checkout required):
 
 ```
-GXP_REPO=/path/to/gxp python3 /home/box/shared/gxp/bin/check.py
+python3 /home/box/shared/gxp/bin/check.py
 ```
+
+`$GXP_REPO`, when set, still wins over the store copies.
 
 Exit 0 = clean; exit 1 prints a concise list of problems.
 

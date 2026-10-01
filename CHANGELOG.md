@@ -6,6 +6,16 @@ package as a whole (core + adapters + install/verify scripts).
 
 ## [Unreleased]
 
+### Changed
+
+- **Fleet checker without a checkout** — `fleet/install-to-store.sh` copies
+  `scripts/validate-ratings-chain.py` to `bin/validate_ratings_chain.py` and
+  `core/templates/job-contract.schema.json` to `schema/`. `fleet/bin/check.py`
+  resolves `$GXP_REPO`, then a parent checkout, then those store copies.
+  `scripts/verify.sh` installs into a temp directory with no repo on the
+  parent path and expects exit 0. Grok Bot `SKILL.md` and Cursor `rule.mdc`
+  mention the acyclic one-owner plan check and the independent final reviewer.
+
 ### Added
 
 - **Fleet records checker** — `fleet/` empty store layout (`jobs/`, `failures/`,
