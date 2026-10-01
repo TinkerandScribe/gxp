@@ -1,0 +1,1 @@
+Positive fixture failure capture.
