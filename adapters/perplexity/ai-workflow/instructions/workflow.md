@@ -6,7 +6,7 @@
 -->
 # Perplexity-Optimized Workflow (v1.1)
 
-> **Last synced from core:** 6aa10d204117dae8fa77d9e3daabe914f3455d7e (2026-08-30)
+> **Last synced from core:** feaf907a88eb813755e2230a6b806efaa961be9f (2026-10-01)
 > This file is generated from `core/workflow.md` plus the perplexity delta. Tool-specific notes are in the delta; shared methodology is core. Run `../sync/check-core.sh` regularly.
 
 This is a **Perplexity-optimized** adaptation of the core AI Workflow methodology, oriented toward research and handoff rather than in-repo implementation.
@@ -227,8 +227,24 @@ named verify), not human page-count.
 1. **Locatable** — the change site is greppable from the Ideal State
    Criterion text.
 2. **One node** — one criterion maps to one node/module, not a shotgun of
-   unrelated files.
+   unrelated files. When the plan is a **graph of nodes** (nodes plus
+   dependencies), this check is structural and binding before Phase 3:
+   - **Acyclic** — walking dependencies never returns to a node already
+     on the path. A cycle fails the plan.
+   - **Exact ownership** — every Ideal State Criterion has exactly one
+     owning node. Uncovered (zero owners) and double-owned (two or more
+     owners) both fail the plan.
+   A single-node brief has no edge to cycle; every criterion is still
+   owned by that one node. Record the check in the brief. Do not add a
+   runtime, service, or dependency to enforce it.
 3. **Named verify** — the verify command is named in the brief.
+
+> **Attribution:** acyclic exact-ownership plans (this check) and the
+> independent final reviewer (Phase 5) are paraphrased from
+> [Intelligent-Internet/zenith](https://github.com/Intelligent-Internet/zenith)
+> (Apache-2.0): `check_acyclic` / `check_coverage` in `task_validation.py`,
+> and the bundled terminal-reviewer and validator prompts. Wording is
+> GXP's; that harness is not vendored here.
 
 **Split / decompose** only when an agent would have to load unrelated
 nodes to prove one criterion. Do not split for aesthetic line count.
@@ -308,6 +324,31 @@ Ideal State Criterion and confirm it is met.
 Before Phase 6, every binding Ideal State Criterion has a recorded
 pass/fail. Smoke / verify exit 0 is necessary, not sufficient. If any
 binding ISC is unmet, Phase 5 fails.
+
+### Independent final reviewer
+
+After implementation, a reviewer checks the finished result against the
+**original request** and the binding Ideal State Criteria. The reviewer
+gathers its own evidence (commands, outputs, files read). Implementer
+notes, worker reports, ratings, handoffs, and other mission artifacts
+are **leads, not proof**. A criterion passes only when that fresh
+evidence shows it.
+
+The reviewer leaves the product, tests, and fixtures as they are. The
+same session may review only by re-checking the workspace and the
+original request, without treating its own write-up as evidence. Prefer
+a separate reviewer when one is available.
+
+A binding criterion that **fails**, or that fresh evidence cannot
+verify, is not a pass. Copy `templates/failure-capture.md` into
+`failures/` and set `failure_ref` on the run's `ratings.jsonl` line.
+That is the existing pair of conventions (`failures/README.md`, Phase 6).
+One capture file may cover several criteria from the same run when they
+share a cause; distinct failures stay in distinct files. Do not add a
+regressions directory, MCP server, persona, or dependency for this role.
+
+The reviewer does not replace the ladder below. Deterministic checks
+still run first. The attribution line is under Standing checks (Phase 2).
 
 Order of checks:
 
