@@ -1,0 +1,46 @@
+{
+  "job_id": "cycle",
+  "owner_bot": "grok-bot",
+  "repo": "TinkerandScribe/gxp",
+  "lane": "cursor",
+  "protocol": "gxp-full",
+  "isc": [
+    {
+      "id": "isc-1",
+      "tag": "outcome",
+      "text": "First criterion in a cyclic task graph.",
+      "owner_bot": "cursor-agent",
+      "status": "pending",
+      "sealed_by": null
+    },
+    {
+      "id": "isc-2",
+      "tag": "outcome",
+      "text": "Second criterion in a cyclic task graph.",
+      "owner_bot": "cursor-agent",
+      "status": "pending",
+      "sealed_by": null
+    }
+  ],
+  "tasks": [
+    {
+      "id": "work-1",
+      "type": "work",
+      "depends_on": ["work-2"],
+      "covers_isc": ["isc-1"]
+    },
+    {
+      "id": "work-2",
+      "type": "work",
+      "depends_on": ["work-1"],
+      "covers_isc": ["isc-2"]
+    }
+  ],
+  "verify_cmds": ["bash scripts/verify.sh"],
+  "evidence_refs": [],
+  "clock": "τ1",
+  "decision": "none",
+  "digest_id": "cycle",
+  "pr_url": "",
+  "rating": null
+}

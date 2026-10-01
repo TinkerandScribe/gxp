@@ -1,0 +1,32 @@
+{
+  "job_id": "refuse-on-tau2",
+  "owner_bot": "grok-bot",
+  "repo": "TinkerandScribe/gxp",
+  "lane": "bot",
+  "protocol": "iscp-plus",
+  "isc": [
+    {
+      "id": "isc-1",
+      "tag": "guardrail",
+      "text": "A review clock may REFUSE the handoff.",
+      "owner_bot": "reviewer-bot",
+      "status": "failed",
+      "sealed_by": null
+    }
+  ],
+  "tasks": [
+    {
+      "id": "work-1",
+      "type": "work",
+      "depends_on": [],
+      "covers_isc": ["isc-1"]
+    }
+  ],
+  "verify_cmds": ["bash scripts/verify.sh"],
+  "evidence_refs": [],
+  "clock": "τ2",
+  "decision": "REFUSE",
+  "digest_id": "refuse-on-tau2",
+  "pr_url": "",
+  "rating": null
+}

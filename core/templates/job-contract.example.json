@@ -1,0 +1,58 @@
+{
+  "job_id": "example-cross-bot-job",
+  "owner_bot": "grok-bot",
+  "repo": "TinkerandScribe/gxp",
+  "lane": "cursor",
+  "protocol": "gxp-full",
+  "isc": [
+    {
+      "id": "isc-schema",
+      "tag": "outcome",
+      "text": "core/templates/job-contract.schema.json defines the cross-bot job contract fields.",
+      "owner_bot": "cursor-agent",
+      "status": "passed",
+      "sealed_by": "gate-contract"
+    },
+    {
+      "id": "isc-commit-clock",
+      "tag": "guardrail",
+      "text": "decision COMMIT is present only when clock is τ4.",
+      "owner_bot": "cursor-agent",
+      "status": "passed",
+      "sealed_by": "gate-contract"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "work-schema",
+      "type": "work",
+      "depends_on": [],
+      "covers_isc": ["isc-schema"]
+    },
+    {
+      "id": "work-commit-clock",
+      "type": "work",
+      "depends_on": ["work-schema"],
+      "covers_isc": ["isc-commit-clock"]
+    },
+    {
+      "id": "validate-contract",
+      "type": "validate",
+      "depends_on": ["work-schema", "work-commit-clock"],
+      "covers_isc": ["isc-schema", "isc-commit-clock"]
+    },
+    {
+      "id": "gate-contract",
+      "type": "gate",
+      "depends_on": ["validate-contract"],
+      "covers_isc": ["isc-schema", "isc-commit-clock"]
+    }
+  ],
+  "verify_cmds": ["bash scripts/verify.sh"],
+  "evidence_refs": ["core/templates/job-contract.example.json"],
+  "clock": "τ4",
+  "decision": "COMMIT",
+  "digest_id": "example-cross-bot-job-r1",
+  "pr_url": "",
+  "rating": 8
+}

@@ -1,0 +1,32 @@
+{
+  "job_id": "commit-on-tau1",
+  "owner_bot": "grok-bot",
+  "repo": "TinkerandScribe/gxp",
+  "lane": "bot",
+  "protocol": "iscp-thin",
+  "isc": [
+    {
+      "id": "isc-1",
+      "tag": "outcome",
+      "text": "Task-work handoff must not use decision COMMIT.",
+      "owner_bot": "worker-bot",
+      "status": "pending",
+      "sealed_by": null
+    }
+  ],
+  "tasks": [
+    {
+      "id": "work-1",
+      "type": "work",
+      "depends_on": [],
+      "covers_isc": ["isc-1"]
+    }
+  ],
+  "verify_cmds": ["bash scripts/verify.sh"],
+  "evidence_refs": [],
+  "clock": "τ1",
+  "decision": "COMMIT",
+  "digest_id": "commit-on-tau1",
+  "pr_url": "",
+  "rating": null
+}

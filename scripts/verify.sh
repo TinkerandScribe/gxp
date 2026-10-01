@@ -83,8 +83,33 @@ if ! "$PY" scripts/generate-adapter-workflows.py --check; then
 fi
 
 echo ""
+echo "6. Job contract (schema, acyclic graph, one owner, COMMIT/clock, sealed)"
+echo "   - scripts/validate-job-contract.py (python: $PY)"
+if ! "$PY" scripts/validate-job-contract.py \
+  --positive core/templates/job-contract.example.json \
+  --positive scripts/fixtures/job-contract/hold-on-tau1.json \
+  --positive scripts/fixtures/job-contract/hold-on-tau4.json \
+  --positive scripts/fixtures/job-contract/refuse-on-tau2.json \
+  --positive scripts/fixtures/job-contract/refuse-on-tau4.json \
+  --positive scripts/fixtures/job-contract/none-on-tau1.json \
+  --positive scripts/fixtures/job-contract/none-on-tau4.json \
+  --negative schema=scripts/fixtures/job-contract/bad-lane.json \
+  --negative cycle=scripts/fixtures/job-contract/cycle.json \
+  --negative isc_work_owner=scripts/fixtures/job-contract/two-work-owners.json \
+  --negative isc_work_owner=scripts/fixtures/job-contract/zero-work-owner.json \
+  --negative isc_owner_bot=scripts/fixtures/job-contract/split-owner-bot.json \
+  --negative decision_clock=scripts/fixtures/job-contract/commit-on-tau1.json \
+  --negative decision_clock=scripts/fixtures/job-contract/commit-on-tau2.json \
+  --negative sealed_pending=scripts/fixtures/job-contract/sealed-pending.json \
+  --negative sealed_ref=scripts/fixtures/job-contract/sealed-by-work.json
+then
+  echo "     FAIL: job contract validator"
+  fail=1
+fi
+
+echo ""
 if [ "$fail" -ne 0 ]; then
-  echo "=== FAIL: missing required files, adapter drift, gen-check drift, or gxp-refine selftest (see above) ==="
+  echo "=== FAIL: missing required files, adapter drift, gen-check drift, gxp-refine selftest, or job contract (see above) ==="
   exit 1
 fi
-echo "=== PASS: required files present, adapter sync checks clean, gen-check clean, gxp-refine selftest clean ==="
+echo "=== PASS: required files present, adapter sync checks clean, gen-check clean, gxp-refine selftest clean, job contract clean ==="

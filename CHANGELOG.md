@@ -8,6 +8,11 @@ package as a whole (core + adapters + install/verify scripts).
 
 ### Added
 
+- **Cross-bot job contract** — `core/templates/job-contract.schema.json`, a valid
+  example, and `scripts/validate-job-contract.py` (schema, acyclic task graph,
+  one `work` owner and one `owner_bot` per criterion, `COMMIT` only on clock
+  `τ4`, sealed criteria not `pending`). `scripts/verify.sh` runs the example
+  and negative fixtures. Phase 8 names the contract.
 - **`adapters/grok-bot/`** — dedicated Grok Bot adapter (independent of chat `gxp` and
   Build `gxp-build`): thin chat (brief/criteria/status only), widget approval gates
   (not `/plan`), Cursor cloud agent or local `cursor-agent` implementation, mechanical

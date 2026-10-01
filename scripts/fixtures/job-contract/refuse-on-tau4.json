@@ -1,0 +1,32 @@
+{
+  "job_id": "refuse-on-tau4",
+  "owner_bot": "grok-bot",
+  "repo": "TinkerandScribe/gxp",
+  "lane": "cursor",
+  "protocol": "gxp-full",
+  "isc": [
+    {
+      "id": "isc-1",
+      "tag": "guardrail",
+      "text": "A criteria-text clock may REFUSE instead of COMMIT.",
+      "owner_bot": "cursor-agent",
+      "status": "failed",
+      "sealed_by": null
+    }
+  ],
+  "tasks": [
+    {
+      "id": "work-1",
+      "type": "work",
+      "depends_on": [],
+      "covers_isc": ["isc-1"]
+    }
+  ],
+  "verify_cmds": ["bash scripts/verify.sh"],
+  "evidence_refs": [],
+  "clock": "τ4",
+  "decision": "REFUSE",
+  "digest_id": "refuse-on-tau4",
+  "pr_url": "",
+  "rating": null
+}

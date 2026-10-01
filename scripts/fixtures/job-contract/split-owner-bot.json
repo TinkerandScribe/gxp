@@ -1,0 +1,32 @@
+{
+  "job_id": "split-owner-bot",
+  "owner_bot": "grok-bot",
+  "repo": "TinkerandScribe/gxp",
+  "lane": "bot",
+  "protocol": "gxp-full",
+  "isc": [
+    {
+      "id": "isc-1",
+      "tag": "outcome",
+      "text": "This criterion names two bots in one field.",
+      "owner_bot": "worker-a, worker-b",
+      "status": "pending",
+      "sealed_by": null
+    }
+  ],
+  "tasks": [
+    {
+      "id": "work-1",
+      "type": "work",
+      "depends_on": [],
+      "covers_isc": ["isc-1"]
+    }
+  ],
+  "verify_cmds": ["bash scripts/verify.sh"],
+  "evidence_refs": [],
+  "clock": "τ1",
+  "decision": "none",
+  "digest_id": "split-owner-bot",
+  "pr_url": "",
+  "rating": null
+}

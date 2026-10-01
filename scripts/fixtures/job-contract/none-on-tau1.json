@@ -1,0 +1,32 @@
+{
+  "job_id": "none-on-tau1",
+  "owner_bot": "grok-bot",
+  "repo": "TinkerandScribe/gxp",
+  "lane": "cursor",
+  "protocol": "gxp-light",
+  "isc": [
+    {
+      "id": "isc-1",
+      "tag": "outcome",
+      "text": "Task-work handoff records decision none.",
+      "owner_bot": "cursor-agent",
+      "status": "pending",
+      "sealed_by": null
+    }
+  ],
+  "tasks": [
+    {
+      "id": "work-1",
+      "type": "work",
+      "depends_on": [],
+      "covers_isc": ["isc-1"]
+    }
+  ],
+  "verify_cmds": ["bash scripts/verify.sh"],
+  "evidence_refs": [],
+  "clock": "τ1",
+  "decision": "none",
+  "digest_id": "none-on-tau1",
+  "pr_url": "",
+  "rating": null
+}

@@ -1,0 +1,38 @@
+{
+  "job_id": "two-work-owners",
+  "owner_bot": "grok-bot",
+  "repo": "TinkerandScribe/gxp",
+  "lane": "cursor",
+  "protocol": "gxp-full",
+  "isc": [
+    {
+      "id": "isc-1",
+      "tag": "outcome",
+      "text": "This criterion is listed by two work tasks.",
+      "owner_bot": "cursor-agent",
+      "status": "pending",
+      "sealed_by": null
+    }
+  ],
+  "tasks": [
+    {
+      "id": "work-1",
+      "type": "work",
+      "depends_on": [],
+      "covers_isc": ["isc-1"]
+    },
+    {
+      "id": "work-2",
+      "type": "work",
+      "depends_on": ["work-1"],
+      "covers_isc": ["isc-1"]
+    }
+  ],
+  "verify_cmds": ["bash scripts/verify.sh"],
+  "evidence_refs": [],
+  "clock": "τ1",
+  "decision": "none",
+  "digest_id": "two-work-owners",
+  "pr_url": "",
+  "rating": null
+}
