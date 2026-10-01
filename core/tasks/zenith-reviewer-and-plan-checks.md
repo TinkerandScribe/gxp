@@ -82,11 +82,9 @@ None. Public methodology text; no production system.
 
 ## Handoff notes
 
-To fill in at the end:
-
-- What changed:
-- What was verified (and how):
-- Explicitly not done / parked / follow-ups:
-- Approval gates hit and outcomes:
-- New `failures/` entries or rules:
-- Rating entry reference:
+- What changed: `core/workflow.md` Standing checks (**One node** graph: acyclic, exactly one owning node per Ideal State Criterion) and Phase 5 **Independent final reviewer** (fresh evidence; worker reports are leads, not proof; failed or unverifiable binding criteria use `failures/` + `failure_ref`). One attribution blockquote names Intelligent-Internet/zenith (Apache-2.0). Chat workflows regenerated for claude, chatgpt, grok, and perplexity.
+- What was verified (and how): `bash scripts/verify.sh` exit 0 (adapter `check-core` scripts, gxp-refine selftest, `generate-adapter-workflows.py --check`). Criterion greps on `core/workflow.md`. `git diff --name-only origin/main` is the brief, `core/workflow.md`, and the four generated workflows — no `experiments/jev-*`, no dependency manifest, no grok-bot / cursor `rule.mdc` / cowork skill edits.
+- Explicitly not done / parked / follow-ups: no runtime. Grok Bot `SKILL.md` still summarizes the old three standing checks; parity did not require an edit. Cursor `rule.mdc` is unchanged for the same reason. The Cursor paste block inside `core/workflow.md` carries the new sentences; generated adapters skip the Cursor usage section.
+- Approval gates hit and outcomes: none.
+- New `failures/` entries or rules: none (no failed criterion).
+- Rating entry reference: `core/ratings.jsonl` task `zenith-reviewer-and-plan-checks`.
