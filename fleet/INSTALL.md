@@ -1,51 +1,48 @@
 # Install the fleet checker on the box
 
-Copy the checker and the empty directory layout from a gxp checkout onto
-`/home/box/shared/gxp/`. Leave existing ledgers and captures in place.
+Copy the checker onto `/home/box/shared/gxp/` so it runs with no gxp checkout
+on the machine. Leave existing ledgers and captures in place.
 
 `ratings.jsonl`, `em-records.jsonl`, `jobs/`, `failures/`, and `regressions/`
-on the box are live records. This sync never replaces those paths when they
-already exist, and it never deletes files under them.
+on the box are live records. The installer never replaces those paths when
+they already exist, and it never deletes files under them.
 
-From the checkout:
+From a gxp checkout:
 
 ```bash
-STORE=/home/box/shared/gxp
-REPO="$(pwd)"
+bash fleet/install-to-store.sh /home/box/shared/gxp
+```
 
-mkdir -p "$STORE/bin" "$STORE/jobs" "$STORE/failures" "$STORE/regressions"
+That script copies:
 
-# Checker is replaced; it reads the ratings validator and job-contract schema
-# from this checkout via GXP_REPO (see below).
-install -m 775 fleet/bin/check.py "$STORE/bin/check.py"
+| From the checkout | Onto the store |
+|---|---|
+| `fleet/bin/check.py` | `bin/check.py` |
+| `scripts/validate-ratings-chain.py` | `bin/validate_ratings_chain.py` |
+| `core/templates/job-contract.schema.json` | `schema/job-contract.schema.json` |
+| `fleet/README.md`, `fleet/INSTALL.md` | `README.md`, `INSTALL.md` |
 
-# Docs may be refreshed. They are not ledgers.
-install -m 664 fleet/README.md "$STORE/README.md"
-install -m 664 fleet/INSTALL.md "$STORE/INSTALL.md"
+Tool files are replaced on each sync. Ledgers are created only when missing:
 
-# Create empty ledgers only when the box does not have them yet.
-if [ ! -e "$STORE/ratings.jsonl" ]; then
-  : > "$STORE/ratings.jsonl"
-  chmod 664 "$STORE/ratings.jsonl"
-fi
-if [ ! -e "$STORE/em-records.jsonl" ]; then
-  : > "$STORE/em-records.jsonl"
-  chmod 664 "$STORE/em-records.jsonl"
-fi
-
-chmod 2775 "$STORE" "$STORE/bin" "$STORE/jobs" "$STORE/failures" "$STORE/regressions"
+```bash
+# equivalent ledger guard inside the script
+if [ ! -e "$STORE/ratings.jsonl" ]; then : > "$STORE/ratings.jsonl"; fi
+if [ ! -e "$STORE/em-records.jsonl" ]; then : > "$STORE/em-records.jsonl"; fi
 ```
 
 Do not `cp -a fleet/. "$STORE/"` and do not `rsync -a --delete fleet/ "$STORE/"`.
 Both would copy this repo's empty `ratings.jsonl` and `em-records.jsonl` over
-the box ledgers.
+the box ledgers, and neither copies the validator or the schema into the store.
 
-The installed `bin/check.py` no longer sits next to a vendored
-`validate-ratings-chain.py`. Point it at the checkout:
+`check.py` resolves the ratings validator and the job-contract schema in this
+order: `$GXP_REPO`, a parent directory that is a gxp checkout, then
+`bin/validate_ratings_chain.py` and `schema/job-contract.schema.json` in the
+store. After this install, the store copies are enough:
 
 ```bash
-GXP_REPO="$REPO" python3 "$STORE/bin/check.py" "$STORE"
+python3 /home/box/shared/gxp/bin/check.py
 ```
 
-Inside the checkout, `python3 fleet/bin/check.py` finds the repo by walking
-parent directories, so `GXP_REPO` is unnecessary there.
+Unset `GXP_REPO` on the box unless you intend a checkout to win. Inside the
+gxp repo, `python3 fleet/bin/check.py` still uses the checkout via the parent
+walk, so `fleet/` does not commit a second copy of the validator or the schema.

@@ -78,6 +78,8 @@ Do **not** instruct the user:
 
 The Cursor cloud agent or local `cursor-agent` must run project verify (for this repo: `bash scripts/verify.sh`) and walk each binding criterion with a tool check. Grok Bot only records whether evidence arrived and whether criteria passed.
 
+Phase 5 on that implementing agent includes an independent final reviewer. The reviewer checks the finished result against the original request and the binding Ideal State Criteria, gathers its own evidence, and treats implementer notes, reports, and handoffs as leads, not proof.
+
 Maintainers still have `adapters/grok-bot/sync/check-core.sh` for CI; that is not an operator chore in this chat.
 
 ## Lightweight vs full
@@ -92,7 +94,7 @@ Grok Bot still only writes the brief and criteria. Cursor still does Phase 0 rea
 When the task is **code**, include these three standing checks in the brief so the Cursor agent can use them. Grok Bot still does not pull repo files to edit them.
 
 1. **Locatable** — the change site is greppable from the Ideal State Criterion text.
-2. **One node** — one criterion maps to one node/module, not a shotgun of unrelated files.
+2. **One node** — one criterion maps to one node/module, not a shotgun of unrelated files. When the plan is a graph of nodes, it is acyclic and every Ideal State Criterion has exactly one owning node (uncovered and double-owned both fail).
 3. **Named verify** — the verify command is named in the brief.
 
 Split only when an agent would have to load unrelated nodes to prove one criterion; do not split for aesthetic line count. Performance is an Ideal State Criterion only when a numeric target already exists (latency, cost, or memory).

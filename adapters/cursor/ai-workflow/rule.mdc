@@ -99,13 +99,19 @@ delete host system prompts/skills.
    `[hypothesis]` (only outcome/guardrail are binding).
 2. Self-eval gate: completeness, ambiguity, scope, verification,
    approval gates, criteria quality, anti-gaming.
+   **One node** for code: one criterion maps to one node/module. When the
+   plan is a graph of nodes, it must be acyclic, and every Ideal State
+   Criterion has exactly one owning node (uncovered and double-owned both fail).
 3. Implement, keeping the diff focused on the brief.
 4. Anti-loop: after two failed attempts on the same approach, stop,
    reframe (restate the problem + name a discarded assumption), then
    switch strategy — no minor-variant third try without that reframe.
 5. Verify — run commands from `.ai/PROGRAM.md` (or `core/PROGRAM.template.md`
    in gxp) first; then deterministic checks (type/lint/test/build),
-   behavioral, then subjective. Honor the **Verification ladder** below.
+   behavioral, then subjective. An **independent final reviewer** checks the
+   finished result against the original request and the binding Ideal State
+   Criteria, gathers its own evidence, and treats implementer notes, reports,
+   and mission artifacts as leads, not proof. Honor the **Verification ladder** below.
 6. Append one JSON object per line to `.ai/ratings.jsonl` (in gxp:
    `core/ratings.jsonl` for work whose subject is this repo). Use fields from
    the schema line (`ts`, `task`, `brief`, `criteria_met`, `criteria_total`,

@@ -110,6 +110,7 @@ fi
 echo ""
 echo "7. Fleet store check (empty layout, positive fixture, negative fixtures)"
 echo "   - fleet/bin/check.py (python: $PY)"
+unset GXP_REPO
 if [ -e fleet/bin/validate_ratings_chain.py ] || [ -e fleet/bin/validate-ratings-chain.py ]; then
   echo "     FAIL: ratings validator must be imported from scripts/, not vendored under fleet/bin"
   fail=1
@@ -149,6 +150,34 @@ fleet_neg "!= folder name" scripts/fixtures/fleet/job-id-mismatch
 fleet_neg "missing required field" scripts/fixtures/fleet/missing-required
 fleet_neg "blank.md: empty" scripts/fixtures/fleet/empty-md
 fleet_neg "not a .md file" scripts/fixtures/fleet/non-md
+
+echo "   - installed checker, no checkout on the parent path, GXP_REPO unset"
+install_tmp=$(mktemp -d)
+if ! (
+  set -euo pipefail
+  store="$install_tmp/store"
+  bash fleet/install-to-store.sh "$store"
+  "$PY" -c '
+import sys
+from pathlib import Path
+script = Path(sys.argv[1]).resolve()
+for candidate in script.parents:
+    if (candidate / "scripts" / "validate-ratings-chain.py").is_file():
+        raise SystemExit("parent walk reaches a checkout at %s" % candidate)
+' "$store/bin/check.py"
+  env -u GXP_REPO "$PY" "$store/bin/check.py" "$store"
+  printf 'sentinel-ledger\n' > "$store/ratings.jsonl"
+  bash fleet/install-to-store.sh "$store"
+  grep -qF 'sentinel-ledger' "$store/ratings.jsonl"
+  test -f "$store/bin/validate_ratings_chain.py"
+  test -f "$store/schema/job-contract.schema.json"
+); then
+  echo "     FAIL: installed fleet checker (temp store without a checkout)"
+  fail=1
+else
+  echo "     OK installed empty store"
+fi
+rm -rf "$install_tmp"
 
 echo ""
 if [ "$fail" -ne 0 ]; then

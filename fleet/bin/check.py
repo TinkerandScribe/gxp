@@ -5,12 +5,14 @@ Usage: python3 fleet/bin/check.py [STORE_ROOT]
   STORE_ROOT defaults to the parent of this bin/ directory
   (fleet/ in the repo, /home/box/shared/gxp after install).
 
-The ratings hash chain is scripts/validate-ratings-chain.py from the gxp
-checkout. Resolution: walk parents of this file, or $GXP_REPO when the
-script has been copied onto the box. Job contracts are checked for the
-top-level "required" fields of core/templates/job-contract.schema.json.
-There is no vendored copy of the ratings validator and no third-party
-schema library.
+The ratings hash chain is scripts/validate-ratings-chain.py. Job contracts
+are checked for the top-level "required" fields of
+core/templates/job-contract.schema.json. Both files are resolved in this
+order: $GXP_REPO, a parent directory that is a gxp checkout, then the
+store copies bin/validate_ratings_chain.py and schema/job-contract.schema.json.
+Inside this repo the parent walk hits the checkout. An installed store with
+no checkout uses the copies fleet/install-to-store.sh places beside the
+checker. Stdlib only; the repo tree does not vendor those copies under fleet/.
 
 Checks:
   1. every line of every *.jsonl under the store parses as a JSON object
@@ -37,20 +39,47 @@ HERE = Path(__file__).resolve().parent
 IGNORED = {".gitkeep", ".keep"}
 RATINGS_REL = Path("scripts") / "validate-ratings-chain.py"
 SCHEMA_REL = Path("core") / "templates" / "job-contract.schema.json"
+STORE_VALIDATOR_NAME = "validate_ratings_chain.py"
+STORE_SCHEMA_REL = Path("schema") / "job-contract.schema.json"
 
 
-def find_repo(start: Path) -> Path | None:
-    env = os.environ.get("GXP_REPO")
-    if env:
-        return Path(env).expanduser().resolve()
-    for candidate in (start, *start.parents):
-        if (candidate / RATINGS_REL).is_file():
-            return candidate
+def _first_file(candidates: list[Path]) -> Path | None:
+    seen: set[Path] = set()
+    for path in candidates:
+        resolved = path.resolve()
+        if resolved in seen:
+            continue
+        seen.add(resolved)
+        if resolved.is_file():
+            return resolved
     return None
 
 
-def load_ratings_validator(repo: Path):
-    path = repo / RATINGS_REL
+def _checkout_roots() -> list[Path]:
+    """$GXP_REPO first, then parents of this file (nearest first)."""
+    roots: list[Path] = []
+    env = os.environ.get("GXP_REPO")
+    if env:
+        roots.append(Path(env).expanduser().resolve())
+    roots.extend(HERE.parents)
+    return roots
+
+
+def resolve_validator(store: Path) -> Path | None:
+    candidates = [root / RATINGS_REL for root in _checkout_roots()]
+    candidates.append(HERE / STORE_VALIDATOR_NAME)
+    candidates.append(store / "bin" / STORE_VALIDATOR_NAME)
+    return _first_file(candidates)
+
+
+def resolve_schema(store: Path) -> Path | None:
+    candidates = [root / SCHEMA_REL for root in _checkout_roots()]
+    candidates.append(HERE.parent / STORE_SCHEMA_REL)
+    candidates.append(store / STORE_SCHEMA_REL)
+    return _first_file(candidates)
+
+
+def load_ratings_validator(path: Path):
     spec = importlib.util.spec_from_file_location("gxp_validate_ratings_chain", path)
     if spec is None or spec.loader is None:
         raise ImportError(f"cannot load {path}")
@@ -107,23 +136,25 @@ def check_ratings_chain(root: Path, bad_jsonl: set[Path], errs: list[str], vrc) 
     return out.getvalue().strip()
 
 
-def load_required_fields(repo: Path, errs: list[str]) -> tuple[list[str] | None, str]:
-    path = repo / SCHEMA_REL
+def load_required_fields(path: Path | None, errs: list[str]) -> tuple[list[str] | None, str]:
     mode = "basic required-field check (stdlib)"
-    if not path.is_file():
-        errs.append(f"{SCHEMA_REL.as_posix()}: missing from repo {repo}")
+    if path is None:
+        errs.append(
+            "schema: cannot find core/templates/job-contract.schema.json "
+            "(tried $GXP_REPO, parent directories, and schema/job-contract.schema.json)"
+        )
         return None, "missing schema"
     try:
         schema = json.loads(path.read_text(encoding="utf-8-sig"))
     except (OSError, json.JSONDecodeError) as exc:
-        errs.append(f"{SCHEMA_REL.as_posix()}: unreadable ({exc})")
+        errs.append(f"{path}: unreadable ({exc})")
         return None, "broken schema"
     if not isinstance(schema, dict):
-        errs.append(f"{SCHEMA_REL.as_posix()}: schema is not a JSON object")
+        errs.append(f"{path}: schema is not a JSON object")
         return None, "broken schema"
     required = schema.get("required", [])
     if not isinstance(required, list) or not all(isinstance(item, str) for item in required):
-        errs.append(f"{SCHEMA_REL.as_posix()}: required is not a list of strings")
+        errs.append(f"{path}: required is not a list of strings")
         return None, "broken schema"
     return required, mode
 
@@ -191,25 +222,19 @@ def check_md_dirs(root: Path, errs: list[str]) -> int:
 def main(argv: list[str]) -> int:
     root = Path(argv[1]).resolve() if len(argv) > 1 else HERE.parent
     errs: list[str] = []
-    repo = find_repo(HERE)
     vrc = None
-    required = None
-    mode = "unavailable"
-    if repo is None:
+    validator_path = resolve_validator(root)
+    if validator_path is None:
         errs.append(
             "repo: cannot find scripts/validate-ratings-chain.py "
-            "(set GXP_REPO to a gxp checkout)"
+            "(tried $GXP_REPO, parent directories, and bin/validate_ratings_chain.py)"
         )
     else:
-        ratings_path = repo / RATINGS_REL
-        if not ratings_path.is_file():
-            errs.append(f"repo: {ratings_path} missing")
-        else:
-            try:
-                vrc = load_ratings_validator(repo)
-            except Exception as exc:
-                errs.append(f"repo: failed to load {RATINGS_REL.as_posix()} ({exc})")
-        required, mode = load_required_fields(repo, errs)
+        try:
+            vrc = load_ratings_validator(validator_path)
+        except Exception as exc:
+            errs.append(f"repo: failed to load {validator_path} ({exc})")
+    required, mode = load_required_fields(resolve_schema(root), errs)
 
     bad = check_jsonl(root, errs)
     if vrc is None:
