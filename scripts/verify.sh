@@ -108,8 +108,51 @@ then
 fi
 
 echo ""
+echo "7. Fleet store check (empty layout, positive fixture, negative fixtures)"
+echo "   - fleet/bin/check.py (python: $PY)"
+if [ -e fleet/bin/validate_ratings_chain.py ] || [ -e fleet/bin/validate-ratings-chain.py ]; then
+  echo "     FAIL: ratings validator must be imported from scripts/, not vendored under fleet/bin"
+  fail=1
+fi
+if ! "$PY" fleet/bin/check.py fleet; then
+  echo "     FAIL: empty fleet store"
+  fail=1
+fi
+if ! "$PY" fleet/bin/check.py scripts/fixtures/fleet/positive; then
+  echo "     FAIL: positive fleet fixture"
+  fail=1
+fi
+fleet_neg() {
+  local token="$1"
+  local root="$2"
+  local out code
+  set +e
+  out=$("$PY" fleet/bin/check.py "$root" 2>&1)
+  code=$?
+  set -e
+  if [ "$code" -eq 0 ]; then
+    echo "     FAIL: $root exited 0; expected: $token"
+    fail=1
+    return
+  fi
+  if ! printf '%s\n' "$out" | grep -qF -- "$token"; then
+    echo "     FAIL: $root did not report: $token"
+    printf '%s\n' "$out"
+    fail=1
+    return
+  fi
+  echo "     OK negative $root"
+}
+fleet_neg "entry_hash mismatch" scripts/fixtures/fleet/tampered-hash
+fleet_neg "invalid JSON" scripts/fixtures/fleet/bad-jsonl
+fleet_neg "!= folder name" scripts/fixtures/fleet/job-id-mismatch
+fleet_neg "missing required field" scripts/fixtures/fleet/missing-required
+fleet_neg "blank.md: empty" scripts/fixtures/fleet/empty-md
+fleet_neg "not a .md file" scripts/fixtures/fleet/non-md
+
+echo ""
 if [ "$fail" -ne 0 ]; then
-  echo "=== FAIL: missing required files, adapter drift, gen-check drift, gxp-refine selftest, or job contract (see above) ==="
+  echo "=== FAIL: missing required files, adapter drift, gen-check drift, gxp-refine selftest, job contract, or fleet store (see above) ==="
   exit 1
 fi
-echo "=== PASS: required files present, adapter sync checks clean, gen-check clean, gxp-refine selftest clean, job contract clean ==="
+echo "=== PASS: required files present, adapter sync checks clean, gen-check clean, gxp-refine selftest clean, job contract clean, fleet store clean ==="
