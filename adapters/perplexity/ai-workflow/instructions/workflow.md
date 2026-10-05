@@ -241,6 +241,12 @@ Before coding, evaluate the brief against these gates. Each must pass.
   implementation.
 - **Alignment residual** — if an alignment step was run, are any major assumptions still unresolved? If yes, either resolve them or stop.
 
+High-stakes, network, or product-write runs may walk the opt-in
+containment checklist in `core/docs/containment-checklist.md` (installed
+copies: `.ai/docs/containment-checklist.md`) before an approval gate.
+Lightweight typo, comment, and one-line tasks skip it. eBPF and AppArmor
+appear there only as platform capabilities when the host provides them.
+
 ### Standing checks (code tasks)
 
 When the task is **code**, also confirm these three standing checks. They
@@ -422,6 +428,23 @@ Then:
 If a criterion cannot be checked mechanically, state how you confirmed
 it and accept the lower confidence.
 
+### Callable verify step
+
+Record Phase 5 evidence as command output. For every named verify
+command, paste raw stdout/stderr and the exit code. "Tests pass" without
+that pasted output is incomplete for Phase 5. Implementer notes remain
+leads for the independent final reviewer.
+
+### Harness and methodology judgments
+
+Judging GXP/harness methodology changes requires ≥2 independent verify
+runs when outcomes are stochastic or noise-sensitive. That covers
+workflow text, adapter instructions, the eval harness, and verify
+wrappers. One green run is insufficient when run-to-run noise can change
+the result. A deterministic command on an unchanged tree may stay a
+single run; record that the outcome is bit-stable. This rule adds no
+tool, persona, or service.
+
 **Perplexity note:**
 
 
@@ -482,6 +505,8 @@ Capture, at minimum:
   recurrence.
 - **Follow-up** — concrete next action: add a test, write a rule,
   update a doc. Link to the resulting PR or issue if any.
+- **Regression check** — when the capture is repeatable, name or link
+  the matching regression file (`failures/README.md`).
 
 The goal is not to log every bug, only patterns worth remembering.
 

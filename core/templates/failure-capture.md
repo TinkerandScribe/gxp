@@ -48,6 +48,13 @@ The concrete next action and its status. Examples:
 - [ ] Update `.ai/PROGRAM.md` section X
 - [ ] Open issue / PR: link
 
+## Regression check
+
+Path to the matching regression procedure or stub. Required when
+**Repeatable?** is yes. Examples: `core/evals/regressions/<slug>.md` in
+this repo, or `regressions/<slug>.md` in a fleet store. See
+`../failures/README.md`.
+
 ## Repeatable?
 
 Yes / no. Only keep this file if yes. If the follow-up converts this
