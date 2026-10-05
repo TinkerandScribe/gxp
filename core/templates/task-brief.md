@@ -97,6 +97,10 @@ How you will check each criterion. Reference commands from `PROGRAM.md`
 where possible. Deterministic checks (type/lint/test/build) go first;
 **ontology validation (if declared)** next; behavioral and subjective checks after.
 
+Phase 5 evidence is a callable verify step. For each named command, paste raw stdout/stderr and the exit code in the handoff notes. "Tests pass" without that paste is incomplete.
+
+When the task judges GXP or harness methodology and the outcome is stochastic or noise-sensitive, plan ≥2 independent verify runs (`core/workflow.md` Phase 5).
+
 ## Self-evaluation gate
 
 Before coding, confirm:
@@ -138,7 +142,7 @@ durable lessons to `failures/` on handoff.
 To fill in at the end:
 
 - What changed:
-- What was verified (and how):
+- What was verified (and how): paste raw stdout/stderr and exit codes for every named verify command. "Tests pass" without that paste is incomplete for Phase 5.
 - Explicitly not done / parked / follow-ups:
 - Approval gates hit and outcomes:
 - New `failures/` entries or rules:

@@ -1,8 +1,12 @@
 # Regression canary — verification wrapper must fail on induced drift
 
 **Purpose:** Guard against `scripts/verify.sh` (or adapter sync checks) returning
-PASS when a structural failure is present. Mirrors the failure class in
-`core/failures/verification-wrapper-swallows-exit-codes.md`.
+PASS when a structural failure is present.
+
+**Paired failure capture:** `core/failures/verification-wrapper-swallows-exit-codes.md`
+
+This canary is the regression check for that failure class. Mirrors the
+failure write-up at the path above.
 
 ## Fixture procedure (manual or CI)
 

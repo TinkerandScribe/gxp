@@ -45,7 +45,19 @@ stdlib only.
 | criteria inside a job's contract | **The product bot that owns the job** | The owning product bot is the **only** agent that may change a job's Ideal State / acceptance criteria. Nobody else edits criteria — not the harness, not Gate Desk after handoff, not other product bots. |
 | final review verdict | **Harness** | The harness runs an **independent** final review against the contract's criteria. It records its outcome (rating / EM record / failure capture); it does not rewrite criteria to make a run pass. |
 | `ratings.jsonl`, `em-records.jsonl` | any agent finishing a run | **Append-only.** Never edit, reorder, or delete existing lines. Corrections are new lines. |
-| `failures/`, `regressions/` | any agent that hit one | New file per event; don't overwrite others' files. Non-empty `.md` only. |
+| `failures/`, `regressions/` | any agent that hit one | New file per event; don't overwrite others' files. Non-empty `.md` only. When adding `failures/*.md` for an incident class, also add `regressions/*.md` for that same class and name the regression path from the failure file. |
+
+## Incident → regression
+
+Writers add `regressions/*.md` when they add `failures/*.md` for the same
+incident class. The regression file names the future check (command or
+procedure) that should catch the incident if it returns. One new file per
+event; leave other agents' files unchanged. This matches
+`core/failures/README.md`.
+
+Ledger lines stay append-only. This pairing rule covers new failure and
+regression notes. It leaves existing `ratings.jsonl` and `em-records.jsonl`
+lines as they are, including the live store at `/home/box/shared/gxp/`.
 
 ## Ledger formats
 

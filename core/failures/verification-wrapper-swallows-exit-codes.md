@@ -71,6 +71,10 @@ task (see `core/tasks/fix-verification-tooling.md`).
 - [ ] Fix the parked tail: grok `check-core.sh` latent unbound-`$YELLOW` crash,
       `install-ai-from-core.sh` subshell counters, `adapters/README.md` negative-test doc.
 
+## Regression check
+
+`core/evals/regressions/verification-wrapper-must-fail-on-drift.md`
+
 ## Repeatable?
 
 Yes — "wrapper swallows exit code" and "guard runs before path resolution" are generic

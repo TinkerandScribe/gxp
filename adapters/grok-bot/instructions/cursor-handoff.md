@@ -40,10 +40,24 @@ The **agent** runs these — do not tell the operator to run `check-core.sh`.
 2. <criterion-edge check smoke would miss>
 3. <diff review>
 
+## Verification evidence (required)
+
+Paste raw stdout/stderr and the exit code for every named verify command. A report that says "tests pass" without that pasted output is incomplete for Phase 5. Prose summaries are leads, not proof.
+
+For each command, include:
+
+- Command: `<exact command>`
+- Exit code: `<N>`
+- Raw stdout/stderr: paste the terminal transcript under the command
+
 ## Handoff request
 
-Read the repository guidance and this brief. Implement the smallest change that meets the binding criteria. Run the verification plan yourself. Return changed files, exact commands with exit codes, criterion-by-criterion evidence, and remaining risks. Leave mechanical git (branch / commit / push) to the local CLI unless the operator already authorized those commands in this Cursor session.
+Read the repository guidance and this brief. Implement the smallest change that meets the binding criteria. Run the verification plan yourself. Return changed files, each named verify command with its exit code and pasted raw stdout/stderr, criterion-by-criterion evidence, and remaining risks. "tests pass" without pasted output is incomplete for Phase 5. Leave mechanical git (branch / commit / push) to the local CLI unless the operator already authorized those commands in this Cursor session.
 ```
+
+## Verification evidence (required)
+
+The Cursor agent must paste raw stdout/stderr and the exit code for every named verify command in the packet. Grok Bot records whether that paste arrived. A sentence such as "tests pass" without the pasted output is incomplete for Phase 5.
 
 ## Surfaces
 

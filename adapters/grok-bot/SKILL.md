@@ -76,7 +76,7 @@ Do **not** instruct the user:
 
 > Please run `bash sync/check-core.sh`
 
-The Cursor cloud agent or local `cursor-agent` must run project verify (for this repo: `bash scripts/verify.sh`) and walk each binding criterion with a tool check. Grok Bot only records whether evidence arrived and whether criteria passed.
+The Cursor cloud agent or local `cursor-agent` must run project verify (for this repo: `bash scripts/verify.sh`) and walk each binding criterion with a tool check. The return packet includes raw stdout/stderr and the exit code for every named verify command (`instructions/cursor-handoff.md`, section **Verification evidence (required)**). A report that says "tests pass" without that pasted output is incomplete for Phase 5. Grok Bot only records whether the paste arrived and whether criteria passed.
 
 Phase 5 on that implementing agent includes an independent final reviewer. The reviewer checks the finished result against the original request and the binding Ideal State Criteria, gathers its own evidence, and treats implementer notes, reports, and handoffs as leads, not proof.
 
