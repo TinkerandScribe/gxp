@@ -1,7 +1,8 @@
-# Install the fleet checker on the box
+# Install the fleet checker and writer on the box
 
-Copy the checker onto `/home/box/shared/gxp/` so it runs with no gxp checkout
-on the machine. Leave existing ledgers and captures in place.
+Copy the checker and `bin/append.py` onto `/home/box/shared/gxp/` so both run
+with no gxp checkout on the machine. Leave existing ledgers and captures in
+place.
 
 `ratings.jsonl`, `em-records.jsonl`, `jobs/`, `failures/`, and `regressions/`
 on the box are live records. The installer never replaces those paths when
@@ -18,6 +19,7 @@ That script copies:
 | From the checkout | Onto the store |
 |---|---|
 | `fleet/bin/check.py` | `bin/check.py` |
+| `fleet/bin/append.py` | `bin/append.py` |
 | `scripts/validate-ratings-chain.py` | `bin/validate_ratings_chain.py` |
 | `core/templates/job-contract.schema.json` | `schema/job-contract.schema.json` |
 | `fleet/README.md`, `fleet/INSTALL.md` | `README.md`, `INSTALL.md` |

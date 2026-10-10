@@ -75,7 +75,12 @@ echo ""
 
 echo "4. Grok Bot constraint markers"
 require_marker "$ADAPTER_ROOT/SKILL.md" "Never clone"
-require_marker "$ADAPTER_ROOT/SKILL.md" "Never edit repos"
+require_marker "$ADAPTER_ROOT/SKILL.md" "small, low-risk code tweaks"
+require_marker "$ADAPTER_ROOT/SKILL.md" "Never edit payments, auth/sign-in, DB migrations, secrets, or legal text"
+require_marker "$ADAPTER_ROOT/SKILL.md" "dashboard default model (no model pin)"
+require_marker "$ADAPTER_ROOT/SKILL.md" "Same PR, review, and merge rules either way"
+require_marker "$ADAPTER_ROOT/SKILL.md" "bin/append.py"
+require_marker "$ADAPTER_ROOT/instructions/cursor-handoff.md" "bin/append.py"
 require_marker "$ADAPTER_ROOT/SKILL.md" "widgets"
 require_marker "$ADAPTER_ROOT/SKILL.md" "cursor-agent"
 require_marker "$ADAPTER_ROOT/SKILL.md" "Cursor cloud agent"
@@ -85,6 +90,20 @@ require_marker "$ADAPTER_ROOT/README.md" "local CLI"
 require_marker "$ADAPTER_ROOT/GETTING_STARTED.md" "widget"
 require_marker "$ADAPTER_ROOT/instructions/cursor-handoff.md" "Ideal State Criteria"
 require_marker "$ADAPTER_ROOT/instructions/cursor-handoff.md" "cursor-agent"
+forbid_marker() {
+  local file="$1"
+  local marker="$2"
+  if [ -f "$file" ] && grep -qF "$marker" "$file"; then
+    echo "  FAIL   forbidden marker in ${file#$REPO_ROOT/}: $marker"
+    fail=1
+  else
+    echo "  OK     no forbidden marker in ${file#$REPO_ROOT/}: $marker"
+  fi
+}
+for doc in SKILL.md README.md GETTING_STARTED.md instructions/cursor-handoff.md; do
+  forbid_marker "$ADAPTER_ROOT/$doc" "Never edit repos"
+  forbid_marker "$ADAPTER_ROOT/$doc" "Never run git here"
+done
 echo ""
 
 echo "5. Must not outsource verify to the operator"
