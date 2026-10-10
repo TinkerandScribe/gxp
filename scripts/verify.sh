@@ -171,6 +171,7 @@ for candidate in script.parents:
   grep -qF 'sentinel-ledger' "$store/ratings.jsonl"
   test -f "$store/bin/validate_ratings_chain.py"
   test -f "$store/schema/job-contract.schema.json"
+  test -x "$store/bin/append.py"
 ); then
   echo "     FAIL: installed fleet checker (temp store without a checkout)"
   fail=1
@@ -178,6 +179,12 @@ else
   echo "     OK installed empty store"
 fi
 rm -rf "$install_tmp"
+
+echo "   - scripts/test-fleet-append.py (python: $PY)"
+if ! "$PY" scripts/test-fleet-append.py; then
+  echo "     FAIL: fleet append writer tests"
+  fail=1
+fi
 
 echo ""
 if [ "$fail" -ne 0 ]; then

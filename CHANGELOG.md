@@ -8,6 +8,14 @@ package as a whole (core + adapters + install/verify scripts).
 
 ### Changed
 
+- **Grok Bot small tweaks** — bots may make small, low-risk code tweaks
+  (copy fixes, config values, a few lines in one or two files) and must not
+  touch payments, auth/sign-in, DB migrations, secrets, or legal text.
+  Bigger or risky work still goes to Cursor on the dashboard default model
+  (no model pin). Same PR, review, and merge rules either way. The Bot
+  skill and Cursor handoff return packet append the fleet rating with one
+  `bin/append.py` command. `sync/check-core.sh` requires the new markers
+  and rejects the old absolute edit/git bans.
 - **Fleet checker without a checkout** — `fleet/install-to-store.sh` copies
   `scripts/validate-ratings-chain.py` to `bin/validate_ratings_chain.py` and
   `core/templates/job-contract.schema.json` to `schema/`. `fleet/bin/check.py`
@@ -18,6 +26,14 @@ package as a whole (core + adapters + install/verify scripts).
 
 ### Added
 
+- **Fleet append writer** — `fleet/bin/append.py` appends one hash-chained
+  rating, one experience-memory record, and an optional failure note with
+  its regression path. It reads JSONL as utf-8-sig (a leading BOM no longer
+  breaks the chain) and runs `fleet/bin/check.py` before and after.
+  `fleet/install-to-store.sh` installs it to `bin/append.py`. The fleet
+  README points at that command instead of an inline snippet.
+  `scripts/test-fleet-append.py` covers an empty store, an appended chain,
+  and a BOM-prefixed ledger (including `core/ratings.jsonl`).
 - **Fleet records checker** — `fleet/` empty store layout (`jobs/`, `failures/`,
   `regressions/`, empty `ratings.jsonl` and `em-records.jsonl`) and
   `fleet/bin/check.py`. The checker imports `scripts/validate-ratings-chain.py`

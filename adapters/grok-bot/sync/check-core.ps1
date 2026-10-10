@@ -89,7 +89,12 @@ Write-Host ""
 
 Write-Host "4. Grok Bot constraint markers"
 Require-Marker (Join-Path $AdapterRoot "SKILL.md") "Never clone"
-Require-Marker (Join-Path $AdapterRoot "SKILL.md") "Never edit repos"
+Require-Marker (Join-Path $AdapterRoot "SKILL.md") "small, low-risk code tweaks"
+Require-Marker (Join-Path $AdapterRoot "SKILL.md") "Never edit payments, auth/sign-in, DB migrations, secrets, or legal text"
+Require-Marker (Join-Path $AdapterRoot "SKILL.md") "dashboard default model (no model pin)"
+Require-Marker (Join-Path $AdapterRoot "SKILL.md") "Same PR, review, and merge rules either way"
+Require-Marker (Join-Path $AdapterRoot "SKILL.md") "bin/append.py"
+Require-Marker (Join-Path $AdapterRoot "instructions\cursor-handoff.md") "bin/append.py"
 Require-Marker (Join-Path $AdapterRoot "SKILL.md") "widgets"
 Require-Marker (Join-Path $AdapterRoot "SKILL.md") "cursor-agent"
 Require-Marker (Join-Path $AdapterRoot "SKILL.md") "Cursor cloud agent"
@@ -98,6 +103,29 @@ Require-Marker (Join-Path $AdapterRoot "README.md") "local CLI"
 Require-Marker (Join-Path $AdapterRoot "GETTING_STARTED.md") "widget"
 Require-Marker (Join-Path $AdapterRoot "instructions\cursor-handoff.md") "Ideal State Criteria"
 Require-Marker (Join-Path $AdapterRoot "instructions\cursor-handoff.md") "cursor-agent"
+function Forbid-Marker {
+    param([string]$Path, [string]$Marker)
+    $found = $false
+    if (Test-Path -LiteralPath $Path) {
+        $found = Select-String -Path $Path -SimpleMatch -Pattern $Marker -Quiet
+    }
+    if ($found) {
+        Write-Host ("  FAIL   forbidden marker: " + $Marker) -ForegroundColor Red
+        $script:fail = 1
+    } else {
+        Write-Host ("  OK     no forbidden marker: " + $Marker)
+    }
+}
+$docs = @(
+    "SKILL.md",
+    "README.md",
+    "GETTING_STARTED.md",
+    "instructions\cursor-handoff.md"
+)
+foreach ($rel in $docs) {
+    Forbid-Marker (Join-Path $AdapterRoot $rel) "Never edit repos"
+    Forbid-Marker (Join-Path $AdapterRoot $rel) "Never run git here"
+}
 Write-Host ""
 
 Write-Host "5. Must not outsource verify to the operator"
