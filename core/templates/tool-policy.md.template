@@ -7,7 +7,7 @@ Phase 0 to read it with PROGRAM / rules / failures. Not auto-evolved.
 ```markdown
 # Tool policy
 
-- A coding agent pointed at a live product tree (Kickoff, WorkshopOS, lumen,
+- A coding agent pointed at a live product tree (e.g. a live product app,
   fab-shop, or any unnamed “find issues” brief) is **read-only** unless the
   brief names writes.
 - No exploit-chain retry. Vuln-shaped findings escalate to a human.
