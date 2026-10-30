@@ -1,6 +1,6 @@
 # Install the fleet checker on the box
 
-Copy the checker onto `/home/box/shared/gxp/` so it runs with no gxp checkout
+Copy the checker onto `<shared-store>/` so it runs with no gxp checkout
 on the machine. Leave existing ledgers and captures in place.
 
 `ratings.jsonl`, `em-records.jsonl`, `jobs/`, `failures/`, and `regressions/`
@@ -10,7 +10,7 @@ they already exist, and it never deletes files under them.
 From a gxp checkout:
 
 ```bash
-bash fleet/install-to-store.sh /home/box/shared/gxp
+bash fleet/install-to-store.sh <shared-store>
 ```
 
 That script copies:
@@ -40,7 +40,7 @@ order: `$GXP_REPO`, a parent directory that is a gxp checkout, then
 store. After this install, the store copies are enough:
 
 ```bash
-python3 /home/box/shared/gxp/bin/check.py
+python3 <shared-store>/bin/check.py
 ```
 
 Unset `GXP_REPO` on the box unless you intend a checkout to win. Inside the
