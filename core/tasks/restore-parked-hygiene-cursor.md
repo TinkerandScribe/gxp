@@ -30,7 +30,7 @@ Restore still-relevant parked-stash themes E, C, and B onto main without blind `
 
 ## Ideal State Criteria
 
-- [x] 1. `OPERATOR_RUNBOOK.md` DEST example has no `C:\Users\Reepicheep` (or other absolute user path); uses a relative `<repo>\...` placeholder.
+- [x] 1. `OPERATOR_RUNBOOK.md` DEST example has no `C:\Users\<user>` (or other absolute user path); uses a relative `<repo>\...` placeholder.
 - [x] 2. Cowork `ratings-schema.md` documents optional `prev_hash` and `entry_hash` with pointer to `scripts/validate-ratings-chain.py`.
 - [x] 3. Cursor `rule.mdc` contains the strings `Verification ladder` and `Where to append`, plus sharpened full/lightweight triggers matching stash intent (smoke thin / underspecified → full).
 - [x] 4. Cursor `START_SESSION.md` paste block includes Verification ladder + where-to-append ratings guidance **and** still contains the `## Not gxp-refine` section linking `GXP_REFINE.md`.
@@ -48,7 +48,7 @@ Restore still-relevant parked-stash themes E, C, and B onto main without blind `
 
 ## Verification plan
 
-1. `rg "Reepicheep|C:\\Users" core/evals/golden/agent-code-quality/OPERATOR_RUNBOOK.md` → no matches
+1. `rg "<user>|C:\\Users" core/evals/golden/agent-code-quality/OPERATOR_RUNBOOK.md` → no matches
 2. `rg "prev_hash|entry_hash" adapters/cowork/.../ratings-schema.md` → both present
 3–6. `rg` markers in Cursor adapter files + run `bash adapters/cursor/ai-workflow/sync/check-core.sh`
 7. `bash scripts/verify.sh`
@@ -73,6 +73,6 @@ Restore still-relevant parked-stash themes E, C, and B onto main without blind `
 ## Handoff notes
 
 - What changed: OPERATOR_RUNBOOK DEST relativized; cowork ratings-schema hash fields; Cursor Verification ladder + where-to-append across rule/START/TEST/README/sync (kept Not gxp-refine).
-- Verified: `bash scripts/verify.sh` exit 0; cursor `check-core.sh` PASS including new markers; no Reepicheep path in runbook; no workflow.md/routing.md edits.
+- Verified: `bash scripts/verify.sh` exit 0; cursor `check-core.sh` PASS including new markers; no <user> path in runbook; no workflow.md/routing.md edits.
 - Parked: stash `park-unrelated-before-gxp-refine` still local; release-notes-1.3.1-rewrite brief; D orphan rating DROP.
 - Rating: core/ratings.jsonl task restore-parked-hygiene-cursor

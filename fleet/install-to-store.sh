@@ -2,7 +2,7 @@
 # Copy the fleet checker onto a store so it runs without a gxp checkout.
 #
 # Usage (from anywhere):
-#   bash fleet/install-to-store.sh /home/box/shared/gxp
+#   bash fleet/install-to-store.sh "$GXP_STORE"   (e.g. GXP_STORE=<shared-store>)
 #
 # Replaces bin/check.py, bin/validate_ratings_chain.py, schema/job-contract.schema.json,
 # README.md, and INSTALL.md. Creates jobs/, failures/, and regressions/ when
