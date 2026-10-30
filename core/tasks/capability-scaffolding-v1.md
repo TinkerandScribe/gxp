@@ -57,7 +57,7 @@ Add a first-class **scaffolding capability tier** (frontier | standard | constra
 - Full model→tier maps for Grok, Codex, Perplexity, Cowork (beyond regenerated core text)
 - Silent or automated ablation of host repo scaffolding files
 - Changing privacy/stakes rails in routing.md beyond a one-line clarification
-- Host-repo rollouts (pre-nicene-wiki, story-repo-steward, mooring-line)
+- Host-repo rollouts (host product repos)
 - Version bump / GitHub release / push to origin (operator)
 
 ## Verification plan
