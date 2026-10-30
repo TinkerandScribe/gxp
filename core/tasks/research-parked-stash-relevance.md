@@ -75,7 +75,7 @@ D) Ratings ledger append — core/ratings.jsonl
 
 E) OPERATOR_RUNBOOK path hygiene —
    core/evals/golden/agent-code-quality/OPERATOR_RUNBOOK.md
-   Stash replaces absolute C:\Users\Reepicheep\… DEST example with a relative
+   Stash replaces absolute C:\Users\<user>\… DEST example with a relative
    placeholder. On main the absolute path may still be present (PII/local leak risk).
    Verdict: KEEP (high priority if path still present) / SUPERSEDED.
 
@@ -127,7 +127,7 @@ Read-only audit of `stash@{0}` / W=`3f03726` vs base `ad72c9f` vs HEAD. **No sta
 | B Cursor ladder / ratings placement | **KEEP** (+ **CONFLICT** on START_SESSION) | `rule.mdc` lacks Verification ladder + where-to-append; full/lightweight triggers weaker than stash. `TEST_PROMPT.md` still 10 Qs. Cursor README lacks ladder bullets. sync `check-core.{sh,ps1}` lack ladder markers. HEAD `START_SESSION.md` has post-stash **Not gxp-refine** section (PRs #3/#5) that stash tip omits — blind apply would drop it. | Port stash intent into rule/TEST/README/sync; merge START_SESSION (ladder text + keep Not gxp-refine). |
 | C Cowork ratings-schema hash fields | **KEEP** | `adapters/cowork/.../ratings-schema.md` optional table ends at `failure_ref`; no `prev_hash`/`entry_hash`. Core schema line + `scripts/validate-ratings-chain.py` already define the chain. | Add two optional-field rows (stash hunk is correct). |
 | D ratings.jsonl orchestrator line | **DROP** | Stash adds `review-gxp-orchestrator-system-prompt` rating. Brief path **missing** on HEAD; task absent from ledger. Blind apply would collide with post-stash chained lines (`gxp-refine-*`). | Do not re-append orphan rating without public brief + clean chain re-anchor. |
-| E OPERATOR_RUNBOOK absolute path | **KEEP (high)** | Line still has `C:\Users\Reepicheep\Claude\gxp-public\...` DEST example. | Relativize to `<repo>\...\trials\<date>-operator-blind\...` (rule-02 class). |
+| E OPERATOR_RUNBOOK absolute path | **KEEP (high)** | Line still has `C:\Users\<user>\Claude\gxp-public\...` DEST example. | Relativize to `<repo>\...\trials\<date>-operator-blind\...` (rule-02 class). |
 
 ### 2. Blind `stash pop` safety
 
