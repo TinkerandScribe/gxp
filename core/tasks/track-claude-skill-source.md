@@ -141,7 +141,7 @@ Deterministic first:
    file; re-run `verify.sh` → exit 0; `git status` clean.
 5. **C5/C6** — `git status --short` and `git diff --stat` show no `core/` paths, no new
    script under `scripts/`, and no files from the two ignored dirs.
-6. **C7** — `git grep -nI "C:\\\\Users\|/mnt/c/Users\|Reepicheep"` over tracked files →
+6. **C7** — `git grep -nI "C:\\\\Users\|/mnt/c/Users\|<user>"` over tracked files →
    zero hits.
 
 Behavioral: none required beyond the negative tests (this artifact is consumed by
