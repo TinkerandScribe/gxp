@@ -1,7 +1,7 @@
 # Shared GXP fleet records store
 
 Versioned empty layout and integrity checker for the fleet store. The live
-copy on the Linux box is `/home/box/shared/gxp/` (every Grok Bot agent on that
+copy on a shared machine is `<shared-store>/` (every agent on that
 machine shares the filesystem; each has its own desktop). That live directory
 is not a git repo. Sync this `fleet/` tree onto it with `INSTALL.md`, which
 refuses to overwrite existing ledgers.
@@ -41,8 +41,8 @@ stdlib only.
 
 | Path | Writer | Rule |
 |------|--------|------|
-| `jobs/<job_id>/contract.json` | **Gate Desk** writes the contract | Shape: `core/templates/job-contract.schema.json`. Folder name equals `job_id`. `check.py` enforces that and the schema's top-level required fields. |
-| criteria inside a job's contract | **The product bot that owns the job** | The owning product bot is the **only** agent that may change a job's Ideal State / acceptance criteria. Nobody else edits criteria — not the harness, not Gate Desk after handoff, not other product bots. |
+| `jobs/<job_id>/contract.json` | **The protocol-desk agent** writes the contract | Shape: `core/templates/job-contract.schema.json`. Folder name equals `job_id`. `check.py` enforces that and the schema's top-level required fields. |
+| criteria inside a job's contract | **The product bot that owns the job** | The owning product bot is the **only** agent that may change a job's Ideal State / acceptance criteria. Nobody else edits criteria — not the harness, not the protocol desk after handoff, not other product bots. |
 | final review verdict | **Harness** | The harness runs an **independent** final review against the contract's criteria. It records its outcome (rating / EM record / failure capture); it does not rewrite criteria to make a run pass. |
 | `ratings.jsonl`, `em-records.jsonl` | any agent finishing a run | **Append-only.** Never edit, reorder, or delete existing lines. Corrections are new lines. |
 | `failures/`, `regressions/` | any agent that hit one | New file per event; don't overwrite others' files. Non-empty `.md` only. When adding `failures/*.md` for an incident class, also add `regressions/*.md` for that same class and name the regression path from the failure file. |
@@ -57,7 +57,7 @@ event; leave other agents' files unchanged. This matches
 
 Ledger lines stay append-only. This pairing rule covers new failure and
 regression notes. It leaves existing `ratings.jsonl` and `em-records.jsonl`
-lines as they are, including the live store at `/home/box/shared/gxp/`.
+lines as they are, including the live store at `<shared-store>/`.
 
 ## Ledger formats
 
@@ -77,7 +77,7 @@ a shell heredoc (gxp has a captured failure about heredocs corrupting escapes):
 
 ```python
 import json, hashlib
-p = "/home/box/shared/gxp/ratings.jsonl"
+p = "<shared-store>/ratings.jsonl"
 prev = None
 for l in open(p, encoding="utf-8"):
     if l.strip():
@@ -118,14 +118,14 @@ From a gxp checkout:
 
 ```
 python3 fleet/bin/check.py
-python3 fleet/bin/check.py /home/box/shared/gxp
+python3 fleet/bin/check.py <shared-store>
 ```
 
-On the box, after `bash fleet/install-to-store.sh /home/box/shared/gxp`, the
+On the shared machine, after `bash fleet/install-to-store.sh <shared-store>`, the
 store copies are enough (no checkout required):
 
 ```
-python3 /home/box/shared/gxp/bin/check.py
+python3 <shared-store>/bin/check.py
 ```
 
 `$GXP_REPO`, when set, still wins over the store copies.
