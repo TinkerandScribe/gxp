@@ -23,7 +23,7 @@ package as a whole (core + adapters + install/verify scripts).
   `fleet/bin/check.py`. The checker imports `scripts/validate-ratings-chain.py`
   and checks job-contract required fields from
   `core/templates/job-contract.schema.json` (stdlib). `fleet/INSTALL.md` syncs
-  the checker onto `/home/box/shared/gxp/` without replacing live ledgers.
+  the checker onto `<shared-store>/` without replacing live ledgers.
   `scripts/verify.sh` runs the empty store plus positive and negative fixtures.
 - **Cross-bot job contract** — `core/templates/job-contract.schema.json`, a valid
   example, and `scripts/validate-job-contract.py` (schema, acyclic task graph,
