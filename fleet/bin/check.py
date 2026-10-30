@@ -3,7 +3,7 @@
 
 Usage: python3 fleet/bin/check.py [STORE_ROOT]
   STORE_ROOT defaults to the parent of this bin/ directory
-  (fleet/ in the repo, /home/box/shared/gxp after install).
+  (fleet/ in the repo, $GXP_STORE (your shared store) after install).
 
 The ratings hash chain is scripts/validate-ratings-chain.py. Job contracts
 are checked for the top-level "required" fields of
