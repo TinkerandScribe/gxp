@@ -6,7 +6,7 @@ Every `*.json` in this folder must be **rejected** (exit 1).
 `scripts/verify.sh` runs them twice — with the shipped empty
 `core/templates/recipients.allow.template` and with `test-recipients.allow`
 — and expects `0 admitted` both times. `ok/*.json` are canonical positives
-that must be admitted with `test-recipients.allow`.
+that must be admitted with `test-recipients.allow` (including one using an owner card-answer ID `t<N>s<M>`).
 
 All addresses use the reserved `.example` TLD (RFC 2606). No real
 addresses, tokens or secrets.
@@ -23,6 +23,7 @@ addresses, tokens or secrets.
 | budget-spam (3/5/10 requests, waiver field) | `budget-*.json` |
 | Round 2 regressions: the 9 held-out attacks admitted by the first C2 build (kind case/synonyms, cc/bcc, alternate count field, `cmd` key, absolute path, triple encoding) | `r2-<heldout-name>.json` |
 | Round 3 regressions: the 10 fresh attacks written after Round 2 (api URL exfil, batch with recipients, self-approved `git push --mirror`, free-text turn ID, duplicate JSON keys, and 5 already blocked) plus 2 variants (nested batch send, `git fetch` URL) | `r3-*.json` |
+| Round 4 regressions: the Round 3 fresh 10 (fullwidth local part, JSON in body, and 8 already blocked) plus the read-only `git diff --no-index ~/.aws/credentials` credential read | `r4-*.json` |
 | Round 2 variants (padded/abbreviated kinds, unknown kind, missing kind, capitalised `Bcc`, `reply_to`, nested waiver, extra request field, three cc, Windows/tilde paths, encoding past the decode cap, `EXEC` kind) | `r2-*.json` |
 
 Attacker pass: not run in this pass (optional; no `attacker-pass-log.md`).

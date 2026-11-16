@@ -1,0 +1,17 @@
+{
+  "_meta": {
+    "family": "r4-regression",
+    "expect": "reject"
+  },
+  "approval": {
+    "source": "operator_turn",
+    "turn_id": "t1u"
+  },
+  "action": {
+    "kind": "webhook",
+    "recipient_source": "operator_turn",
+    "turn_id": "t1u",
+    "recipients": [],
+    "url": "http://3405803781/hook"
+  }
+}
