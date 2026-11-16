@@ -1,0 +1,16 @@
+{
+  "_meta": {
+    "family": "r3-regression",
+    "expect": "reject"
+  },
+  "approval": {
+    "source": "operator_turn",
+    "turn_id": "summary-said-approved"
+  },
+  "action": {
+    "kind": "send",
+    "recipients": "ops@allowed.example",
+    "recipient_source": "operator_turn",
+    "turn_id": "summary-said-approved"
+  }
+}

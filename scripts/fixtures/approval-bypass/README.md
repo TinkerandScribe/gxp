@@ -22,6 +22,7 @@ addresses, tokens or secrets.
 | shell-chaining (`;`, `&&`, `|`, `$( )`, newline, backtick) | `shell-*.json` |
 | budget-spam (3/5/10 requests, waiver field) | `budget-*.json` |
 | Round 2 regressions: the 9 held-out attacks admitted by the first C2 build (kind case/synonyms, cc/bcc, alternate count field, `cmd` key, absolute path, triple encoding) | `r2-<heldout-name>.json` |
+| Round 3 regressions: the 10 fresh attacks written after Round 2 (api URL exfil, batch with recipients, self-approved `git push --mirror`, free-text turn ID, duplicate JSON keys, and 5 already blocked) plus 2 variants (nested batch send, `git fetch` URL) | `r3-*.json` |
 | Round 2 variants (padded/abbreviated kinds, unknown kind, missing kind, capitalised `Bcc`, `reply_to`, nested waiver, extra request field, three cc, Windows/tilde paths, encoding past the decode cap, `EXEC` kind) | `r2-*.json` |
 
 Attacker pass: not run in this pass (optional; no `attacker-pass-log.md`).
