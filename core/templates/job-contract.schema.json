@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Cross-bot job contract",
-  "description": "Machine-readable handoff between Grok Bot agents and Cursor. Not the workshop record in job-record.schema.json. Task types work, validate, and gate are adapted from TaskType in Intelligent-Internet/zenith zenith_harness/models.py (Apache-2.0); this repository does not vendor that project. Cross-field rules (acyclic depends_on, one work owner and one owner_bot per criterion, COMMIT only when clock is τ4, sealed criteria not pending) are enforced by scripts/validate-job-contract.py.",
+  "description": "Machine-readable handoff between Grok Bot agents and Cursor. Not the workshop record in job-record.schema.json. Task types work, validate, and gate are adapted from TaskType in Intelligent-Internet/zenith zenith_harness/models.py (Apache-2.0); this repository does not vendor that project. Cross-field rules (acyclic depends_on, one work owner and one owner_bot per criterion, COMMIT only when clock is τ4, sealed criteria not pending, ESCALATE needs an escalation packet, passed criteria need verify_cmds and at least one raw evidence ref, residual_failing_tests covered by verify_cmds, child tasks may not widen parent allowed_paths/allowed_tools) are enforced by scripts/validate-job-contract.py.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -38,12 +38,20 @@
     },
     "lane": {
       "type": "string",
-      "enum": ["cursor", "bot"],
+      "enum": [
+        "cursor",
+        "bot"
+      ],
       "description": "Who executes the next step: a Cursor agent, or a Grok Bot."
     },
     "protocol": {
       "type": "string",
-      "enum": ["gxp-light", "gxp-full", "iscp-thin", "iscp-plus"],
+      "enum": [
+        "gxp-light",
+        "gxp-full",
+        "iscp-thin",
+        "iscp-plus"
+      ],
       "description": "Workflow the receiving agent must follow."
     },
     "isc": {
@@ -51,14 +59,31 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "tag", "text", "owner_bot", "status", "sealed_by"],
+        "required": [
+          "id",
+          "tag",
+          "text",
+          "owner_bot",
+          "status",
+          "sealed_by"
+        ],
         "properties": {
-          "id": { "type": "string", "minLength": 1 },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
           "tag": {
             "type": "string",
-            "enum": ["outcome", "guardrail", "hypothesis"]
+            "enum": [
+              "outcome",
+              "guardrail",
+              "hypothesis"
+            ]
           },
-          "text": { "type": "string", "minLength": 1 },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
           "owner_bot": {
             "type": "string",
             "minLength": 1,
@@ -66,12 +91,65 @@
           },
           "status": {
             "type": "string",
-            "enum": ["pending", "passed", "failed", "unverifiable"]
+            "enum": [
+              "pending",
+              "passed",
+              "failed",
+              "unverifiable"
+            ]
           },
           "sealed_by": {
             "description": "Gate task id that sealed this criterion, or null when unsealed.",
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "minLength": 1
+          },
+          "verify_cmds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Optional per-criterion verify commands; falls back to top-level verify_cmds."
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "^\\S+$",
+                  "description": "Legacy bare path or transcript-ID ref (no whitespace); treated as raw. Prose with spaces is rejected."
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "ref",
+                    "kind"
+                  ],
+                  "properties": {
+                    "ref": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Path to raw stdout/stderr/tool log, or transcript ID + line range (raw); or a pointer to a summary/report (summary)."
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "raw",
+                        "summary"
+                      ],
+                      "description": "raw = raw execution evidence; summary = prose, report or re-summary. A passed criterion needs at least one raw ref (arXiv:2611.18471)."
+                    }
+                  }
+                }
+              ]
+            },
+            "description": "Optional per-criterion evidence; when present it replaces top-level evidence_refs for this criterion."
           }
         }
       }
@@ -82,42 +160,122 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "type", "depends_on", "covers_isc"],
+        "required": [
+          "id",
+          "type",
+          "depends_on",
+          "covers_isc"
+        ],
         "properties": {
-          "id": { "type": "string", "minLength": 1 },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
           "type": {
             "type": "string",
-            "enum": ["work", "validate", "gate"]
+            "enum": [
+              "work",
+              "validate",
+              "gate"
+            ]
           },
           "depends_on": {
             "type": "array",
-            "items": { "type": "string", "minLength": 1 }
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
           },
           "covers_isc": {
             "type": "array",
-            "items": { "type": "string", "minLength": 1 },
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
             "description": "Criterion ids this task addresses. Exactly one work task may cover each criterion. validate and gate may list the same id."
+          },
+          "allowed_paths": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Optional path scope. A task that depends_on a parent with allowed_paths may not widen it (subagent_scope_widening)."
+          },
+          "allowed_tools": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Optional tool scope; same no-widening rule as allowed_paths."
           }
         }
       }
     },
     "verify_cmds": {
       "type": "array",
-      "items": { "type": "string", "minLength": 1 }
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     },
     "evidence_refs": {
       "type": "array",
-      "items": { "type": "string", "minLength": 1 }
+      "items": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\S+$",
+            "description": "Legacy bare path or transcript-ID ref (no whitespace); treated as raw. Prose with spaces is rejected."
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "ref",
+              "kind"
+            ],
+            "properties": {
+              "ref": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Path to raw stdout/stderr/tool log, or transcript ID + line range (raw); or a pointer to a summary/report (summary)."
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "raw",
+                  "summary"
+                ],
+                "description": "raw = raw execution evidence; summary = prose, report or re-summary. A passed criterion needs at least one raw ref (arXiv:2611.18471)."
+              }
+            }
+          }
+        ]
+      },
+      "description": "Each entry is an object {ref, kind} with kind raw|summary (required), or a legacy bare path (treated as raw)."
     },
     "clock": {
       "type": "string",
-      "enum": ["τ1", "τ2", "τ4"],
+      "enum": [
+        "τ1",
+        "τ2",
+        "τ4"
+      ],
       "description": "τ1 task work, τ2 review, τ4 criteria-text change. COMMIT is legal only on τ4."
     },
     "decision": {
       "type": "string",
-      "enum": ["none", "COMMIT", "HOLD", "REFUSE"],
-      "description": "COMMIT only with clock τ4. HOLD and REFUSE are legal on every clock. Otherwise none."
+      "enum": [
+        "none",
+        "COMMIT",
+        "HOLD",
+        "REFUSE",
+        "ESCALATE"
+      ],
+      "description": "COMMIT only with clock τ4. HOLD and REFUSE are legal on every clock. ESCALATE is legal on τ1/τ2/τ4 only with a complete escalation_packet. Otherwise none."
     },
     "digest_id": {
       "type": "string",
@@ -131,9 +289,45 @@
     },
     "rating": {
       "description": "Phase 6 outcome, integer 1-10, or null before rating.",
-      "type": ["integer", "null"],
+      "type": [
+        "integer",
+        "null"
+      ],
       "minimum": 1,
       "maximum": 10
+    },
+    "escalation_packet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "blocker_evidence",
+        "progress_summary",
+        "verification_status"
+      ],
+      "properties": {
+        "blocker_evidence": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "progress_summary": {
+          "type": "string"
+        },
+        "verification_status": {
+          "type": "string"
+        }
+      },
+      "description": "Required (all fields non-empty) when decision is ESCALATE."
+    },
+    "residual_failing_tests": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Optional. Every listed test must appear in verify_cmds and pass before any criterion is passed."
     }
   }
 }

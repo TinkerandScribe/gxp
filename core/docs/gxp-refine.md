@@ -58,3 +58,5 @@ See [`core/tasks/EXAMPLE-gxp-refine-run.md`](../tasks/EXAMPLE-gxp-refine-run.md)
 - Auto-promote / continuous self-rewrite
 - Multi-provider critic product
 - Weakening `core/routing.md` rails or `core/workflow.md` gates
+
+Criteria exposure (arXiv:2611.08318): the run template's §5 adds a held-out set and a reworded success rule; a win only under the original criteria is inconclusive (`core/templates/gxp-refine-run.md` §5, §8).

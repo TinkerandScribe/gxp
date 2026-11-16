@@ -13,6 +13,14 @@ After schema conformance, the semantic checks are:
 - HOLD and REFUSE are legal on τ1, τ2, and τ4; otherwise decision is none
 - a criterion with sealed_by set is not pending, and sealed_by names a gate
   task whose covers_isc includes that criterion
+- ESCALATE (legal on τ1/τ2/τ4) needs escalation_packet with non-empty
+  blocker_evidence, progress_summary and verification_status
+- a passed criterion needs non-empty verify_cmds and evidence_refs with at
+  least one kind "raw" ref; summary-only evidence is rejected
+  (summary_only_evidence; arXiv:2611.18471)
+- every residual_failing_tests entry appears in verify_cmds
+- a task may not widen the allowed_paths / allowed_tools of a task it
+  depends_on (subagent_scope_widening)
 
 Task type names follow TaskType in Intelligent-Internet/zenith
 zenith_harness/models.py (Apache-2.0). This script does not vendor that
@@ -302,6 +310,125 @@ def semantic_errors(doc: object) -> list[tuple[str, str]]:
                 f"decision COMMIT requires clock {TAU4} (criteria-text change); got {clock!r}",
             )
         )
+    if decision == "ESCALATE":
+        packet = doc.get("escalation_packet")
+        if not isinstance(packet, dict) or not _escalation_complete(packet):
+            errors.append(
+                (
+                    "escalate_packet",
+                    "decision ESCALATE requires escalation_packet with non-empty "
+                    "blocker_evidence, progress_summary and verification_status",
+                )
+            )
+    errors.extend(_evidence_errors(doc, isc))
+    errors.extend(_scope_errors(tasks, by_id))
+    return errors
+
+
+def _escalation_complete(packet: dict) -> bool:
+    blockers = packet.get("blocker_evidence")
+    if not isinstance(blockers, list) or not any(
+        isinstance(b, str) and b.strip() for b in blockers
+    ):
+        return False
+    for key in ("progress_summary", "verification_status"):
+        val = packet.get(key)
+        if not isinstance(val, str) or not val.strip():
+            return False
+    return True
+
+
+def _ref_kind(ref: object) -> str | None:
+    """raw | summary | None (malformed). Legacy bare strings count as raw."""
+    if isinstance(ref, str):
+        return "raw" if ref.strip() and not any(c.isspace() for c in ref) else None
+    if isinstance(ref, dict) and ref.get("kind") in ("raw", "summary"):
+        return ref["kind"]
+    return None
+
+
+def _evidence_errors(doc: dict, isc: list) -> list[tuple[str, str]]:
+    """Passed criteria need verify_cmds and >=1 raw evidence ref (Plan B)."""
+    errors: list[tuple[str, str]] = []
+    top_cmds = doc.get("verify_cmds") if isinstance(doc.get("verify_cmds"), list) else []
+    top_refs = doc.get("evidence_refs") if isinstance(doc.get("evidence_refs"), list) else []
+    all_cmds: list[str] = [c for c in top_cmds if isinstance(c, str)]
+    any_passed = False
+    for item in isc:
+        if not isinstance(item, dict):
+            continue
+        own_cmds = item.get("verify_cmds")
+        if isinstance(own_cmds, list):
+            all_cmds.extend(c for c in own_cmds if isinstance(c, str))
+        if item.get("status") != "passed":
+            continue
+        any_passed = True
+        cid = item.get("id")
+        cmds = own_cmds if isinstance(own_cmds, list) else top_cmds
+        refs = item.get("evidence_refs")
+        refs = refs if isinstance(refs, list) else top_refs
+        if not [c for c in cmds if isinstance(c, str) and c.strip()]:
+            errors.append(("passed_no_verify", f"criterion {cid} is passed with empty verify_cmds"))
+        if not refs:
+            errors.append(("passed_no_evidence", f"criterion {cid} is passed with empty evidence_refs"))
+            continue
+        kinds = [_ref_kind(r) for r in refs]
+        if "raw" not in kinds:
+            errors.append(
+                (
+                    "summary_only_evidence",
+                    f"criterion {cid} is passed but has no raw evidence_ref "
+                    "(summary-only evidence is UNVERIFIED)",
+                )
+            )
+    residual = doc.get("residual_failing_tests")
+    if isinstance(residual, list):
+        for test in residual:
+            if not isinstance(test, str):
+                continue
+            if not any(test in cmd for cmd in all_cmds):
+                errors.append(
+                    (
+                        "residual_uncovered",
+                        f"residual_failing_tests entry {test!r} is not in any verify_cmds",
+                    )
+                )
+        if residual and any_passed and any(
+            not any(t in c for c in all_cmds) for t in residual if isinstance(t, str)
+        ):
+            errors.append(
+                (
+                    "residual_passed",
+                    "a criterion is passed while a residual failing test is not covered by verify_cmds",
+                )
+            )
+    return errors
+
+
+def _scope_errors(tasks: list, by_id: dict) -> list[tuple[str, str]]:
+    """A child task may not widen a parent's allowed_paths / allowed_tools."""
+    errors: list[tuple[str, str]] = []
+    for task in tasks:
+        if not isinstance(task, dict):
+            continue
+        deps = task.get("depends_on") if isinstance(task.get("depends_on"), list) else []
+        for dep in deps:
+            parent = by_id.get(dep)
+            if not isinstance(parent, dict):
+                continue
+            for key in ("allowed_paths", "allowed_tools"):
+                p_scope = parent.get(key)
+                c_scope = task.get(key)
+                if not isinstance(p_scope, list) or not isinstance(c_scope, list):
+                    continue
+                extra = sorted(set(c_scope) - set(p_scope))
+                if extra:
+                    errors.append(
+                        (
+                            "subagent_scope_widening",
+                            f"task {task.get('id')} {key} widens parent {dep}: {extra}",
+                        )
+                    )
     return errors
 
 

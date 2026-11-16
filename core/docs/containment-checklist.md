@@ -50,6 +50,23 @@ residual items the platform cannot enforce.
       this” when it does not. This checklist does not claim GXP enforces
       eBPF or AppArmor today.
 
+- [ ] **Monitor checkpoints.** Monitor checks fire at every
+      compaction/summary boundary, every N≤10 tool calls, and at most every
+      30 min of wall time (aspirational where the host cannot enforce a
+      wall-clock timer — name the gap). Reconcile inference-vs-monitor
+      counts. Tool/search handoffs state result caps, truncation limits and
+      identifier namespaces.
+- [ ] **Monitor config is hashed.** Run `fleet/bin/monitor_snapshot.py snap`
+      before and `compare` after the run. Any monitor-class diff (disabled,
+      re-scheduled, prompt changed, recipients emptied) exits 1 unless a
+      typed operator `--approval-turn` ID is supplied. Quiet / no-send rules
+      never authorize muting, re-routing or deleting a monitor.
+- [ ] **Tool schema drift.** Compare tool-schema snapshots with
+      `fleet/bin/tool_schema_diff.py`; a changed write-capable tool fails
+      closed until re-approved.
+- [ ] **Monitor model not weaker.** The monitor/verifier model is never
+      weaker than the executor unless a recorded measurement says otherwise.
+
 ## Residual
 
 Items the platform cannot enforce stay on the approval card. Proceed only

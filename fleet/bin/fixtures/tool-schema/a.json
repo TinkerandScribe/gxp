@@ -1,0 +1,17 @@
+{
+ "user-Gmail": {
+  "send_message": {
+   "type": "object",
+   "properties": {
+    "to": {
+     "type": "string"
+    }
+   }
+  }
+ },
+ "user-logdriver": {
+  "get_today": {
+   "type": "object"
+  }
+ }
+}

@@ -180,8 +180,31 @@ fi
 rm -rf "$install_tmp"
 
 echo ""
+echo "8. Plans A/B/C/C2/R self-tests (stdlib)"
+for st in scripts/extract-state-carryforward.py scripts/check-spec-oracle-gaps.py \
+          scripts/check-pre-exec-state.py fleet/bin/monitor_snapshot.py \
+          fleet/bin/tool_schema_diff.py; do
+  echo "   - $st --self-test"
+  if ! "$PY" "$st" --self-test >/dev/null; then
+    echo "     FAIL: $st --self-test"
+    fail=1
+  fi
+done
+echo "   - scripts/test-job-contract.py"
+if ! "$PY" scripts/test-job-contract.py >/dev/null; then
+  echo "     FAIL: scripts/test-job-contract.py"
+  fail=1
+fi
+echo "   - fleet/bin/check.py source_transcript_id cutoff fixtures"
+if ! "$PY" fleet/bin/check.py scripts/fixtures/fleet/stid-present >/dev/null; then
+  echo "     FAIL: stid-present fixture"
+  fail=1
+fi
+fleet_neg "missing source_transcript_id" scripts/fixtures/fleet/stid-missing
+
+echo ""
 if [ "$fail" -ne 0 ]; then
-  echo "=== FAIL: missing required files, adapter drift, gen-check drift, gxp-refine selftest, job contract, or fleet store (see above) ==="
+  echo "=== FAIL: missing required files, adapter drift, gen-check drift, gxp-refine selftest, job contract, fleet store, or plan self-tests (see above) ==="
   exit 1
 fi
-echo "=== PASS: required files present, adapter sync checks clean, gen-check clean, gxp-refine selftest clean, job contract clean, fleet store clean ==="
+echo "=== PASS: required files present, adapter sync checks clean, gen-check clean, gxp-refine selftest clean, job contract clean, fleet store clean, plan self-tests clean ==="

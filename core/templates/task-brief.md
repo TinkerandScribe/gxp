@@ -25,6 +25,28 @@ One sentence describing what success looks like.
 > weaken binary Ideal State Criteria, verification, anti-loop, or privacy/stakes rails.
 > See `core/docs/capability-scaffolding.md` (or `.ai/docs/capability-scaffolding.md`).
 
+## Scope and Stop (verbatim — do not edit across compaction)
+
+Copy this block unchanged into every resumed or compacted session.
+`scripts/extract-state-carryforward.py` diffs it byte-for-byte and exits 1 on
+any drift.
+
+- Allowed to create/modify ONLY:
+- Forbidden:
+- Stop if:
+
+### First-green checkpoint
+
+- When every named verify command exits 0 and each ISC is checked, commit
+  `wip: first-green`, record its SHA as `first_green_sha`, and **stop editing
+  source**.
+- Any further edit needs a one-line reason per commit, and every named
+  verify is re-run with fresh raw output pasted.
+- The handoff reports `first_green_sha`, the final SHA, and
+  `git diff --stat <first_green_sha>..<final>` (empty if none).
+- Guard: this applies only to the binding named verify set. Thin smoke green
+  is still not done, and the claim-blind reviewer still runs.
+
 ## Routing
 
 For dispatch via the routing policy (`core/routing.md`). Fill when the job may be
@@ -143,6 +165,9 @@ To fill in at the end:
 
 - What changed:
 - What was verified (and how): paste raw stdout/stderr and exit codes for every named verify command. "Tests pass" without that paste is incomplete for Phase 5.
+- Evidence kind per criterion: `raw` (path to raw stdout/stderr/tool log, or transcript ID + line range) or `summary`. A PASS resting only on `summary` evidence is UNVERIFIED.
+- `process_criteria_met` (process checks) and `continuity_checks_passed` (continuity_regression) — reported separately from requested-feature checks:
+- First-green: `first_green_sha`, final SHA, `git diff --stat <first_green_sha>..<final>`:
 - Explicitly not done / parked / follow-ups:
 - Approval gates hit and outcomes:
 - New `failures/` entries or rules:

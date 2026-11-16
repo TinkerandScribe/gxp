@@ -20,7 +20,10 @@ Checks:
   2. ratings.jsonl hash chain, via the repo validator;
   3. jobs/*/contract.json parses as a JSON object; required fields come from
      the repo job-contract schema; job_id (if present) must equal the folder name;
-  4. every file under failures/ and regressions/ is a non-empty .md file.
+  4. every file under failures/ and regressions/ is a non-empty .md file;
+  5. entries dated 2026-11-02 or later (ledger lines in ratings.jsonl and
+     em-records.jsonl, and failures/regressions .md files with a Date line)
+     must carry a non-empty source_transcript_id. Older entries are exempt.
 Exit 0 when clean; exit 1 with a concise report otherwise.
 """
 from __future__ import annotations
@@ -30,6 +33,7 @@ import importlib.util
 import io
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -41,6 +45,22 @@ RATINGS_REL = Path("scripts") / "validate-ratings-chain.py"
 SCHEMA_REL = Path("core") / "templates" / "job-contract.schema.json"
 STORE_VALIDATOR_NAME = "validate_ratings_chain.py"
 STORE_SCHEMA_REL = Path("schema") / "job-contract.schema.json"
+TRANSCRIPT_ID_CUTOFF = "2026-11-02"
+LEDGERS = {"ratings.jsonl", "em-records.jsonl"}
+DATE_KEYS = ("date", "ts", "timestamp", "created_at", "recorded_at")
+DATE_RE = re.compile(r"(\d{4}-\d{2}-\d{2})")
+MD_DATE_RE = re.compile(r"^\s*[-*]?\s*\**date\**\s*:\**\s*(\d{4}-\d{2}-\d{2})", re.I | re.M)
+MD_STID_RE = re.compile(r"source_transcript_id\**\s*:\**\s*`?\S+", re.I)
+
+
+def _entry_date(obj: dict) -> str | None:
+    for key in DATE_KEYS:
+        val = obj.get(key)
+        if isinstance(val, str):
+            m = DATE_RE.search(val)
+            if m:
+                return m.group(1)
+    return None
 
 
 def _first_file(candidates: list[Path]) -> Path | None:
@@ -113,6 +133,12 @@ def check_jsonl(root: Path, errs: list[str]) -> set[Path]:
             if not isinstance(obj, dict):
                 errs.append(f"{rel}:{i}: line is not a JSON object")
                 bad.add(path)
+                continue
+            if path.name in LEDGERS:
+                day = _entry_date(obj)
+                stid = obj.get("source_transcript_id")
+                if day and day >= TRANSCRIPT_ID_CUTOFF and not (isinstance(stid, str) and stid.strip()):
+                    errs.append(f"{rel}:{i}: entry dated {day} missing source_transcript_id")
     return bad
 
 
@@ -216,6 +242,10 @@ def check_md_dirs(root: Path, errs: list[str]) -> int:
                 continue
             if not body.strip():
                 errs.append(f"{rel}: empty")
+                continue
+            m = MD_DATE_RE.search(body)
+            if m and m.group(1) >= TRANSCRIPT_ID_CUTOFF and not MD_STID_RE.search(body):
+                errs.append(f"{rel}: dated {m.group(1)} missing source_transcript_id")
     return count
 
 

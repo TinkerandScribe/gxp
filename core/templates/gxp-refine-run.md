@@ -87,6 +87,8 @@ rails, Verification ladder, anti-loop, or L3/L4 bounded-autonomy language.
 | Regression set (must hold ~100%) | at minimum: `bash scripts/verify.sh` exit 0 |
 | Repeated trials if stochastic (N) | N= / n/a |
 | Evaluator independence | target change must **not** also change harness/metric/corpus |
+| Held-out set | ≥1 task or script **not shown to the candidate author**, stored outside the branch, run only in §7 |
+| Reworded success rule | ≥1 instruction-faithful rewording of the primary metric; the candidate must beat baseline under **both** the original and the reworded rule |
 
 ---
 
@@ -139,6 +141,7 @@ unfavorable ones.
 - **Verdict:** promote / reject / inconclusive
 - **Rationale (capability vs regression):**
   A capability win that breaks the regression set is a **reject**.
+  A win that holds only under the original (read) criteria is **inconclusive**.
 
 ---
 

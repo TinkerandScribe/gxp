@@ -8,6 +8,14 @@ package as a whole (core + adapters + install/verify scripts).
 
 ### Changed
 
+- **Plans A/B/C/C2/R (Oct 26 + Nov 2/9/16 digests)** — Oct 30 `grok -p`
+  coding lane in the grok-bot adapter; verbatim Scope and Stop +
+  first-green checkpoint; monitor cadence, ESCALATE, claim-blind two-stage
+  review with path evidence and raw-vs-summary evidence (`kind`); pre-exec
+  gate with approval budget, recipient normalisation and an empty-by-default
+  recipient allow-list; tool-schema and monitor snapshots; gxp-refine
+  held-out set + reworded rule; `fleet/bin/check.py` source_transcript_id
+  cutoff (2026-11-02). Stdlib only; new self-tests run from `scripts/verify.sh`.
 - **Fleet checker without a checkout** — `fleet/install-to-store.sh` copies
   `scripts/validate-ratings-chain.py` to `bin/validate_ratings_chain.py` and
   `core/templates/job-contract.schema.json` to `schema/`. `fleet/bin/check.py`

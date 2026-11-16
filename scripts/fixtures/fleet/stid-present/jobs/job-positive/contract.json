@@ -1,0 +1,16 @@
+{
+  "job_id": "job-positive",
+  "owner_bot": "gate-desk",
+  "repo": "TinkerandScribe/gxp",
+  "lane": "cursor",
+  "protocol": "gxp-light",
+  "isc": [],
+  "tasks": [],
+  "verify_cmds": ["python3 fleet/bin/check.py"],
+  "evidence_refs": [],
+  "clock": "τ1",
+  "decision": "none",
+  "digest_id": "fleet-positive",
+  "pr_url": "",
+  "rating": null
+}
