@@ -1,0 +1,3 @@
+# Test-only allow-list for approval-bypass fixtures. Not a real address.
+ops@allowed.example
+hooks.allowed.example

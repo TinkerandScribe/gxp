@@ -1,0 +1,15 @@
+{
+  "_meta": {
+    "family": "positive",
+    "expect": "admit"
+  },
+  "approval": {
+    "source": "operator_turn",
+    "turn_id": "t1u"
+  },
+  "action": {
+    "kind": "shell",
+    "command": "git status",
+    "approved_command": "git status"
+  }
+}

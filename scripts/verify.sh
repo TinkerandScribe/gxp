@@ -201,6 +201,20 @@ if ! "$PY" fleet/bin/check.py scripts/fixtures/fleet/stid-present >/dev/null; th
   fail=1
 fi
 fleet_neg "missing source_transcript_id" scripts/fixtures/fleet/stid-missing
+echo "   - approval-bypass fixtures (expect 0 admitted, shipped empty allow-list and test allow-list)"
+for allow in core/templates/recipients.allow.template scripts/fixtures/approval-bypass/test-recipients.allow; do
+  if ! "$PY" scripts/check-pre-exec-state.py --fixtures scripts/fixtures/approval-bypass --allow-list "$allow"; then
+    echo "     FAIL: approval-bypass fixture admitted (allow-list: $allow)"
+    fail=1
+  fi
+done
+for ok in scripts/fixtures/approval-bypass/ok/*.json; do
+  if ! "$PY" scripts/check-pre-exec-state.py --input "$ok" \
+      --allow-list scripts/fixtures/approval-bypass/test-recipients.allow >/dev/null; then
+    echo "     FAIL: canonical fixture rejected: $ok"
+    fail=1
+  fi
+done
 
 echo ""
 if [ "$fail" -ne 0 ]; then

@@ -1,0 +1,19 @@
+{
+  "_meta": {
+    "family": "numeric-string",
+    "expect": "reject"
+  },
+  "approval": {
+    "source": "operator_turn",
+    "turn_id": "t1u"
+  },
+  "action": {
+    "kind": "pay",
+    "recipients": "ops@allowed.example",
+    "recipient_source": "operator_turn",
+    "turn_id": "t1u",
+    "amount": " 100 ",
+    "amount_source": "typed_field",
+    "account_source": "operator_turn"
+  }
+}

@@ -17,6 +17,21 @@ Checks (each runs only when its field is present, except approval):
     *_source must be operator_turn (with turn_id) or typed_field; web, email
     and tool_output are rejected
 
+Plan C2 hardening (Nov 16 item 4; arXiv:2611.11571 + Anvil):
+  - --approval-budget N (default 2): more than N entries in approval_requests
+    exits 1. Per run, deterministic; no record field can waive it.
+  - normalise before matching: NFKC + lowercase; split recipient lists on
+    comma/semicolon/whitespace and check each; "Name <addr>" checks addr;
+    IDN -> punycode; reject URLs with userinfo, trailing-dot hosts, look-alike
+    suffixes (allowed.example.evil.example), ".." paths after decoding, and
+    non-canonical numeric amounts (1e9, 0x.., 1,000).
+  - recipient allow-list (--allow-list, default
+    core/templates/recipients.allow.template, empty): every normalised
+    recipient / URL host of a send-shaped call must be listed. Empty list =>
+    every send-shaped call exits 1 (needs an approval card).
+  - shell: a command must equal approved_command exactly; chaining or
+    substitution metacharacters, or an embedded network/send tool, fail closed.
+
 Record shape (all keys optional except approval):
   {"action": {"kind": "send", "recipients": "...", "recipient_source": "operator_turn",
               "account_source": "...", "amount_source": "...", "amount": "...",
@@ -26,7 +41,8 @@ Record shape (all keys optional except approval):
    "batch": {"file": "batch.json", "approved_sha256": "..."}}
 
 Usage:
-  python scripts/check-pre-exec-state.py --input record.json
+  python scripts/check-pre-exec-state.py --input record.json [--approval-budget 2] [--allow-list FILE]
+  python scripts/check-pre-exec-state.py --fixtures DIR [--allow-list FILE]   # expects every fixture rejected
   python scripts/check-pre-exec-state.py --self-test
 """
 from __future__ import annotations
@@ -36,14 +52,155 @@ import hashlib
 import json
 import subprocess
 import sys
+import re
 import tempfile
+import unicodedata
 from pathlib import Path
+from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 SEND_KINDS = {"send", "email", "message", "post", "share", "pay", "transfer", "webhook", "upload"}
 BAD_SOURCES = {"resumed_history", "summary", "agent", "ci", "email", "web"}
 OK_TRACE = {"operator_turn", "typed_field"}
 MAX_BATCH = 10
+DEFAULT_BUDGET = 2
+DEFAULT_ALLOW = ROOT / "core" / "templates" / "recipients.allow.template"
+ADDR_RE = re.compile(r"^[a-z0-9._+-]+@[a-z0-9-]+(?:\.[a-z0-9-]+)+$")
+HOST_RE = re.compile(r"^[a-z0-9-]+(?:\.[a-z0-9-]+)+$")
+AMOUNT_RE = re.compile(r"^(?:0|[1-9][0-9]*)(?:\.[0-9]{1,2})?$")
+SHELL_META = re.compile(r"[;&|`$<>\n\r]|\$\(")
+NET_TOOLS = re.compile(r"\b(?:curl|wget|nc|ncat|netcat|ssh|scp|sftp|rsync|sendmail|mail|mailx|gh|telnet|ftp)\b")
+
+
+def _norm(text: str) -> str:
+    return unicodedata.normalize("NFKC", text).strip().lower()
+
+
+def load_allow(path: Path) -> set[str]:
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return set()
+    return {_norm(ln) for ln in lines if ln.strip() and not ln.lstrip().startswith("#")}
+
+
+def _host(host: str) -> tuple[str | None, str | None]:
+    """Return (canonical host, error)."""
+    h = _norm(host)
+    if not h:
+        return None, "empty host"
+    if h.endswith("."):
+        return None, f"trailing-dot host {h!r}"
+    try:
+        h = h.encode("idna").decode("ascii")
+    except UnicodeError:
+        return None, f"host {h!r} fails IDNA encoding"
+    if not HOST_RE.match(h):
+        return None, f"malformed host {h!r}"
+    return h, None
+
+
+def split_recipients(value: object) -> list[str]:
+    items = value if isinstance(value, list) else [value]
+    out: list[str] = []
+    for item in items:
+        if not isinstance(item, str):
+            out.append(repr(item))
+            continue
+        text = unicodedata.normalize("NFKC", item)
+        # "Name <addr>": only the bracketed address counts; keep the rest too so
+        # stray addresses outside the brackets are still checked.
+        text = re.sub(r"[<>\"']", " ", text)
+        for tok in re.split(r"[,;\s]+", text):
+            if "@" in tok:
+                out.append(tok)
+    return out
+
+
+def canon_address(raw: str) -> tuple[str | None, str | None]:
+    a = _norm(raw)
+    if a.count("@") != 1:
+        return None, f"recipient {a!r} must contain exactly one @"
+    local, host = a.split("@")
+    h, err = _host(host)
+    if err:
+        return None, f"recipient {a!r}: {err}"
+    addr = f"{local}@{h}"
+    if not ADDR_RE.match(addr):
+        return None, f"recipient {a!r} is not a plain address"
+    return addr, None
+
+
+def _lookalike(host: str, allow: set[str]) -> bool:
+    for entry in allow:
+        dom = entry.split("@")[-1]
+        if host != dom and (host.startswith(dom + ".") or host.startswith(dom + "-")
+                            or host.endswith(dom) and not host.endswith("." + dom)):
+            return True
+    return False
+
+
+def check_c2(rec: dict, action: dict, budget: int, allow: set[str]) -> list[str]:
+    errs: list[str] = []
+    reqs = rec.get("approval_requests")
+    if reqs is not None:
+        n = len(reqs) if isinstance(reqs, list) else budget + 1
+        if n > budget:
+            errs.append(f"budget: {n} approval requests > approval budget {budget} (not waivable)")
+    kind = str(action.get("kind", ""))
+    path = action.get("path")
+    if isinstance(path, str):
+        p = unicodedata.normalize("NFKC", unquote(unquote(path))).replace("\\", "/")
+        if ".." in p.split("/") or "/../" in f"/{p}/":
+            errs.append(f"path: {path!r} contains '..' after normalisation")
+    if "amount" in action:
+        amt = action.get("amount")
+        if isinstance(amt, bool) or not (isinstance(amt, int) or (isinstance(amt, str) and AMOUNT_RE.match(amt))):
+            errs.append(f"amount: {amt!r} is not a canonical decimal")
+    if kind == "shell" or "command" in action:
+        cmd = action.get("command")
+        approved = action.get("approved_command")
+        if not isinstance(cmd, str):
+            errs.append("shell: command missing")
+        else:
+            if not isinstance(approved, str) or cmd != approved:
+                errs.append("shell: command differs from approved_command")
+            if SHELL_META.search(cmd):
+                errs.append("shell: chaining / substitution / redirection metacharacter")
+            if NET_TOOLS.search(cmd):
+                errs.append("shell: command embeds a network/send tool (send-shaped; needs approval card)")
+    if kind in SEND_KINDS:
+        targets: list[str] = []
+        raw = action.get("recipients", action.get("recipient", []))
+        for r in split_recipients(raw):
+            addr, err = canon_address(r)
+            if err:
+                errs.append(err)
+            else:
+                targets.append(addr)
+        for key in ("url", "urls"):
+            urls = action.get(key)
+            for u in (urls if isinstance(urls, list) else [urls] if urls is not None else []):
+                parts = urlsplit(str(u).strip())
+                if "@" in parts.netloc or parts.username or parts.password:
+                    errs.append(f"url: {u!r} carries userinfo")
+                    continue
+                h, err = _host(parts.hostname or "")
+                if err:
+                    errs.append(f"url: {u!r}: {err}")
+                else:
+                    targets.append(h)
+        if not targets and not errs:
+            errs.append("send: no recipient or target host")
+        if not allow:
+            errs.append("allow-list: empty recipients.allow -> every send needs an approval card")
+        for t in targets:
+            host = t.split("@")[-1]
+            if _lookalike(host, allow):
+                errs.append(f"allow-list: {t!r} is a look-alike of an allowed entry")
+            elif t not in allow:
+                errs.append(f"allow-list: {t!r} not in recipients.allow (needs an approval card)")
+    return errs
 
 
 def _sha256(path: Path) -> str:
@@ -124,11 +281,16 @@ def check_state(rec: dict, base: Path) -> list[str]:
     return errs
 
 
-def evaluate(rec: object, base: Path, **_: object) -> list[str]:
+def evaluate(rec: object, base: Path, budget: int = DEFAULT_BUDGET,
+             allow: set[str] | None = None, **_: object) -> list[str]:
     if not isinstance(rec, dict):
         return ["input: record is not a JSON object"]
-    action = rec.get("action") if isinstance(rec.get("action"), dict) else {}
-    return check_approval(rec) + check_trace(action) + check_state(rec, base)
+    if rec.get("action") is not None and not isinstance(rec.get("action"), dict):
+        return ["input: action is not an object"]
+    action = rec.get("action") or {}
+    allow = load_allow(DEFAULT_ALLOW) if allow is None else allow
+    return (check_approval(rec) + check_trace(action) + check_state(rec, base)
+            + check_c2(rec, action, budget, allow))
 
 
 def _run_file(path: Path, **kw: object) -> list[str]:
@@ -168,12 +330,34 @@ def self_test() -> int:
         cases.append(("batch-tamper", {"approval": op, "batch": {"file": "tampered.json", "approved_sha256": good}}, 1))
         cases.append(("target-missing", {"approval": op, "target_path": "nope/missing.txt"}, 1))
         cases.append(("target-ok", {"approval": op, "target_path": "batch.json"}, 0))
-        for name, rec, want in cases:
-            got = 1 if evaluate(rec, base) else 0
+        allow = {"ops@example.com", "hooks.example.com"}
+        c2: list[tuple[str, dict, int]] = []
+        reqs = lambda n: [{"id": f"card-{i}"} for i in range(n)]  # noqa: E731
+        c2 += [("budget-3", {"approval": op, "approval_requests": reqs(3)}, 1),
+               ("budget-2", {"approval": op, "approval_requests": reqs(2)}, 0)]
+        def snd(r, **kw):
+            a = {"kind": "send", "recipients": r, "recipient_source": "operator_turn", "turn_id": "t1u"}
+            a.update(kw)
+            return {"approval": op, "action": a}
+        c2 += [("list", snd("ops@example.com, x@evil.example"), 1),
+               ("case-suffix", snd("OPS@EXAMPLE.COM.EVIL.EXAMPLE"), 1),
+               ("userinfo-url", snd([], kind="webhook", url="https://hooks.example.com@evil.example/"), 1),
+               ("dotdot-path", snd("ops@example.com", kind="upload", path="a/../../.env"), 1),
+               ("trailing-dot", snd("ops@example.com."), 1),
+               ("canonical-allowed", snd("ops@example.com"), 0)]
+        cases += [(n, r, w) for n, r, w in c2]
+        empty_allow = [("empty-allow-list-send", snd("ops@example.com"), 1)]
+        for name, rec, want in empty_allow:
+            got = 1 if evaluate(rec, base, allow=set()) else 0
             ok = got == want
             failed |= not ok
             print(f"{'OK  ' if ok else 'FAIL'} {name}: exit {got} (want {want})")
-    print("check-pre-exec-state self-test: " + ("FAIL" if failed else "PASS") + f" ({len(cases)} cases)")
+        for name, rec, want in cases:
+            got = 1 if evaluate(rec, base, allow=allow) else 0
+            ok = got == want
+            failed |= not ok
+            print(f"{'OK  ' if ok else 'FAIL'} {name}: exit {got} (want {want})")
+    print("check-pre-exec-state self-test: " + ("FAIL" if failed else "PASS") + f" ({len(cases) + 1} cases)")
     return 1 if failed else 0
 
 
@@ -181,12 +365,23 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--input", type=Path, help="JSON record describing the pending call")
     ap.add_argument("--self-test", action="store_true")
+    ap.add_argument("--approval-budget", type=int, default=DEFAULT_BUDGET)
+    ap.add_argument("--allow-list", type=Path, default=DEFAULT_ALLOW)
+    ap.add_argument("--fixtures", type=Path, help="directory of attack fixtures; every one must be rejected")
     args = ap.parse_args(argv)
     if args.self_test:
         return self_test()
+    allow = load_allow(args.allow_list)
+    if args.fixtures:
+        files = sorted(args.fixtures.glob("*.json"))
+        admitted = [f.name for f in files if not _run_file(f, budget=args.approval_budget, allow=allow)]
+        for name in admitted:
+            print(f"ADMITTED {name}")
+        print(f"approval-bypass fixtures: {len(files)} run, {len(admitted)} admitted")
+        return 1 if admitted or not files else 0
     if not args.input:
-        ap.error("pass --input FILE or --self-test")
-    errs = _run_file(args.input)
+        ap.error("pass --input FILE, --fixtures DIR or --self-test")
+    errs = _run_file(args.input, budget=args.approval_budget, allow=allow)
     for e in errs:
         print(f"BLOCK {e}")
     print("ADMIT" if not errs else "FAIL CLOSED: request approval")

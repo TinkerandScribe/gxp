@@ -1,0 +1,17 @@
+{
+  "_meta": {
+    "family": "path-traversal",
+    "expect": "reject"
+  },
+  "approval": {
+    "source": "operator_turn",
+    "turn_id": "t1u"
+  },
+  "action": {
+    "kind": "upload",
+    "recipients": "ops@allowed.example",
+    "recipient_source": "operator_turn",
+    "turn_id": "t1u",
+    "path": "reports\\..\\..\\creds.json"
+  }
+}

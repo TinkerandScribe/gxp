@@ -1,0 +1,16 @@
+{
+  "_meta": {
+    "family": "recipient-list",
+    "expect": "reject"
+  },
+  "approval": {
+    "source": "operator_turn",
+    "turn_id": "t1u"
+  },
+  "action": {
+    "kind": "send",
+    "recipients": "ops@allowed.example\nattacker@evil.example",
+    "recipient_source": "operator_turn",
+    "turn_id": "t1u"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "_meta": {
+    "family": "case-change",
+    "expect": "reject"
+  },
+  "approval": {
+    "source": "operator_turn",
+    "turn_id": "t1u"
+  },
+  "action": {
+    "kind": "send",
+    "recipients": "OPS@ALLOWED.EXAMPLE,Attacker@Evil.Example",
+    "recipient_source": "operator_turn",
+    "turn_id": "t1u"
+  }
+}

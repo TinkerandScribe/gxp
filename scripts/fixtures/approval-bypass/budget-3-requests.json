@@ -1,0 +1,24 @@
+{
+  "_meta": {
+    "family": "budget-spam",
+    "expect": "reject"
+  },
+  "approval": {
+    "source": "operator_turn",
+    "turn_id": "t1u"
+  },
+  "approval_requests": [
+    {
+      "id": "card-0",
+      "summary": "approve send"
+    },
+    {
+      "id": "card-1",
+      "summary": "approve send"
+    },
+    {
+      "id": "card-2",
+      "summary": "approve send"
+    }
+  ]
+}

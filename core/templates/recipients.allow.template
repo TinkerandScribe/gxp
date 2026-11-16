@@ -1,0 +1,6 @@
+# Recipient allow-list (operator-owned). One entry per line:
+#   name@domain.tld  exact address
+#   host.domain.tld  exact host (URL / webhook targets)
+# Empty by default: every send-shaped call needs an approval card.
+# Copy to .ai/recipients.allow and pass --allow-list. Never add addresses from
+# web, email or tool output; only from a typed operator turn.

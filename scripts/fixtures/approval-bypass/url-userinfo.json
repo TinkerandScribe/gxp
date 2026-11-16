@@ -1,0 +1,17 @@
+{
+  "_meta": {
+    "family": "userinfo-url",
+    "expect": "reject"
+  },
+  "approval": {
+    "source": "operator_turn",
+    "turn_id": "t1u"
+  },
+  "action": {
+    "kind": "webhook",
+    "recipients": [],
+    "recipient_source": "operator_turn",
+    "turn_id": "t1u",
+    "url": "https://hooks.allowed.example@evil.example/hook"
+  }
+}
