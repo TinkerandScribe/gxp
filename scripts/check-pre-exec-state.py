@@ -32,6 +32,19 @@ Plan C2 hardening (Nov 16 item 4; arXiv:2611.11571 + Anvil):
   - shell: a command must equal approved_command exactly; chaining or
     substitution metacharacters, or an embedded network/send tool, fail closed.
 
+Fail-closed structure (Round 2):
+  - action kind is NFKC-normalised, lowercased, whitespace/hyphens -> "_",
+    then mapped through an explicit alias table (SEND/forward/reply_all ->
+    send class, bash/sh/exec -> shell). Any other kind is rejected.
+  - unknown top-level fields and unknown fields in action / approval / git /
+    batch / approval_requests[] / _meta are rejected.
+  - every recipient-bearing field (recipients, recipient, to, cc, bcc,
+    reply_to) is a recipient; each non-allow-listed recipient counts as one
+    approval request toward the cap.
+  - paths (action.path, target_path, batch.file) are percent-decoded until
+    stable (max 8 rounds; still encoded => reject), NFKC-normalised, and
+    rejected when absolute (/, ~, C:) or containing a '..' component.
+
 Record shape (all keys optional except approval):
   {"action": {"kind": "send", "recipients": "...", "recipient_source": "operator_turn",
               "account_source": "...", "amount_source": "...", "amount": "...",
@@ -59,7 +72,31 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
-SEND_KINDS = {"send", "email", "message", "post", "share", "pay", "transfer", "webhook", "upload"}
+SEND_KINDS = {"send", "post", "share", "pay", "transfer", "webhook", "upload"}
+OTHER_KINDS = {"shell", "git", "api", "batch"}
+# Fail closed: only these spellings are understood. Case/whitespace/hyphens are
+# normalised first; anything not listed is rejected as an unknown action.
+KIND_ALIASES = {
+    **{k: k for k in SEND_KINDS | OTHER_KINDS},
+    "email": "send", "mail": "send", "message": "send", "dm": "send", "reply": "send",
+    "reply_all": "send", "replyall": "send", "forward": "send", "fwd": "send", "respond": "send",
+    "publish": "post", "comment": "post", "payment": "pay", "wire": "transfer",
+    "bash": "shell", "sh": "shell", "zsh": "shell", "exec": "shell", "run": "shell", "command": "shell",
+}
+RECIPIENT_FIELDS = ("recipients", "recipient", "to", "cc", "bcc", "reply_to")
+TOP_FIELDS = {"_meta", "action", "approval", "approval_requests", "target_path", "git", "batch"}
+NESTED_FIELDS = {
+    "_meta": {"family", "expect", "note"},
+    "approval": {"source", "turn_id", "rule_path"},
+    "git": {"repo", "expected_branch"},
+    "batch": {"file", "approved_sha256"},
+    "action": set(RECIPIENT_FIELDS) | {
+        "kind", "recipient_source", "recipient_turn_id", "account", "account_source",
+        "account_turn_id", "amount", "amount_source", "amount_turn_id", "turn_id", "url", "urls",
+        "path", "command", "approved_command", "subject", "body"},
+}
+REQUEST_FIELDS = {"id", "summary"}
+DECODE_ROUNDS = 8
 BAD_SOURCES = {"resumed_history", "summary", "agent", "ci", "email", "web"}
 OK_TRACE = {"operator_turn", "typed_field"}
 MAX_BATCH = 10
@@ -70,6 +107,75 @@ HOST_RE = re.compile(r"^[a-z0-9-]+(?:\.[a-z0-9-]+)+$")
 AMOUNT_RE = re.compile(r"^(?:0|[1-9][0-9]*)(?:\.[0-9]{1,2})?$")
 SHELL_META = re.compile(r"[;&|`$<>\n\r]|\$\(")
 NET_TOOLS = re.compile(r"\b(?:curl|wget|nc|ncat|netcat|ssh|scp|sftp|rsync|sendmail|mail|mailx|gh|telnet|ftp)\b")
+
+
+def canon_kind(kind: object) -> str | None:
+    if not isinstance(kind, str):
+        return None
+    k = re.sub(r"[\s\-]+", "_", unicodedata.normalize("NFKC", kind).strip().lower())
+    return KIND_ALIASES.get(k)
+
+
+def structure_errors(rec: dict) -> list[str]:
+    """Reject unknown top-level / nested fields and unknown action kinds (fail closed)."""
+    errs = [f"fields: unknown top-level field {k!r}" for k in sorted(set(rec) - TOP_FIELDS)]
+    for key, allowed in NESTED_FIELDS.items():
+        val = rec.get(key)
+        if val is None:
+            continue
+        if not isinstance(val, dict):
+            errs.append(f"fields: {key} must be an object")
+            continue
+        errs += [f"fields: unknown {key} field {k!r}" for k in sorted(set(val) - allowed)]
+    reqs = rec.get("approval_requests")
+    if reqs is not None:
+        if not isinstance(reqs, list):
+            errs.append("fields: approval_requests must be a list")
+        else:
+            for i, item in enumerate(reqs):
+                if not isinstance(item, dict):
+                    errs.append(f"fields: approval_requests[{i}] must be an object")
+                else:
+                    errs += [f"fields: unknown approval_requests[{i}] field {k!r}"
+                             for k in sorted(set(item) - REQUEST_FIELDS)]
+    action = rec.get("action")
+    if isinstance(action, dict):
+        if canon_kind(action.get("kind")) is None:
+            errs.append(f"action: unknown kind {action.get('kind')!r} (fail closed)")
+        for f in RECIPIENT_FIELDS:
+            v = action.get(f)
+            if v is not None and not (isinstance(v, str) or (isinstance(v, list) and all(isinstance(x, str) for x in v))):
+                errs.append(f"fields: action.{f} must be a string or list of strings")
+        for f in ("url", "path", "command", "approved_command", "subject", "body", "turn_id"):
+            if f in action and not isinstance(action[f], str):
+                errs.append(f"fields: action.{f} must be a string")
+        if "urls" in action and not (isinstance(action["urls"], list) and all(isinstance(x, str) for x in action["urls"])):
+            errs.append("fields: action.urls must be a list of strings")
+    return errs
+
+
+def path_errors(label: str, path: str) -> list[str]:
+    """Fully decode (loop-capped), normalise, then reject absolute or traversal paths."""
+    cur = path
+    for _ in range(DECODE_ROUNDS):
+        nxt = unquote(cur)
+        if nxt == cur:
+            break
+        cur = nxt
+    else:
+        if unquote(cur) != cur:
+            return [f"path: {label} {path!r} still encoded after {DECODE_ROUNDS} decode rounds"]
+    if re.search(r"%[0-9a-fA-F]{2}", cur):
+        return [f"path: {label} {path!r} still encoded after decoding"]
+    p = unicodedata.normalize("NFKC", cur).replace("\\", "/").strip()
+    errs: list[str] = []
+    if "\x00" in p or not p:
+        errs.append(f"path: {label} {path!r} empty or contains NUL")
+    if p.startswith(("/", "~")) or re.match(r"^[A-Za-z]:", p):
+        errs.append(f"path: {label} {path!r} is absolute")
+    if ".." in p.split("/"):
+        errs.append(f"path: {label} {path!r} contains '..' after normalisation")
+    return errs
 
 
 def _norm(text: str) -> str:
@@ -143,21 +249,19 @@ def _lookalike(host: str, allow: set[str]) -> bool:
 def check_c2(rec: dict, action: dict, budget: int, allow: set[str]) -> list[str]:
     errs: list[str] = []
     reqs = rec.get("approval_requests")
+    n_requests = 0
     if reqs is not None:
-        n = len(reqs) if isinstance(reqs, list) else budget + 1
-        if n > budget:
-            errs.append(f"budget: {n} approval requests > approval budget {budget} (not waivable)")
-    kind = str(action.get("kind", ""))
-    path = action.get("path")
-    if isinstance(path, str):
-        p = unicodedata.normalize("NFKC", unquote(unquote(path))).replace("\\", "/")
-        if ".." in p.split("/") or "/../" in f"/{p}/":
-            errs.append(f"path: {path!r} contains '..' after normalisation")
+        n_requests = len(reqs) if isinstance(reqs, list) else budget + 1
+    kind = canon_kind(action.get("kind")) or ""
+    for label, val in (("action.path", action.get("path")), ("target_path", rec.get("target_path")),
+                       ("batch.file", (rec.get("batch") or {}).get("file") if isinstance(rec.get("batch"), dict) else None)):
+        if isinstance(val, str):
+            errs += path_errors(label, val)
     if "amount" in action:
         amt = action.get("amount")
         if isinstance(amt, bool) or not (isinstance(amt, int) or (isinstance(amt, str) and AMOUNT_RE.match(amt))):
             errs.append(f"amount: {amt!r} is not a canonical decimal")
-    if kind == "shell" or "command" in action:
+    if kind == "shell" or "command" in action or "approved_command" in action:
         cmd = action.get("command")
         approved = action.get("approved_command")
         if not isinstance(cmd, str):
@@ -171,7 +275,11 @@ def check_c2(rec: dict, action: dict, budget: int, allow: set[str]) -> list[str]
                 errs.append("shell: command embeds a network/send tool (send-shaped; needs approval card)")
     if kind in SEND_KINDS:
         targets: list[str] = []
-        raw = action.get("recipients", action.get("recipient", []))
+        raw: list[str] = []
+        for f in RECIPIENT_FIELDS:
+            v = action.get(f)
+            if v is not None:
+                raw += v if isinstance(v, list) else [v]
         for r in split_recipients(raw):
             addr, err = canon_address(r)
             if err:
@@ -194,12 +302,17 @@ def check_c2(rec: dict, action: dict, budget: int, allow: set[str]) -> list[str]
             errs.append("send: no recipient or target host")
         if not allow:
             errs.append("allow-list: empty recipients.allow -> every send needs an approval card")
-        for t in targets:
+        for t in sorted(set(targets)):
             host = t.split("@")[-1]
             if _lookalike(host, allow):
                 errs.append(f"allow-list: {t!r} is a look-alike of an allowed entry")
+                n_requests += 1
             elif t not in allow:
                 errs.append(f"allow-list: {t!r} not in recipients.allow (needs an approval card)")
+                n_requests += 1
+    if n_requests > budget:
+        errs.append(f"budget: {n_requests} approval requests (incl. non-allow-listed recipients) "
+                    f"> approval budget {budget} (not waivable)")
     return errs
 
 
@@ -225,10 +338,13 @@ def check_approval(rec: dict) -> list[str]:
 
 def check_trace(action: dict) -> list[str]:
     errs: list[str] = []
-    if str(action.get("kind", "")) not in SEND_KINDS:
+    if canon_kind(action.get("kind")) not in SEND_KINDS:
         return errs
     for field in ("recipient", "account", "amount"):
-        has_value = field + "s" in action or field in action or f"{field}_source" in action
+        if field == "recipient":
+            has_value = any(f in action for f in RECIPIENT_FIELDS) or "recipient_source" in action
+        else:
+            has_value = field in action or f"{field}_source" in action
         if field == "recipient" and not has_value:
             errs.append("trace: send-shaped call without recipients")
             continue
@@ -289,6 +405,9 @@ def evaluate(rec: object, base: Path, budget: int = DEFAULT_BUDGET,
         return ["input: action is not an object"]
     action = rec.get("action") or {}
     allow = load_allow(DEFAULT_ALLOW) if allow is None else allow
+    structural = structure_errors(rec)
+    if structural:
+        return structural + check_approval(rec)
     return (check_approval(rec) + check_trace(action) + check_state(rec, base)
             + check_c2(rec, action, budget, allow))
 
@@ -344,7 +463,14 @@ def self_test() -> int:
                ("userinfo-url", snd([], kind="webhook", url="https://hooks.example.com@evil.example/"), 1),
                ("dotdot-path", snd("ops@example.com", kind="upload", path="a/../../.env"), 1),
                ("trailing-dot", snd("ops@example.com."), 1),
-               ("canonical-allowed", snd("ops@example.com"), 0)]
+               ("canonical-allowed", snd("ops@example.com"), 0),
+               ("kind-uppercase-mapped", snd("ops@example.com", kind=" SEND "), 0),
+               ("kind-unknown", snd("ops@example.com", kind="smtp_relay"), 1),
+               ("unknown-action-field", snd("ops@example.com", bcc_hidden="x@evil.example"), 1),
+               ("unknown-top-field", {"approval": op, "approval_request_count": 9}, 1),
+               ("bcc-not-allowed", snd("ops@example.com", bcc="x@evil.example"), 1),
+               ("absolute-path", snd("ops@example.com", kind="upload", path="/etc/passwd"), 1),
+               ("triple-encoded-path", snd("ops@example.com", kind="upload", path="a/%25252e%25252e/b"), 1)]
         cases += [(n, r, w) for n, r, w in c2]
         empty_allow = [("empty-allow-list-send", snd("ops@example.com"), 1)]
         for name, rec, want in empty_allow:

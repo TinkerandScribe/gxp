@@ -1,0 +1,22 @@
+{
+  "_meta": {
+    "family": "r2-variant",
+    "expect": "reject"
+  },
+  "approval": {
+    "source": "operator_turn",
+    "turn_id": "t1u",
+    "waive_budget": true
+  },
+  "approval_requests": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    },
+    {
+      "id": 3
+    }
+  ]
+}
